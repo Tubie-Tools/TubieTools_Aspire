@@ -8,5 +8,6 @@ builder.AddProject<Projects.TubieTools_Aspire_Web>("webfrontend")
     .WaitFor(publicApi);
 
 //test
+//test2
 
 builder.Build().Run();
