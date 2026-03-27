@@ -26,6 +26,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BLL", "BLL", "{A265A754-0A8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Host", "Host", "{B4CC44EB-2F28-46A9-BD42-36350F39F999}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SanityCheque", "..\..\Workspaces\SanityCheque\SanityCheque\SanityCheque.csproj", "{F54335B3-5904-49EF-373D-5A47C87CB6BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{602218B5-F255-45A3-B4F5-C03F0D4DD9B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{602218B5-F255-45A3-B4F5-C03F0D4DD9B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{602218B5-F255-45A3-B4F5-C03F0D4DD9B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F54335B3-5904-49EF-373D-5A47C87CB6BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F54335B3-5904-49EF-373D-5A47C87CB6BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F54335B3-5904-49EF-373D-5A47C87CB6BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F54335B3-5904-49EF-373D-5A47C87CB6BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +68,7 @@ Global
 		{9D0E6B10-3838-7AB8-79AD-00FC20E74E1C} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{9B34805D-E063-0693-C4C9-E26C025A91E3} = {03839617-D70E-4E67-AD64-4458BEAF8B7B}
 		{602218B5-F255-45A3-B4F5-C03F0D4DD9B7} = {E1A7387B-8C42-4E1E-95DF-35677B0E333A}
+		{F54335B3-5904-49EF-373D-5A47C87CB6BB} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {69CB4A26-DBDB-4782-90E2-E94AFCA83ED5}
