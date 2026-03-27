@@ -7,4 +7,6 @@ builder.AddProject<Projects.TubieTools_Aspire_Web>("webfrontend")
     .WithReference(publicApi)
     .WaitFor(publicApi);
 
+//test
+
 builder.Build().Run();
