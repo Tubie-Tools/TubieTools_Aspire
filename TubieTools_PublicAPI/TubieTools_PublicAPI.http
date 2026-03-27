@@ -1,0 +1,6 @@
+@TubieTools_PublicAPI_HostAddress = http://localhost:5031
+
+GET {{TubieTools_PublicAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

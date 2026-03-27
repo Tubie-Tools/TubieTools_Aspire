@@ -1,0 +1,48 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37111.16 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TubieTools_Aspire.AppHost", "TubieTools_Aspire.AppHost\TubieTools_Aspire.AppHost.csproj", "{E01E7013-DE64-4A52-9FA9-6F325C7B12A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TubieTools_Aspire.ServiceDefaults", "TubieTools_Aspire.ServiceDefaults\TubieTools_Aspire.ServiceDefaults.csproj", "{3122BC27-923A-31AB-D684-2B691C1C6075}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TubieTools_Aspire.Web", "TubieTools_Aspire.Web\TubieTools_Aspire.Web.csproj", "{9D0E6B10-3838-7AB8-79AD-00FC20E74E1C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TubieTools_Aspire.Tests", "TubieTools_Aspire.Tests\TubieTools_Aspire.Tests.csproj", "{9B34805D-E063-0693-C4C9-E26C025A91E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TubieTools_PublicAPI", "TubieTools_PublicAPI\TubieTools_PublicAPI.csproj", "{602218B5-F255-45A3-B4F5-C03F0D4DD9B7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E01E7013-DE64-4A52-9FA9-6F325C7B12A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E01E7013-DE64-4A52-9FA9-6F325C7B12A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E01E7013-DE64-4A52-9FA9-6F325C7B12A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E01E7013-DE64-4A52-9FA9-6F325C7B12A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3122BC27-923A-31AB-D684-2B691C1C6075}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3122BC27-923A-31AB-D684-2B691C1C6075}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3122BC27-923A-31AB-D684-2B691C1C6075}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3122BC27-923A-31AB-D684-2B691C1C6075}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D0E6B10-3838-7AB8-79AD-00FC20E74E1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D0E6B10-3838-7AB8-79AD-00FC20E74E1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D0E6B10-3838-7AB8-79AD-00FC20E74E1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D0E6B10-3838-7AB8-79AD-00FC20E74E1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B34805D-E063-0693-C4C9-E26C025A91E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B34805D-E063-0693-C4C9-E26C025A91E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B34805D-E063-0693-C4C9-E26C025A91E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B34805D-E063-0693-C4C9-E26C025A91E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{602218B5-F255-45A3-B4F5-C03F0D4DD9B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{602218B5-F255-45A3-B4F5-C03F0D4DD9B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{602218B5-F255-45A3-B4F5-C03F0D4DD9B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{602218B5-F255-45A3-B4F5-C03F0D4DD9B7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {69CB4A26-DBDB-4782-90E2-E94AFCA83ED5}
+	EndGlobalSection
+EndGlobal
