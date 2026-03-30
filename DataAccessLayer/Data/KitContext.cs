@@ -13,9 +13,9 @@ namespace DataAccessLayer
     public class KitContext : DbContext
     {
 
-        //public KitContext(DbContextOptions<KitContext> options) : base(options)
-        //{
-        //}
+        public KitContext(DbContextOptions<KitContext> options) : base(options)
+        {
+        }
 
         public DbSet<Profile> Profile { get; set; }
         public DbSet<Event> Event { get; set; }

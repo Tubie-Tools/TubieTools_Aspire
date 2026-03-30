@@ -2,10 +2,14 @@ using Aspire.Hosting;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
+//env variable password
+// Create a ParameterResource for a password
+var secretpassword = builder.AddParameter("dbpassword", secret: true);
+
 var password = builder.AddParameter("SqlAdminPassword","My$ecureP@ssw0rd",false,true); // Or omit to auto-generate
 
 // Add a SQL Server container for local development
-var sqldb = builder.AddSqlServer("sql", password)
+var sqldb = builder.AddSqlServer("sql", secretpassword)
     .WithLifetime(ContainerLifetime.Persistent)
     .WithDataBindMount(source: @"C:\SqlServer\Data")
     .WithEndpoint(port: 6033, targetPort: 1433, name: "ssms")
