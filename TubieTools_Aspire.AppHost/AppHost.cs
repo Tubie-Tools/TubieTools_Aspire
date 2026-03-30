@@ -2,8 +2,16 @@ using Aspire.Hosting;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
+var password = builder.AddParameter("SqlAdminPassword","My$ecureP@ssw0rd",false,true); // Or omit to auto-generate
+
 // Add a SQL Server container for local development
-var sqldb = builder.AddSqlServer("sanitycheque");//.WithPassword(passwordFromKeyVault);
+var sqldb = builder.AddSqlServer("sql", password)
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithDataBindMount(source: @"C:\SqlServer\Data")
+    .WithEndpoint(port: 6033, targetPort: 1433, name: "ssms")
+    .WithContainerName("sqlserver")
+    .WithDataVolume()
+    .WithEnvironment("ACCEPT_EULA", "Y");
 
 // Optionally add a database to the SQL Server
 var db = sqldb.AddDatabase("MyDatabase");
