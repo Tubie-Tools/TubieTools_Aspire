@@ -9,6 +9,7 @@ var secretpassword = builder.AddParameter("dbpassword", secret: true);
 var password = builder.AddParameter("SqlAdminPassword","My$ecureP@ssw0rd",false,true); // Or omit to auto-generate
 
 // Add a SQL Server container for local development
+// Except my container is garbage, fallback to local SSMS .
 var sqldb = builder.AddSqlServer("sql", secretpassword)
     .WithLifetime(ContainerLifetime.Persistent)
     .WithDataBindMount(source: @"C:\SqlServer\Data")
