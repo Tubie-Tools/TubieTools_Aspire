@@ -12,7 +12,12 @@ namespace DataAccessLayer
     /// </summary>
     public class KitContext : DbContext
     {
-
+        /// <summary>
+        /// For some reason uncomment me, turn on SSMS service because I do not want it on startup for local dev
+        /// Database generates with user xequence_user, creds legit
+        /// do work
+        /// </summary>
+        /// <param name="options"></param>
         public KitContext(DbContextOptions<KitContext> options) : base(options)
         {
         }
