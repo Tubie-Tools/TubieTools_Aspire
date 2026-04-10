@@ -22,8 +22,8 @@ var password = builder.AddParameter("SqlAdminPassword","My$ecureP@ssw0rd",false,
 //var db = sqldb.AddDatabase("MyDatabase");
 
 var publicApi = builder.AddProject<Projects.TubieTools_PublicAPI>("publicapi");
-    //.WithReference(db);
-
+//.WithReference(db);
+builder.AddProject<Projects.TubieTools_SentimentModel_WebApi>("sentimentapi");
 
 builder.AddProject<Projects.TubieTools_Aspire_Web>("webfrontend")
     .WithExternalHttpEndpoints() 
