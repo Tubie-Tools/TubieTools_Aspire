@@ -10,19 +10,19 @@ var password = builder.AddParameter("SqlAdminPassword","My$ecureP@ssw0rd",false,
 
 // Add a SQL Server container for local development
 // Except my container is garbage, fallback to local SSMS .
-var sqldb = builder.AddSqlServer("sql", secretpassword)
-    .WithLifetime(ContainerLifetime.Persistent)
-    .WithDataBindMount(source: @"C:\SqlServer\Data")
-    .WithEndpoint(port: 6033, targetPort: 1433, name: "ssms")
-    .WithContainerName("sqlserver")
-    .WithDataVolume()
-    .WithEnvironment("ACCEPT_EULA", "Y");
+//var sqldb = builder.AddSqlServer("sql", secretpassword)
+//    .WithLifetime(ContainerLifetime.Persistent)
+//    .WithDataBindMount(source: @"C:\SqlServer\Data")
+//    .WithEndpoint(port: 6033, targetPort: 1433, name: "ssms")
+//    .WithContainerName("sqlserver")
+//    .WithDataVolume()
+//    .WithEnvironment("ACCEPT_EULA", "Y");
 
 // Optionally add a database to the SQL Server
-var db = sqldb.AddDatabase("MyDatabase");
+//var db = sqldb.AddDatabase("MyDatabase");
 
-var publicApi = builder.AddProject<Projects.TubieTools_PublicAPI>("publicapi").
-    WithReference(db);
+var publicApi = builder.AddProject<Projects.TubieTools_PublicAPI>("publicapi");
+    //.WithReference(db);
 
 
 builder.AddProject<Projects.TubieTools_Aspire_Web>("webfrontend")
