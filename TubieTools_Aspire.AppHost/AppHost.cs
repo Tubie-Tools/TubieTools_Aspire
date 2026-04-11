@@ -25,6 +25,7 @@ var publicApi = builder.AddProject<Projects.TubieTools_PublicAPI>("publicapi");
 //.WithReference(db);
 builder.AddProject<Projects.TubieTools_SentimentModel_WebApi>("sentimentapi");
 builder.AddProject<Projects.TubieTools_SentimentModel_ProductApi>("sentimentproductapi");
+builder.AddProject<Projects.TubieTools_Forecasting_API>("forecastingapi");
 
 builder.AddProject<Projects.TubieTools_Aspire_Web>("webfrontend")
     .WithExternalHttpEndpoints() 

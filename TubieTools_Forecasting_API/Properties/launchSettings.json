@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "TubieTools_Forecasting_API": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:49758;http://localhost:49759"
+    }
+  }
+}

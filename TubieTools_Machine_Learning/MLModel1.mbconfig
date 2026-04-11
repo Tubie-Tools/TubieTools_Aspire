@@ -1,0 +1,417 @@
+﻿{
+  "Scenario": "Forecasting",
+  "DataSource": {
+    "Version": 3,
+    "EscapeCharacter": "\"",
+    "ReadMultiLines": false,
+    "KeepDiacritics": false,
+    "KeepPunctuations": false,
+    "AllowQuoting": false,
+    "Type": "TabularFile",
+    "FilePath": "C:\\Users\\xeque\\Downloads\\EtsySoldOrderItems2026.csv",
+    "Delimiter": ",",
+    "DecimalMarker": ".",
+    "HasHeader": true,
+    "ColumnProperties": [
+      {
+        "ColumnName": "Sale Date",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Item Name",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Buyer",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Quantity",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": true,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Price",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Coupon Code",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Coupon Details",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Discount Amount",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Shipping Discount",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": true,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Order Shipping",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Order Sales Tax",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": true,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Item Total",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Currency",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": true,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Transaction ID",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Listing ID",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Date Paid",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Date Shipped",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Ship Name",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Ship Address1",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Ship Address2",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Ship City",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Ship State",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Ship Zipcode",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Ship Country",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": true,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Order ID",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Variations",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Order Type",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": true,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Listings Type",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": true,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "Payment Type",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": true,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "InPerson Discount",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "InPerson Location",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "VAT Paid by Buyer",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "Single",
+        "IsCategorical": true,
+        "Type": "Column",
+        "Version": 5
+      },
+      {
+        "ColumnName": "SKU",
+        "ColumnPurpose": "Feature",
+        "ColumnDataFormat": "String",
+        "IsCategorical": false,
+        "Type": "Column",
+        "Version": 5
+      }
+    ]
+  },
+  "Environment": {
+    "Type": "LocalCPU",
+    "Version": 1
+  },
+  "RunHistory": {
+    "Version": 3,
+    "Type": "Result",
+    "Trials": [
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "ForecastBySsa",
+        "Score": 4.7643658059571692,
+        "RuntimeInSeconds": 0.537,
+        "Parameter": {
+          "_SCHEMA_": "e0",
+          "e0": {
+            "WindowSize": 2,
+            "SeriesLength": 10,
+            "TrainSize": 102,
+            "Horizon": 50,
+            "OutputColumnName": "Price",
+            "InputColumnName": "Price",
+            "ConfidenceLowerBoundColumn": "Price_LB",
+            "ConfidenceUpperBoundColumn": "Price_UB"
+          }
+        }
+      },
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "ForecastBySsa",
+        "Score": 4.7643658059571692,
+        "RuntimeInSeconds": 0.003,
+        "Parameter": {
+          "_SCHEMA_": "e0",
+          "e0": {
+            "WindowSize": 2,
+            "SeriesLength": 182,
+            "TrainSize": 102,
+            "Horizon": 50,
+            "OutputColumnName": "Price",
+            "InputColumnName": "Price",
+            "ConfidenceLowerBoundColumn": "Price_LB",
+            "ConfidenceUpperBoundColumn": "Price_UB"
+          }
+        }
+      },
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "ForecastBySsa",
+        "Score": 4.7643658059571692,
+        "RuntimeInSeconds": 0.003,
+        "Parameter": {
+          "_SCHEMA_": "e0",
+          "e0": {
+            "WindowSize": 2,
+            "SeriesLength": 541,
+            "TrainSize": 102,
+            "Horizon": 50,
+            "OutputColumnName": "Price",
+            "InputColumnName": "Price",
+            "ConfidenceLowerBoundColumn": "Price_LB",
+            "ConfidenceUpperBoundColumn": "Price_UB"
+          }
+        }
+      },
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "ForecastBySsa",
+        "Score": 4.7643658059571692,
+        "RuntimeInSeconds": 0.003,
+        "Parameter": {
+          "_SCHEMA_": "e0",
+          "e0": {
+            "WindowSize": 2,
+            "SeriesLength": 261,
+            "TrainSize": 102,
+            "Horizon": 50,
+            "OutputColumnName": "Price",
+            "InputColumnName": "Price",
+            "ConfidenceLowerBoundColumn": "Price_LB",
+            "ConfidenceUpperBoundColumn": "Price_UB"
+          }
+        }
+      },
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "ForecastBySsa",
+        "Score": 4.7643658059571692,
+        "RuntimeInSeconds": 0.003,
+        "Parameter": {
+          "_SCHEMA_": "e0",
+          "e0": {
+            "WindowSize": 2,
+            "SeriesLength": 59,
+            "TrainSize": 102,
+            "Horizon": 50,
+            "OutputColumnName": "Price",
+            "InputColumnName": "Price",
+            "ConfidenceLowerBoundColumn": "Price_LB",
+            "ConfidenceUpperBoundColumn": "Price_UB"
+          }
+        }
+      }
+    ],
+    "Estimators": {
+      "e0": "ForecastBySsa"
+    },
+    "Schema": "e0",
+    "MetricName": "RMSE",
+    "ModelFilePath": "C:\\Users\\xeque\\source\\repos\\TubieTools_Aspire\\TubieTools_Machine_Learning\\MLModel1.mlnet"
+  },
+  "Type": "TrainingConfig",
+  "Version": 5,
+  "TrainingOption": {
+    "Version": 3,
+    "OptimizeMetric": "RMSE",
+    "Subsampling": false,
+    "Type": "ForecastingTrainingOption",
+    "TrainingTime": 60,
+    "UseCrossValidation": false,
+    "Horizon": 50,
+    "TimeColumn": "Sale Date",
+    "LabelColumn": "Price",
+    "UseDefaultIndex": false,
+    "ValidationOption": {
+      "Version": 0,
+      "Type": "CrossValidationValidationOption",
+      "NumberOfFolds": 5
+    }
+  }
+}
