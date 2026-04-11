@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/TubieTools_Machine_Learning/data/EtsySoldOrderItems2022.csv
+/TubieTools_Machine_Learning/data/EtsySoldOrderItems2023.csv
+/TubieTools_Machine_Learning/data/EtsySoldOrderItems2024.csv
+/TubieTools_Machine_Learning/data/EtsySoldOrderItems2025 (1).csv
+/TubieTools_Machine_Learning/data/EtsySoldOrderItems2026.csv
+/TubieTools_Machine_Learning/data/output.csv
