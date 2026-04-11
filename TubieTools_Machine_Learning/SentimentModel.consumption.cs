@@ -16,24 +16,136 @@ namespace TubieTools_Machine_Learning
         public class ModelInput
         {
             [LoadColumn(0)]
-            [ColumnName(@"reviewer")]
-            public string Reviewer { get; set; }
+            [ColumnName(@"Sale Date")]
+            public string Sale_Date { get; set; }
 
             [LoadColumn(1)]
-            [ColumnName(@"date_reviewed")]
-            public string Date_reviewed { get; set; }
+            [ColumnName(@"Item Name")]
+            public string Item_Name { get; set; }
 
             [LoadColumn(2)]
-            [ColumnName(@"star_rating")]
-            public float Star_rating { get; set; }
+            [ColumnName(@"Buyer")]
+            public string Buyer { get; set; }
 
             [LoadColumn(3)]
-            [ColumnName(@"message")]
-            public string Message { get; set; }
+            [ColumnName(@"Quantity")]
+            public float Quantity { get; set; }
 
             [LoadColumn(4)]
-            [ColumnName(@"order_id")]
-            public string Order_id { get; set; }
+            [ColumnName(@"Price")]
+            public float Price { get; set; }
+
+            [LoadColumn(5)]
+            [ColumnName(@"Coupon Code")]
+            public string Coupon_Code { get; set; }
+
+            [LoadColumn(6)]
+            [ColumnName(@"Coupon Details")]
+            public string Coupon_Details { get; set; }
+
+            [LoadColumn(7)]
+            [ColumnName(@"Discount Amount")]
+            public float Discount_Amount { get; set; }
+
+            [LoadColumn(8)]
+            [ColumnName(@"Shipping Discount")]
+            public float Shipping_Discount { get; set; }
+
+            [LoadColumn(9)]
+            [ColumnName(@"Order Shipping")]
+            public float Order_Shipping { get; set; }
+
+            [LoadColumn(10)]
+            [ColumnName(@"Order Sales Tax")]
+            public float Order_Sales_Tax { get; set; }
+
+            [LoadColumn(11)]
+            [ColumnName(@"Item Total")]
+            public float Item_Total { get; set; }
+
+            [LoadColumn(12)]
+            [ColumnName(@"Currency")]
+            public string Currency { get; set; }
+
+            [LoadColumn(13)]
+            [ColumnName(@"Transaction ID")]
+            public float Transaction_ID { get; set; }
+
+            [LoadColumn(14)]
+            [ColumnName(@"Listing ID")]
+            public float Listing_ID { get; set; }
+
+            [LoadColumn(15)]
+            [ColumnName(@"Date Paid")]
+            public string Date_Paid { get; set; }
+
+            [LoadColumn(16)]
+            [ColumnName(@"Date Shipped")]
+            public string Date_Shipped { get; set; }
+
+            [LoadColumn(17)]
+            [ColumnName(@"Ship Name")]
+            public string Ship_Name { get; set; }
+
+            [LoadColumn(18)]
+            [ColumnName(@"Ship Address1")]
+            public string Ship_Address1 { get; set; }
+
+            [LoadColumn(19)]
+            [ColumnName(@"Ship Address2")]
+            public string Ship_Address2 { get; set; }
+
+            [LoadColumn(20)]
+            [ColumnName(@"Ship City")]
+            public string Ship_City { get; set; }
+
+            [LoadColumn(21)]
+            [ColumnName(@"Ship State")]
+            public string Ship_State { get; set; }
+
+            [LoadColumn(22)]
+            [ColumnName(@"Ship Zipcode")]
+            public string Ship_Zipcode { get; set; }
+
+            [LoadColumn(23)]
+            [ColumnName(@"Ship Country")]
+            public string Ship_Country { get; set; }
+
+            [LoadColumn(24)]
+            [ColumnName(@"Order ID")]
+            public float Order_ID { get; set; }
+
+            [LoadColumn(25)]
+            [ColumnName(@"Variations")]
+            public string Variations { get; set; }
+
+            [LoadColumn(26)]
+            [ColumnName(@"Order Type")]
+            public string Order_Type { get; set; }
+
+            [LoadColumn(27)]
+            [ColumnName(@"Listings Type")]
+            public string Listings_Type { get; set; }
+
+            [LoadColumn(28)]
+            [ColumnName(@"Payment Type")]
+            public string Payment_Type { get; set; }
+
+            [LoadColumn(29)]
+            [ColumnName(@"InPerson Discount")]
+            public string InPerson_Discount { get; set; }
+
+            [LoadColumn(30)]
+            [ColumnName(@"InPerson Location")]
+            public string InPerson_Location { get; set; }
+
+            [LoadColumn(31)]
+            [ColumnName(@"VAT Paid by Buyer")]
+            public float VAT_Paid_by_Buyer { get; set; }
+
+            [LoadColumn(32)]
+            [ColumnName(@"SKU")]
+            public string SKU { get; set; }
 
         }
 
@@ -45,26 +157,113 @@ namespace TubieTools_Machine_Learning
         #region model output class
         public class ModelOutput
         {
-            [ColumnName(@"reviewer")]
-            public float[] Reviewer { get; set; }
+            [ColumnName(@"Sale Date")]
+            public float[] Sale_Date { get; set; }
 
-            [ColumnName(@"date_reviewed")]
-            public float[] Date_reviewed { get; set; }
+            [ColumnName(@"Item Name")]
+            public float[] Item_Name { get; set; }
 
-            [ColumnName(@"star_rating")]
-            public float Star_rating { get; set; }
+            [ColumnName(@"Buyer")]
+            public float[] Buyer { get; set; }
 
-            [ColumnName(@"message")]
-            public float[] Message { get; set; }
+            [ColumnName(@"Quantity")]
+            public float Quantity { get; set; }
 
-            [ColumnName(@"order_id")]
-            public float[] Order_id { get; set; }
+            [ColumnName(@"Price")]
+            public uint Price { get; set; }
+
+            [ColumnName(@"Coupon Code")]
+            public float[] Coupon_Code { get; set; }
+
+            [ColumnName(@"Coupon Details")]
+            public float[] Coupon_Details { get; set; }
+
+            [ColumnName(@"Discount Amount")]
+            public float Discount_Amount { get; set; }
+
+            [ColumnName(@"Shipping Discount")]
+            public float Shipping_Discount { get; set; }
+
+            [ColumnName(@"Order Shipping")]
+            public float Order_Shipping { get; set; }
+
+            [ColumnName(@"Order Sales Tax")]
+            public float Order_Sales_Tax { get; set; }
+
+            [ColumnName(@"Item Total")]
+            public float Item_Total { get; set; }
+
+            [ColumnName(@"Currency")]
+            public float[] Currency { get; set; }
+
+            [ColumnName(@"Transaction ID")]
+            public float Transaction_ID { get; set; }
+
+            [ColumnName(@"Listing ID")]
+            public float Listing_ID { get; set; }
+
+            [ColumnName(@"Date Paid")]
+            public float[] Date_Paid { get; set; }
+
+            [ColumnName(@"Date Shipped")]
+            public float[] Date_Shipped { get; set; }
+
+            [ColumnName(@"Ship Name")]
+            public float[] Ship_Name { get; set; }
+
+            [ColumnName(@"Ship Address1")]
+            public float[] Ship_Address1 { get; set; }
+
+            [ColumnName(@"Ship Address2")]
+            public float[] Ship_Address2 { get; set; }
+
+            [ColumnName(@"Ship City")]
+            public float[] Ship_City { get; set; }
+
+            [ColumnName(@"Ship State")]
+            public float[] Ship_State { get; set; }
+
+            [ColumnName(@"Ship Zipcode")]
+            public float[] Ship_Zipcode { get; set; }
+
+            [ColumnName(@"Ship Country")]
+            public float[] Ship_Country { get; set; }
+
+            [ColumnName(@"Order ID")]
+            public float Order_ID { get; set; }
+
+            [ColumnName(@"Variations")]
+            public float[] Variations { get; set; }
+
+            [ColumnName(@"Order Type")]
+            public float[] Order_Type { get; set; }
+
+            [ColumnName(@"Listings Type")]
+            public float[] Listings_Type { get; set; }
+
+            [ColumnName(@"Payment Type")]
+            public float[] Payment_Type { get; set; }
+
+            [ColumnName(@"InPerson Discount")]
+            public float[] InPerson_Discount { get; set; }
+
+            [ColumnName(@"InPerson Location")]
+            public float[] InPerson_Location { get; set; }
+
+            [ColumnName(@"VAT Paid by Buyer")]
+            public float VAT_Paid_by_Buyer { get; set; }
+
+            [ColumnName(@"SKU")]
+            public float[] SKU { get; set; }
 
             [ColumnName(@"Features")]
             public float[] Features { get; set; }
 
+            [ColumnName(@"PredictedLabel")]
+            public float PredictedLabel { get; set; }
+
             [ColumnName(@"Score")]
-            public float Score { get; set; }
+            public float[] Score { get; set; }
 
         }
 
@@ -80,6 +279,62 @@ namespace TubieTools_Machine_Learning
             var mlContext = new MLContext();
             ITransformer mlModel = mlContext.Model.Load(MLNetModelPath, out var _);
             return mlContext.Model.CreatePredictionEngine<ModelInput, ModelOutput>(mlModel);
+        }
+
+        /// <summary>
+        /// Use this method to predict scores for all possible labels.
+        /// </summary>
+        /// <param name="input">model input.</param>
+        /// <returns><seealso cref=" ModelOutput"/></returns>
+        public static IOrderedEnumerable<KeyValuePair<string, float>> PredictAllLabels(ModelInput input)
+        {
+            var predEngine = PredictEngine.Value;
+            var result = predEngine.Predict(input);
+            return GetSortedScoresWithLabels(result);
+        }
+
+        /// <summary>
+        /// Map the unlabeled result score array to the predicted label names.
+        /// </summary>
+        /// <param name="result">Prediction to get the labeled scores from.</param>
+        /// <returns>Ordered list of label and score.</returns>
+        /// <exception cref="Exception"></exception>
+        public static IOrderedEnumerable<KeyValuePair<string, float>> GetSortedScoresWithLabels(ModelOutput result)
+        {
+            var unlabeledScores = result.Score;
+            var labelNames = GetLabels(result);
+
+            Dictionary<string, float> labledScores = new Dictionary<string, float>();
+            for (int i = 0; i < labelNames.Count(); i++)
+            {
+                // Map the names to the predicted result score array
+                var labelName = labelNames.ElementAt(i);
+                labledScores.Add(labelName.ToString(), unlabeledScores[i]);
+            }
+
+            return labledScores.OrderByDescending(c => c.Value);
+        }
+
+        /// <summary>
+        /// Get the ordered label names.
+        /// </summary>
+        /// <param name="result">Predicted result to get the labels from.</param>
+        /// <returns>List of labels.</returns>
+        /// <exception cref="Exception"></exception>
+        private static IEnumerable<string> GetLabels(ModelOutput result)
+        {
+            var schema = PredictEngine.Value.OutputSchema;
+
+            var labelColumn = schema.GetColumnOrNull("Price");
+            if (labelColumn == null)
+            {
+                throw new Exception("Price column not found. Make sure the name searched for matches the name in the schema.");
+            }
+
+            // Key values contains an ordered array of the possible labels. This allows us to map the results to the correct label value.
+            var keyNames = new VBuffer<float>();
+            labelColumn.Value.GetKeyValues(ref keyNames);
+            return keyNames.DenseValues().Select(x => x.ToString());
         }
 
         /// <summary>

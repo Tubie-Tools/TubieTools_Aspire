@@ -14,6 +14,7 @@
     <ProjectReference Include="..\..\..\Workspaces\SanityCheque\SanityCheque\SanityCheque.csproj" />
     <ProjectReference Include="..\TubieTools_Aspire.Web\TubieTools_Aspire.Web.csproj" />
     <ProjectReference Include="..\TubieTools_PublicAPI\TubieTools_PublicAPI.csproj" />
+    <ProjectReference Include="..\TubieTools_SentimentModel_ProductApi\TubieTools_SentimentModel_ProductApi.csproj" />
     <ProjectReference Include="..\TubieTools_SentimentModel_WebApi\TubieTools_SentimentModel_WebApi.csproj" />
   </ItemGroup>
 

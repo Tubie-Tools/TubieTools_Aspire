@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TubieTools_Machine_Learning
+namespace TubieTools_SentimentModel_ProductApi
 {
     public partial class SentimentModel
     {

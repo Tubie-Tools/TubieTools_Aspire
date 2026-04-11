@@ -10,9 +10,6 @@ using Microsoft.ML.Data;
 using Microsoft.ML.Trainers;
 using Microsoft.ML.Trainers.FastTree;
 using Microsoft.ML.Transforms;
-
-namespace TubieTools_Machine_Learning
-{
     public partial class SentimentModel
     {
         public const string RetrainFilePath =  @"C:\Users\xeque\Downloads\EtsySoldOrderItems2022.csv";
@@ -118,4 +115,4 @@ namespace TubieTools_Machine_Learning
             return pipeline;
         }
     }
- }
+ 
