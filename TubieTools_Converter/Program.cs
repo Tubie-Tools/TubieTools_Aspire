@@ -6,6 +6,8 @@ using CsvHelper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+
+// i convert all  json files to a csv to use in ML.NET
 class Program
 {
     static void Main(string[] args)
