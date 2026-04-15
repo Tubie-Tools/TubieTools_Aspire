@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "TubieTools_TensorFlow": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

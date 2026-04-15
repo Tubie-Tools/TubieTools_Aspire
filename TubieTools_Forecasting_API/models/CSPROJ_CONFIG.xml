@@ -1,0 +1,8 @@
+&lt;!-- Add this ItemGroup section to your TubieTools_Forecasting_API.csproj file --&gt;
+&lt;!-- This ensures ONNX model files are copied to the output directory during build --&gt;
+
+&lt;ItemGroup&gt;
+  &lt;None Update="models\**\*.onnx"&gt;
+    &lt;CopyToOutputDirectory&gt;PreserveNewest&lt;/CopyToOutputDirectory&gt;
+  &lt;/None&gt;
+&lt;/ItemGroup&gt;
