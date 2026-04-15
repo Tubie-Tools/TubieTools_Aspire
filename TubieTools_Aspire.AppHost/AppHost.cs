@@ -27,6 +27,9 @@ builder.AddProject<Projects.TubieTools_SentimentModel_WebApi>("sentimentapi");
 builder.AddProject<Projects.TubieTools_SentimentModel_ProductApi>("sentimentproductapi");
 builder.AddProject<Projects.TubieTools_Forecasting_API>("forecastingapi");
 
+// start tensorflow
+builder.AddProject<Projects.TubieTools_TensorFlow>("tensorflow");
+
 builder.AddProject<Projects.TubieTools_Aspire_Web>("webfrontend")
     .WithExternalHttpEndpoints() 
     .WithReference(publicApi)

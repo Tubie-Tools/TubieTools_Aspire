@@ -12,6 +12,24 @@ namespace TensorFlowNET.Examples
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("=== TubieTools TensorFlow & ONNX Demo ===\n");
+
+            // Ensure model exists before proceeding
+            string? modelPath = EnsureModelLoaded();
+
+            if (modelPath == null)
+            {
+                Console.WriteLine("\n✗ CRITICAL: Could not load or find the ONNX model file.");
+                Console.WriteLine("  The application cannot continue without a valid model.");
+                ModelUtility.PrintCandidatePaths();
+                Console.WriteLine("\nTo fix this:");
+                Console.WriteLine("  1. Run this application from the TubieTools_TensorFlow directory");
+                Console.WriteLine("  2. Or manually run: .\\ Export-OnnxModel.ps1");
+                Console.WriteLine("  3. Or ensure MLModel1.mlnet exists in TubieTools_Machine_Learning");
+                return;
+            }
+
+            Console.WriteLine();
             var hello = tf.constant("Hello, TensorFlow!");
             Console.WriteLine(hello);
 
@@ -54,8 +72,23 @@ namespace TensorFlowNET.Examples
         static void OnnxPredictionExample()
         {
             // Path to your ONNX model (exported from ML.NET AutoML or similar)
-            // Update this path to point to your actual ONNX model file
-            string modelPath = "model.onnx"; // Replace with actual path
+            // Get the directory where the executable is running from
+            string executingDirectory = AppContext.BaseDirectory;
+            string modelPath = Path.Combine(executingDirectory, "model.onnx");
+
+            // Alternative: Use a models subdirectory
+            // string modelPath = Path.Combine(executingDirectory, "models", "model.onnx");
+
+            // Check if the model file exists before attempting to load
+            if (!File.Exists(modelPath))
+            {
+                Console.WriteLine($"✗ ONNX model file not found at: {modelPath}");
+                Console.WriteLine("  To fix this:");
+                Console.WriteLine("  1. Provide a valid ONNX model file");
+                Console.WriteLine("  2. Place it in the executable's directory or in a 'models' subdirectory");
+                Console.WriteLine("  3. You can export ML.NET models to ONNX using Model Builder or programmatically");
+                return;
+            }
 
             try
             {
@@ -106,8 +139,6 @@ namespace TensorFlowNET.Examples
             catch (Exception ex)
             {
                 Console.WriteLine($"✗ ONNX Prediction Example Error: {ex.Message}");
-                Console.WriteLine("  Note: Make sure to provide a valid ONNX model file path.");
-                Console.WriteLine("  You can export ML.NET models to ONNX using Model Builder or programmatically.");
             }
         }
 
@@ -131,6 +162,87 @@ namespace TensorFlowNET.Examples
                 // Test with input value 10
                 var result2 = session.run(add_op, feed_dict: new FeedItem(input, 10));
                 Console.WriteLine($"Graph result for input 10: {(int)result2}");
+            }
+        }
+
+        static string? EnsureModelLoaded()
+        {
+            // First, try to find an existing model
+            string? existingModel = ModelUtility.FindModelFile();
+            if (existingModel != null && File.Exists(existingModel))
+            {
+                Console.WriteLine($"✓ Using existing model: {existingModel}");
+                return existingModel;
+            }
+
+            Console.WriteLine("⚠ ONNX model not found. Attempting to auto-export from ML.NET model...\n");
+
+            // Try to ensure the model exists (copy from source if needed)
+            string? modelPath = ModelUtility.EnsureModelExists();
+
+            if (modelPath != null && File.Exists(modelPath))
+            {
+                Console.WriteLine();
+                // Verify the model
+                ModelUtility.VerifyModel(modelPath);
+                return modelPath;
+            }
+
+            return null;
+        }
+
+        static void ExportModelIfNeeded()
+        {
+            try
+            {
+                // Path to the existing ML.NET model - try multiple locations
+                var sourceModelPaths = new[]
+                {
+                    @"C:\Users\xeque\source\repos\TubieTools_Aspire\TubieTools_Machine_Learning\MLModel1.mlnet",
+                    Path.Combine(AppContext.BaseDirectory, "..", "..", "TubieTools_Machine_Learning", "MLModel1.mlnet"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "..", "TubieTools_Machine_Learning", "MLModel1.mlnet"),
+                };
+
+                string? mlnetModelPath = null;
+                foreach (var path in sourceModelPaths)
+                {
+                    if (File.Exists(path))
+                    {
+                        mlnetModelPath = path;
+                        break;
+                    }
+                }
+
+                // Output path for the ONNX model
+                string executingDirectory = AppContext.BaseDirectory;
+                string outputOnnxPath = Path.Combine(executingDirectory, "model.onnx");
+
+                if (mlnetModelPath == null)
+                {
+                    Console.WriteLine($"⚠ ML.NET model not found at expected locations");
+                    Console.WriteLine("  Checked:");
+                    foreach (var path in sourceModelPaths)
+                    {
+                        Console.WriteLine($"    - {path}");
+                    }
+                    return;
+                }
+
+                Console.WriteLine($"Setting up model...\n");
+
+                // Copy the model file to the output location
+                bool copied = ModelUtility.CopyModelFile(mlnetModelPath, outputOnnxPath);
+
+                if (copied)
+                {
+                    Console.WriteLine();
+                    // Verify the copied model
+                    ModelUtility.VerifyModel(outputOnnxPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"✗ Error during model setup: {ex.Message}\n");
             }
         }
     }
