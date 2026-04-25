@@ -6,15 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.ML;
-using Microsoft.ML.Data;
-using Microsoft.ML.TorchSharp;
-using Microsoft.ML.Trainers;
 
 namespace TubieTools_Machine_Learning
 {
     public partial class ReviewModel
     {
-        public const string RetrainFilePath =  @"C:\Users\xeque\source\repos\TubieTools_Aspire\TubieTools_Machine_Learning\data\output.csv";
+        public const string RetrainFilePath =  @"C:\Users\xeque\source\repos\TubieTools_Aspire\TubieTools_Machine_Learning\data\EtsySoldOrderItems2026.csv";
         public const char RetrainSeparatorChar = ',';
         public const bool RetrainHasHeader =  true;
         public const bool RetrainAllowQuoting =  false;
@@ -90,9 +87,7 @@ namespace TubieTools_Machine_Learning
         public static IEstimator<ITransformer> BuildPipeline(MLContext mlContext)
         {
             // Data process configuration with pipeline data transformations
-            var pipeline = mlContext.Transforms.Conversion.MapValueToKey(outputColumnName:@"star_rating",inputColumnName:@"star_rating",addKeyValueAnnotationsAsText:false)      
-                                    .Append(mlContext.MulticlassClassification.Trainers.TextClassification(labelColumnName: @"star_rating", sentence1ColumnName: @"message"))      
-                                    .Append(mlContext.Transforms.Conversion.MapKeyToValue(outputColumnName:@"PredictedLabel",inputColumnName:@"PredictedLabel"));
+            var pipeline = mlContext.Forecasting.ForecastBySsa(windowSize:2,seriesLength:10,trainSize:102,horizon:100,outputColumnName:@"Price",inputColumnName:@"Price",confidenceLowerBoundColumn:@"Price_LB",confidenceUpperBoundColumn:@"Price_UB");
 
             return pipeline;
         }

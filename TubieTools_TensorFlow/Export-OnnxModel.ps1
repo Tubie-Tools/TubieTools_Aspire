@@ -19,7 +19,7 @@
 
 param(
 	[Parameter(Mandatory=$false)]
-	[string]$SourceModel = "C:\Users\xeque\source\repos\TubieTools_Aspire\TubieTools_Machine_Learning\MLModel1.mlnet",
+	[string]$SourceModel = "C:\Users\xeque\source\repos\TubieTools_Aspire\TubieTools_Machine_Learning\ReviewModel.mlnet",
 
 	[Parameter(Mandatory=$false)]
 	[string]$OutputPath = "C:\Users\xeque\source\repos\TubieTools_Aspire\TubieTools_TensorFlow\model.onnx"
