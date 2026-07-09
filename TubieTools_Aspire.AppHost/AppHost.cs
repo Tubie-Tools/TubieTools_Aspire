@@ -35,11 +35,11 @@ builder.AddProject<Projects.TubieTools_Aspire_Web>("webfrontend")
     .WithReference(publicApi)
     .WaitFor(publicApi);
 
-builder.AddProject<Projects.SanityCheque>("sanityCheque")
+/*builder.AddProject<Projects.SanityCheque>("sanityCheque")
     .WithExternalHttpEndpoints()
     .WithReference(publicApi)
     .WaitFor(publicApi);
-
+*/
 //test
 //test2
 

@@ -4,7 +4,13 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <UserSecretsId>779b0bbe-3922-41c8-a08f-7a0432a28e4d</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\TubieTools_Aspire.ServiceDefaults\TubieTools_Aspire.ServiceDefaults.csproj" />
