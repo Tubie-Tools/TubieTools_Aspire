@@ -1,0 +1,110 @@
+﻿<!-- TubieTools_Aspire.Web/Components/Pages/Shop.razor -->
+@page "/shop"
+@using TubieTools_Aspire.Web.Models
+@using TubieTools_Aspire.Web.Services
+@inject CartService CartService
+@inject NavigationManager Navigation
+
+<div class="container mt-4">
+    <h1 class="mb-4">Product Shop</h1>
+
+    <div class="row">
+        @foreach (var product in products)
+        {
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="@product.ImagePath" class="card-img-top" alt="@product.Name" style="height: 250px; object-fit: cover;">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text text-muted">@product.Description</p>
+                        <p class="card-text">
+                            <strong class="text-success">$@product.Price.ToString("F2")</strong>
+                        </p>
+                        <p class="card-text text-secondary">
+                            <small>Stock: @product.Stock</small>
+                        </p>
+                        <div class="mt-auto">
+                            <div class="input-group mb-2">
+                                <input type="number" @bind="quantities[product.Id]" min="1" max="@product.Stock" class="form-control" />
+                                <button class="btn btn-primary" @onclick="() => AddToCart(product)">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<Product> products = new();
+    private Dictionary<int, int> quantities = new();
+
+    protected override void OnInitialized()
+    {
+        // Initialize products with available images
+        products = new List<Product>
+        {
+            new Product
+            {
+                Id = 1,
+                Name = "Gtube Syringe Holder 60ml",
+                Description = "Premium 60ml facial serum for daily use",
+                Price = 29.99m,
+                ImagePath = "/60ml.png",
+                Stock = 50
+            },
+            new Product
+            {
+                Id = 2,
+                Name = "Gtube Syringe Holder 60ml",
+                Description = "Luminous glow serum 60ml bottle",
+                Price = 34.99m,
+                ImagePath = "/glow60ml.jpg",
+                Stock = 35
+            },
+            new Product
+            {
+                Id = 3,
+                Name = "Gtube Extension Holder",
+                Description = "Gtube Extension Holder",
+                Price = 24.99m,
+                ImagePath = "/extension.png",
+                Stock = 40
+            },
+            new Product
+            {
+                Id = 4,
+                Name = "Gtube Combo Syringe Holder",
+                Description = "Gtube Combo Syringe Holder",
+                Price = 19.99m,
+                ImagePath = "/combo.png",
+                Stock = 25
+            },
+            new Product
+            {
+                Id = 5,
+                Name = "Premium Bundle",
+                Description = "Exclusive premium product bundle",
+                Price = 89.99m,
+                ImagePath = "/il_794xN.3807071448_nq1q.webp",
+                Stock = 20
+            }
+        };
+
+        foreach (var product in products)
+        {
+            quantities[product.Id] = 1;
+        }
+    }
+
+    private void AddToCart(Product product)
+    {
+        int quantity = quantities[product.Id];
+        if (quantity > 0 && quantity <= product.Stock)
+        {
+            CartService.AddToCart(product, quantity);
+            quantities[product.Id] = 1;
+        }
+    }
+}

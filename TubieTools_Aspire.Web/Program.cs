@@ -1,5 +1,6 @@
     using TubieTools_Aspire.Web;
 using TubieTools_Aspire.Web.Components;
+using TubieTools_Aspire.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddOutputCache();
+builder.Services.AddScoped<CartService>();
 
 builder.Services.AddHttpClient<WeatherApiClient>(client =>
     {

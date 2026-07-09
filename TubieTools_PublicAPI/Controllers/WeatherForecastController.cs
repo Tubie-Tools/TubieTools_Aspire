@@ -12,15 +12,23 @@ namespace TubieTools_PublicAPI.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
-
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        private readonly IServiceTenant _serviceTenant;
+        /// <summary>
+        /// Service tenant for multi tenants.
+        /// </summary>
+        /// <param name="serviceTenant"></param>
+        /// <param name="logger"></param>
+        public WeatherForecastController(IServiceTenant serviceTenant, ILogger<WeatherForecastController> logger)
         {
+            _serviceTenant = serviceTenant;
             _logger = logger;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
+            var resolved = _serviceTenant.GetType().FullName;
+
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),

@@ -52,7 +52,7 @@ namespace TensorFlowNET.Examples
             catch (Exception ex)
             {
                 Console.WriteLine($"✗ Error loading ONNX model: {ex.Message}");
-                throw;
+                //who c aresthrow;
             }
         }
 
@@ -86,7 +86,13 @@ namespace TensorFlowNET.Examples
             {
                 // Create input tensor
                 // Assuming the model expects a single float value for Price
-                var inputName = _session.InputMetadata.Keys.First();
+                var inputName = _session?.InputMetadata.Keys.FirstOrDefault();
+                if (inputName == null)
+                    return new PricePredictionOutput
+                    {
+                        Error = "Model does not have any inputs defined."
+                    };
+                //throw new Exception("Model does not have any inputs defined.");
                 var shape = _session.InputMetadata[inputName].Dimensions;
 
                 var inputTensor = new DenseTensor<float>(new[] { input.Price }, shape);
