@@ -2,6 +2,7 @@
 @page "/shop"
 @using TubieTools_Aspire.Web.Models
 @using TubieTools_Aspire.Web.Services
+@using ImageMagick;
 @inject CartService CartService
 @inject NavigationManager Navigation
 
@@ -89,12 +90,91 @@
                 Price = 89.99m,
                 ImagePath = "/il_794xN.3807071448_nq1q.webp",
                 Stock = 20
+            },
+            new Product
+            {
+                Id = 6,
+                Name = "Q5 10mL Syringe Holder",
+                Description = "10mL Syringe Holder",
+                Price = 89.99m,
+                ImagePath = "/IMG_0321.HEIC",
+                Stock = 20
+            },
+            new Product
+            {
+                Id = 7,
+                Name = "Premium Bundle",
+                Description = "Exclusive premium product bundle",
+                Price = 89.99m,
+                ImagePath = "/IMG_0348.HEIC",
+                Stock = 20
+            },
+            new Product
+            {
+                Id = 8,
+                Name = "Premium Bundle",
+                Description = "Exclusive premium product bundle",
+                Price = 89.99m,
+                ImagePath = "/IMG_0448.HEIC",
+                Stock = 20
             }
         };
 
         foreach (var product in products)
         {
             quantities[product.Id] = 1;
+
+            ConvertHEICToJPEG(product);
+        }
+    }
+
+    /// <summary>
+    /// Converts HEIC images to JPEG format and updates the product's ImagePath If and only if the image is in HEIC format.
+    /// Apparently a team of 36 created MagickImage that is an enhancement of ImageResizor and as far as I know 
+    /// is actually the team that created the precursor.
+    /// TBH there are dozens of interfaces with a single property, most likely to obfuscate everything but c'est la vie.
+    /// </summary>
+    /// <param name="product"></param>
+    public void ConvertHEICToJPEG(Product product)
+    {
+        if (product.ImagePath.Contains(".HEIC"))
+        {
+            // Reads the raw HEIC file bytes directly
+            string filePath = product.ImagePath;
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath.TrimStart('/'));
+            string rootFilePath = path + filePath;
+            // Example: byte array containing image data
+            byte[] heicData = ConvertHeicToJpegBytes(rootFilePath); // Replace with your byte array source
+            using var image = new MagickImage(heicData); // Load from byte array
+            image.Format = MagickFormat.Jpeg; // Set output format
+
+            using var memStream = new MemoryStream();
+            image.Write(memStream); // Save to memory stream
+            byte[] jpegData = memStream.ToArray(); // Get byte array
+
+            // Now jpegData contains the JPEG image
+            File.WriteAllBytes(path + product.ImagePath.Split('.')[0] + ".jpg", jpegData);
+        }
+    }
+
+    public byte[] ConvertHeicToJpegBytes(string heicFilePath)
+    {
+        // Define reading settings specifically for HEIC
+        var settings = new MagickReadSettings
+        {
+            Format = MagickFormat.Heic
+        };
+
+        // Load the file using Magick.NET
+        using (var image = new MagickImage(heicFilePath, settings))
+        {
+            // Set the output format you want for your byte array
+            image.Format = MagickFormat.Jpeg;
+
+            // Convert the image data directly to a byte array
+            byte[] jpegBytes = image.ToByteArray();
+
+            return jpegBytes;
         }
     }
 
