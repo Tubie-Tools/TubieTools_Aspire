@@ -1,4 +1,4 @@
-namespace TubieTools_PublicAPI.Data.Entities
+namespace DataAccessLayer.Data.Entities
 {
     /// <summary>
     /// Entity Framework model for CareProvider

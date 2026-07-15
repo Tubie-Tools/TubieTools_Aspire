@@ -1,8 +1,8 @@
 namespace TubieTools_PublicAPI.Services
 {
-    using TubieTools_PublicAPI.Data.Entities;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using DataAccessLayer.Data.Entities;
 
     /// <summary>
     /// Interface for Entity Framework based care provider operations

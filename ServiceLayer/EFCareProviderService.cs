@@ -1,12 +1,12 @@
 namespace TubieTools_PublicAPI.Services
 {
-    using TubieTools_PublicAPI.Data;
-    using TubieTools_PublicAPI.Data.Entities;
     using Microsoft.EntityFrameworkCore;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.Extensions.Logging;
+    using DataAccessLayer.Data.Entities;
+    using DataAccessLayer.Data;
 
     /// <summary>
     /// Implementation of EF Core based care provider service
