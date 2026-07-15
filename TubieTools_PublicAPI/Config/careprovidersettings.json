@@ -1,0 +1,170 @@
+{
+  "Okta": {
+    "Domain": "https://dev-12345.okta.com",
+    "ClientId": "0oa1a2b3c4d5e6f7g8h9",
+    "ClientSecret": "your-client-secret-here",
+    "AuthorizationServerId": "default",
+    "Audience": "https://tubie.local"
+  },
+  "ApiSettings": {
+    "BaseUrl": "https://localhost:7001",
+    "Environment": "Development",
+    "LogLevel": "Information"
+  },
+  "CareProviderSettings": {
+    "DefaultTier": "DayCare",
+    "EnableDemoAccount": true,
+    "PurchaseHistoryPath": "Data/purchase_history",
+    "AuditTrailPath": "Data/audit_trail"
+  },
+  "PaymentStructures": {
+    "DayCare": {
+      "BasePriceMultiplier": 1.0,
+      "LumpSumDiscount": 0.05,
+      "MonthlyDiscount": 0.02,
+      "QuarterlyDiscount": 0.04,
+      "MinimumOrderValue": 100.0,
+      "PaymentTermsDays": 30
+    },
+    "ElderlyHome": {
+      "BasePriceMultiplier": 0.95,
+      "LumpSumDiscount": 0.10,
+      "MonthlyDiscount": 0.07,
+      "QuarterlyDiscount": 0.09,
+      "MinimumOrderValue": 250.0,
+      "PaymentTermsDays": 45
+    },
+    "HealthcareProvider": {
+      "BasePriceMultiplier": 0.90,
+      "LumpSumDiscount": 0.15,
+      "MonthlyDiscount": 0.12,
+      "QuarterlyDiscount": 0.14,
+      "MinimumOrderValue": 500.0,
+      "PaymentTermsDays": 60
+    }
+  },
+  "VolumeTiers": [
+    {
+      "Tier": "DayCare",
+      "Thresholds": [
+        { "Quantity": 50, "DiscountPercentage": 0.05 },
+        { "Quantity": 100, "DiscountPercentage": 0.10 },
+        { "Quantity": 250, "DiscountPercentage": 0.12 }
+      ]
+    },
+    {
+      "Tier": "ElderlyHome",
+      "Thresholds": [
+        { "Quantity": 100, "DiscountPercentage": 0.10 },
+        { "Quantity": 250, "DiscountPercentage": 0.15 },
+        { "Quantity": 500, "DiscountPercentage": 0.18 }
+      ]
+    },
+    {
+      "Tier": "HealthcareProvider",
+      "Thresholds": [
+        { "Quantity": 500, "DiscountPercentage": 0.15 },
+        { "Quantity": 1000, "DiscountPercentage": 0.20 },
+        { "Quantity": 2500, "DiscountPercentage": 0.25 }
+      ]
+    }
+  ],
+  "PromoCodes": {
+    "SUMMER20": {
+      "DiscountPercentage": 0.20,
+      "ValidFrom": "2024-06-01T00:00:00Z",
+      "ValidTo": "2024-08-31T23:59:59Z",
+      "MaxUses": 100,
+      "ApplicableTiers": ["DayCare", "ElderlyHome", "HealthcareProvider"]
+    },
+    "BULK50": {
+      "DiscountPercentage": 0.10,
+      "ValidFrom": "2024-01-01T00:00:00Z",
+      "ValidTo": "2024-12-31T23:59:59Z",
+      "MaxUses": 0,
+      "MinimumQuantity": 50,
+      "ApplicableTiers": ["DayCare"]
+    },
+    "BULK100": {
+      "DiscountPercentage": 0.15,
+      "ValidFrom": "2024-01-01T00:00:00Z",
+      "ValidTo": "2024-12-31T23:59:59Z",
+      "MaxUses": 0,
+      "MinimumQuantity": 100,
+      "ApplicableTiers": ["ElderlyHome", "HealthcareProvider"]
+    },
+    "NEWCUSTOMER15": {
+      "DiscountPercentage": 0.15,
+      "ValidFrom": "2024-01-01T00:00:00Z",
+      "ValidTo": "2024-12-31T23:59:59Z",
+      "MaxUses": 1,
+      "ApplicableTiers": ["DayCare", "ElderlyHome", "HealthcareProvider"]
+    },
+    "HEALTHCARE20": {
+      "DiscountPercentage": 0.20,
+      "ValidFrom": "2024-01-01T00:00:00Z",
+      "ValidTo": "2024-12-31T23:59:59Z",
+      "MaxUses": 50,
+      "ApplicableTiers": ["HealthcareProvider"]
+    }
+  },
+  "ManHourMetrics": {
+    "DayCare": {
+      "MaterialCostPerUnit": 5.00,
+      "LaborCostPerHour": 35.00,
+      "BaseSetupHours": 0.5,
+      "ProductionHoursPerHundred": 1.0,
+      "ShippingDaysStandard": 3,
+      "ShippingDaysExpedited": 1,
+      "ProcessingDays": 2
+    },
+    "ElderlyHome": {
+      "MaterialCostPerUnit": 4.50,
+      "LaborCostPerHour": 40.00,
+      "BaseSetupHours": 1.0,
+      "ProductionHoursPerHundred": 1.5,
+      "ShippingDaysStandard": 2,
+      "ShippingDaysExpedited": 1,
+      "ProcessingDays": 2
+    },
+    "HealthcareProvider": {
+      "MaterialCostPerUnit": 4.00,
+      "LaborCostPerHour": 50.00,
+      "BaseSetupHours": 2.0,
+      "ProductionHoursPerHundred": 2.0,
+      "ShippingDaysStandard": 1,
+      "ShippingDaysExpedited": 0,
+      "ProcessingDays": 1,
+      "SpecialHandlingRequired": true,
+      "ComplianceCheckHours": 4.0
+    }
+  },
+  "EmailSettings": {
+    "SmtpServer": "smtp.sendgrid.net",
+    "SmtpPort": 587,
+    "FromEmail": "orders@tubie.local",
+    "FromName": "Tubie Care Orders",
+    "EnableSSL": true,
+    "TemplatesPath": "Config/email_templates"
+  },
+  "DemoAccount": {
+    "ProviderId": "demo-provider-001",
+    "ProviderName": "Demo Day Care Center",
+    "Tier": "DayCare",
+    "Email": "demo@tubie.local",
+    "ContactPerson": {
+      "FirstName": "Demo",
+      "LastName": "Manager",
+      "Email": "demo.manager@tubie.local",
+      "Phone": "555-0100"
+    },
+    "Address": {
+      "StreetAddress": "123 Demo Street",
+      "City": "Demo City",
+      "State": "DC",
+      "PostalCode": "12345",
+      "Country": "United States"
+    },
+    "OktaUserId": "00u1a2b3c4d5e6f7g8h9"
+  }
+}

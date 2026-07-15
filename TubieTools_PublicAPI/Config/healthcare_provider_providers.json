@@ -1,0 +1,218 @@
+{
+  "CareProviders": [
+    {
+      "ProviderId": "healthcare-001",
+      "ProviderName": "United Medical Center",
+      "Tier": 3,
+      "TaxId": "12-3456794",
+      "Status": "Active",
+      "AnnualOrderVolume": 750,
+      "PrimaryContact": {
+        "FirstName": "Dr.",
+        "LastName": "Richardson",
+        "Email": "d.richardson@unitedmedical.local",
+        "Phone": "555-0601",
+        "Title": "Chief Supply Officer",
+        "Department": "Supply Chain Management"
+      },
+      "SecondaryContact": {
+        "FirstName": "Katherine",
+        "LastName": "Lee",
+        "Email": "k.lee@unitedmedical.local",
+        "Phone": "555-0602",
+        "Title": "Procurement Manager",
+        "Department": "Procurement"
+      },
+      "BillingAddress": {
+        "StreetAddress": "999 Medical Plaza Drive",
+        "City": "New York",
+        "State": "NY",
+        "PostalCode": "10001",
+        "Country": "United States",
+        "IsPrimaryAddress": true,
+        "AddressType": "Billing"
+      },
+      "ShippingAddress": {
+        "StreetAddress": "999 Medical Plaza Drive",
+        "City": "New York",
+        "State": "NY",
+        "PostalCode": "10001",
+        "Country": "United States",
+        "IsPrimaryAddress": false,
+        "AddressType": "Shipping"
+      },
+      "PaymentConfiguration": {
+        "PaymentFrequency": 2,
+        "DiscountPercentage": 0.15,
+        "NextBillingDate": "2024-02-01T00:00:00Z",
+        "AutoRenew": true,
+        "PaymentMethod": "BankTransfer"
+      },
+      "ActiveDiscounts": [
+        {
+          "Id": 1,
+          "CareProviderId": 1,
+          "DiscountType": "Volume",
+          "PromoCode": "HEALTHCARE20",
+          "DiscountPercentage": 0.20,
+          "MinimumOrderQuantity": 500,
+          "MaximumOrderQuantity": 0,
+          "StartDate": "2024-01-01T00:00:00Z",
+          "EndDate": "2024-12-31T23:59:59Z",
+          "IsActive": true,
+          "Description": "Volume discount for healthcare providers: 20% off 500+ unit orders"
+        },
+        {
+          "Id": 2,
+          "CareProviderId": 1,
+          "DiscountType": "Tier",
+          "PromoCode": "HEALTHCARE_TIER",
+          "DiscountPercentage": 0.15,
+          "MinimumOrderQuantity": 1,
+          "MaximumOrderQuantity": 0,
+          "StartDate": "2024-01-01T00:00:00Z",
+          "EndDate": "2024-12-31T23:59:59Z",
+          "IsActive": true,
+          "Description": "Healthcare provider tier discount: 15% off all orders"
+        }
+      ],
+      "InternalNotes": "Premier account. Fortune 500 healthcare system. 5-year contract. Requires HIPAA compliance, SOC 2 certification, and quarterly compliance audits. Executive sponsor present.",
+      "CreatedDate": "2020-01-01T08:00:00Z",
+      "ModifiedDate": "2024-01-14T10:30:00Z"
+    },
+    {
+      "ProviderId": "healthcare-002",
+      "ProviderName": "National Hospital Network",
+      "Tier": 3,
+      "TaxId": "12-3456795",
+      "Status": "Active",
+      "AnnualOrderVolume": 1200,
+      "PrimaryContact": {
+        "FirstName": "Margaret",
+        "LastName": "Anderson",
+        "Email": "m.anderson@nationalhospital.local",
+        "Phone": "555-0701",
+        "Title": "Director of Materials Management",
+        "Department": "Supply Chain"
+      },
+      "SecondaryContact": {
+        "FirstName": "Steven",
+        "LastName": "Martinez",
+        "Email": "s.martinez@nationalhospital.local",
+        "Phone": "555-0702",
+        "Title": "Supplier Relationship Manager",
+        "Department": "Procurement"
+      },
+      "BillingAddress": {
+        "StreetAddress": "500 Health Boulevard",
+        "City": "Houston",
+        "State": "TX",
+        "PostalCode": "77001",
+        "Country": "United States",
+        "IsPrimaryAddress": true,
+        "AddressType": "Billing"
+      },
+      "ShippingAddress": {
+        "StreetAddress": "500 Health Boulevard",
+        "City": "Houston",
+        "State": "TX",
+        "PostalCode": "77001",
+        "Country": "United States",
+        "IsPrimaryAddress": false,
+        "AddressType": "Shipping"
+      },
+      "PaymentConfiguration": {
+        "PaymentFrequency": 2,
+        "DiscountPercentage": 0.15,
+        "NextBillingDate": "2024-02-01T00:00:00Z",
+        "AutoRenew": true,
+        "PaymentMethod": "CreditCard"
+      },
+      "ActiveDiscounts": [
+        {
+          "Id": 3,
+          "CareProviderId": 2,
+          "DiscountType": "Volume",
+          "PromoCode": "BULK1000",
+          "DiscountPercentage": 0.25,
+          "MinimumOrderQuantity": 1000,
+          "MaximumOrderQuantity": 0,
+          "StartDate": "2024-01-01T00:00:00Z",
+          "EndDate": "2024-12-31T23:59:59Z",
+          "IsActive": true,
+          "Description": "Volume discount for healthcare: 25% off 1000+ unit orders"
+        }
+      ],
+      "InternalNotes": "Largest healthcare network customer. Multi-state operations. Rapid growth. Dedicated account manager assigned. Weekly call schedule. Strategic partnership potential.",
+      "CreatedDate": "2021-06-15T09:30:00Z",
+      "ModifiedDate": "2024-01-15T14:00:00Z"
+    },
+    {
+      "ProviderId": "healthcare-003",
+      "ProviderName": "Regional Medical Associates",
+      "Tier": 3,
+      "TaxId": "12-3456796",
+      "Status": "Active",
+      "AnnualOrderVolume": 550,
+      "PrimaryContact": {
+        "FirstName": "Dr.",
+        "LastName": "Patel",
+        "Email": "dr.patel@regionalmedical.local",
+        "Phone": "555-0801",
+        "Title": "Chief Operations Officer",
+        "Department": "Operations"
+      },
+      "SecondaryContact": {
+        "FirstName": "Linda",
+        "LastName": "White",
+        "Email": "l.white@regionalmedical.local",
+        "Phone": "555-0802",
+        "Title": "Procurement Coordinator",
+        "Department": "Procurement"
+      },
+      "BillingAddress": {
+        "StreetAddress": "222 Healthcare Avenue",
+        "City": "Miami",
+        "State": "FL",
+        "PostalCode": "33101",
+        "Country": "United States",
+        "IsPrimaryAddress": true,
+        "AddressType": "Billing"
+      },
+      "ShippingAddress": {
+        "StreetAddress": "222 Healthcare Avenue",
+        "City": "Miami",
+        "State": "FL",
+        "PostalCode": "33101",
+        "Country": "United States",
+        "IsPrimaryAddress": false,
+        "AddressType": "Shipping"
+      },
+      "PaymentConfiguration": {
+        "PaymentFrequency": 3,
+        "DiscountPercentage": 0.14,
+        "NextBillingDate": "2024-03-01T00:00:00Z",
+        "AutoRenew": true,
+        "PaymentMethod": "BankTransfer"
+      },
+      "ActiveDiscounts": [
+        {
+          "Id": 4,
+          "CareProviderId": 3,
+          "DiscountType": "Tier",
+          "PromoCode": "HEALTHCARE_TIER",
+          "DiscountPercentage": 0.15,
+          "MinimumOrderQuantity": 1,
+          "MaximumOrderQuantity": 0,
+          "StartDate": "2024-01-01T00:00:00Z",
+          "EndDate": "2024-12-31T23:59:59Z",
+          "IsActive": true,
+          "Description": "Healthcare provider tier discount: 15% off all orders"
+        }
+      ],
+      "InternalNotes": "Growing medical practice network. 8 locations. Consistent orders. Good payment history. Potential for expansion to neighboring markets.",
+      "CreatedDate": "2022-03-20T10:15:00Z",
+      "ModifiedDate": "2024-01-12T11:45:00Z"
+    }
+  ]
+}

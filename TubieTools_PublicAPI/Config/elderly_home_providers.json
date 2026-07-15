@@ -1,0 +1,187 @@
+{
+  "CareProviders": [
+    {
+      "ProviderId": "elderly-001",
+      "ProviderName": "Golden Years Senior Living",
+      "Tier": "ElderlyHome",
+      "TaxId": "12-3456791",
+      "Status": "Active",
+      "AnnualOrderVolume": 150,
+      "PrimaryContact": {
+        "FirstName": "Patricia",
+        "LastName": "Thompson",
+        "Email": "patricia@goldenyears.local",
+        "Phone": "555-0301",
+        "Title": "Supply Chain Manager",
+        "Department": "Operations"
+      },
+      "SecondaryContact": {
+        "FirstName": "David",
+        "LastName": "Wilson",
+        "Email": "david@goldenyears.local",
+        "Phone": "555-0302",
+        "Title": "Director of Facilities",
+        "Department": "Administration"
+      },
+      "BillingAddress": {
+        "StreetAddress": "321 Maple Drive",
+        "City": "Boston",
+        "State": "MA",
+        "PostalCode": "02101",
+        "Country": "United States",
+        "IsPrimaryAddress": true,
+        "AddressType": "Billing"
+      },
+      "ShippingAddress": {
+        "StreetAddress": "321 Maple Drive",
+        "City": "Boston",
+        "State": "MA",
+        "PostalCode": "02101",
+        "Country": "United States",
+        "IsPrimaryAddress": false,
+        "AddressType": "Shipping"
+      },
+      "PaymentConfiguration": {
+        "PaymentFrequency": "Monthly",
+        "DiscountPercentage": 0.10,
+        "NextBillingDate": "2024-02-01T00:00:00Z",
+        "AutoRenew": true,
+        "PaymentMethod": "CreditCard"
+      },
+      "ActiveDiscounts": [
+        {
+          "DiscountType": "Volume",
+          "PromoCode": "BULK100",
+          "DiscountPercentage": 0.15,
+          "MinimumOrderQuantity": 100,
+          "MaximumOrderQuantity": 249,
+          "StartDate": "2024-01-01T00:00:00Z",
+          "EndDate": "2024-12-31T23:59:59Z",
+          "IsActive": true,
+          "Description": "15% discount for orders between 100-249 units"
+        }
+      ],
+      "InternalNotes": "Tier-1 customer. 3-year contract. Requires HIPAA compliance.",
+      "CreatedDate": "2021-03-20T08:00:00Z",
+      "ModifiedDate": "2024-01-12T10:30:00Z"
+    },
+    {
+      "ProviderId": "elderly-002",
+      "ProviderName": "Sunset Retirement Community",
+      "Tier": "ElderlyHome",
+      "TaxId": "12-3456792",
+      "Status": "Active",
+      "AnnualOrderVolume": 120,
+      "PrimaryContact": {
+        "FirstName": "Jennifer",
+        "LastName": "Garcia",
+        "Email": "jennifer@sunsetcc.local",
+        "Phone": "555-0401",
+        "Title": "Procurement Director",
+        "Department": "Supply Chain"
+      },
+      "SecondaryContact": {
+        "FirstName": "Thomas",
+        "LastName": "Rodriguez",
+        "Email": "thomas@sunsetcc.local",
+        "Phone": "555-0402",
+        "Title": "Executive Director",
+        "Department": "Executive"
+      },
+      "BillingAddress": {
+        "StreetAddress": "555 Sunset Boulevard",
+        "City": "San Diego",
+        "State": "CA",
+        "PostalCode": "92101",
+        "Country": "United States",
+        "IsPrimaryAddress": true,
+        "AddressType": "Billing"
+      },
+      "ShippingAddress": {
+        "StreetAddress": "555 Sunset Boulevard",
+        "City": "San Diego",
+        "State": "CA",
+        "PostalCode": "92101",
+        "Country": "United States",
+        "IsPrimaryAddress": false,
+        "AddressType": "Shipping"
+      },
+      "PaymentConfiguration": {
+        "PaymentFrequency": "Quarterly",
+        "DiscountPercentage": 0.09,
+        "NextBillingDate": "2024-03-01T00:00:00Z",
+        "AutoRenew": true,
+        "PaymentMethod": "BankTransfer"
+      },
+      "ActiveDiscounts": [
+        {
+          "DiscountType": "Tier",
+          "PromoCode": "ELDERHOME10",
+          "DiscountPercentage": 0.10,
+          "MinimumOrderQuantity": 1,
+          "MaximumOrderQuantity": 0,
+          "StartDate": "2024-01-01T00:00:00Z",
+          "EndDate": "2024-12-31T23:59:59Z",
+          "IsActive": true,
+          "Description": "Elderly home tier discount: 10% off all orders"
+        }
+      ],
+      "InternalNotes": "Strong customer relationship. Consistent monthly orders.",
+      "CreatedDate": "2022-05-10T14:30:00Z",
+      "ModifiedDate": "2024-01-14T09:20:00Z"
+    },
+    {
+      "ProviderId": "elderly-003",
+      "ProviderName": "Caring Hearts Senior Care",
+      "Tier": "ElderlyHome",
+      "TaxId": "12-3456793",
+      "Status": "Pending",
+      "AnnualOrderVolume": 0,
+      "PrimaryContact": {
+        "FirstName": "Michelle",
+        "LastName": "Brown",
+        "Email": "michelle@caringhearts.local",
+        "Phone": "555-0501",
+        "Title": "Operations Manager",
+        "Department": "Operations"
+      },
+      "SecondaryContact": {
+        "FirstName": "James",
+        "LastName": "Taylor",
+        "Email": "james@caringhearts.local",
+        "Phone": "555-0502",
+        "Title": "Administrator",
+        "Department": "Administration"
+      },
+      "BillingAddress": {
+        "StreetAddress": "888 Elm Street",
+        "City": "Portland",
+        "State": "OR",
+        "PostalCode": "97201",
+        "Country": "United States",
+        "IsPrimaryAddress": true,
+        "AddressType": "Billing"
+      },
+      "ShippingAddress": {
+        "StreetAddress": "888 Elm Street",
+        "City": "Portland",
+        "State": "OR",
+        "PostalCode": "97201",
+        "Country": "United States",
+        "IsPrimaryAddress": false,
+        "AddressType": "Shipping"
+      },
+      "PaymentConfiguration": {
+        "PaymentFrequency": "Monthly",
+        "DiscountPercentage": 0.07,
+        "NextBillingDate": "2024-02-01T00:00:00Z",
+        "AutoRenew": false,
+        "PaymentMethod": "Check"
+      },
+      "ActiveDiscounts": [],
+      "InternalNotes": "New prospect. Sent onboarding materials. Follow up scheduled.",
+      "CreatedDate": "2024-01-08T11:00:00Z",
+      "ModifiedDate": "2024-01-15T13:45:00Z"
+    }
+  ]
+}

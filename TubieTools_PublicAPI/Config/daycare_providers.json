@@ -1,0 +1,134 @@
+{
+  "CareProviders": [
+    {
+      "ProviderId": "daycare-001",
+      "ProviderName": "Sunshine Day Care Center",
+      "Tier": "DayCare",
+      "TaxId": "12-3456789",
+      "Status": "Active",
+      "AnnualOrderVolume": 75,
+      "PrimaryContact": {
+        "FirstName": "Sarah",
+        "LastName": "Johnson",
+        "Email": "sarah.johnson@sunshinecare.local",
+        "Phone": "555-0101",
+        "Title": "Operations Manager",
+        "Department": "Procurement"
+      },
+      "SecondaryContact": {
+        "FirstName": "Mike",
+        "LastName": "Anderson",
+        "Email": "mike.anderson@sunshinecare.local",
+        "Phone": "555-0102",
+        "Title": "Director",
+        "Department": "Administration"
+      },
+      "BillingAddress": {
+        "StreetAddress": "456 Oak Avenue",
+        "City": "Springfield",
+        "State": "IL",
+        "PostalCode": "62701",
+        "Country": "United States",
+        "IsPrimaryAddress": true,
+        "AddressType": "Billing"
+      },
+      "ShippingAddress": {
+        "StreetAddress": "456 Oak Avenue",
+        "City": "Springfield",
+        "State": "IL",
+        "PostalCode": "62701",
+        "Country": "United States",
+        "IsPrimaryAddress": false,
+        "AddressType": "Shipping"
+      },
+      "PaymentConfiguration": {
+        "PaymentFrequency": "Monthly",
+        "DiscountPercentage": 0.05,
+        "NextBillingDate": "2024-02-01T00:00:00Z",
+        "AutoRenew": true,
+        "PaymentMethod": "CreditCard"
+      },
+      "ActiveDiscounts": [
+        {
+          "DiscountType": "Volume",
+          "PromoCode": "BULK50",
+          "DiscountPercentage": 0.10,
+          "MinimumOrderQuantity": 50,
+          "MaximumOrderQuantity": 99,
+          "StartDate": "2024-01-01T00:00:00Z",
+          "EndDate": "2024-12-31T23:59:59Z",
+          "IsActive": true,
+          "Description": "10% discount for orders between 50-99 units"
+        }
+      ],
+      "InternalNotes": "Long-standing customer. Good payment history.",
+      "CreatedDate": "2023-06-15T10:30:00Z",
+      "ModifiedDate": "2024-01-10T14:20:00Z"
+    },
+    {
+      "ProviderId": "daycare-002",
+      "ProviderName": "Happy Kids Preschool",
+      "Tier": "DayCare",
+      "TaxId": "12-3456790",
+      "Status": "Active",
+      "AnnualOrderVolume": 60,
+      "PrimaryContact": {
+        "FirstName": "Lisa",
+        "LastName": "Martinez",
+        "Email": "lisa@happykids.local",
+        "Phone": "555-0201",
+        "Title": "Purchasing Agent",
+        "Department": "Operations"
+      },
+      "SecondaryContact": {
+        "FirstName": "Robert",
+        "LastName": "Chen",
+        "Email": "robert@happykids.local",
+        "Phone": "555-0202",
+        "Title": "Administrator",
+        "Department": "Management"
+      },
+      "BillingAddress": {
+        "StreetAddress": "789 Pine Road",
+        "City": "Chicago",
+        "State": "IL",
+        "PostalCode": "60601",
+        "Country": "United States",
+        "IsPrimaryAddress": true,
+        "AddressType": "Billing"
+      },
+      "ShippingAddress": {
+        "StreetAddress": "789 Pine Road",
+        "City": "Chicago",
+        "State": "IL",
+        "PostalCode": "60601",
+        "Country": "United States",
+        "IsPrimaryAddress": false,
+        "AddressType": "Shipping"
+      },
+      "PaymentConfiguration": {
+        "PaymentFrequency": "Quarterly",
+        "DiscountPercentage": 0.04,
+        "NextBillingDate": "2024-03-01T00:00:00Z",
+        "AutoRenew": true,
+        "PaymentMethod": "BankTransfer"
+      },
+      "ActiveDiscounts": [
+        {
+          "DiscountType": "Promo",
+          "PromoCode": "NEWCUSTOMER15",
+          "DiscountPercentage": 0.15,
+          "MinimumOrderQuantity": 1,
+          "MaximumOrderQuantity": 0,
+          "StartDate": "2024-01-01T00:00:00Z",
+          "EndDate": "2024-03-31T23:59:59Z",
+          "IsActive": true,
+          "Description": "New customer promotion: 15% off first quarter"
+        }
+      ],
+      "InternalNotes": "New customer. Established 2024. Quick growth potential.",
+      "CreatedDate": "2024-01-05T09:15:00Z",
+      "ModifiedDate": "2024-01-15T11:45:00Z"
+    }
+  ]
+}
