@@ -13,6 +13,7 @@ namespace TubieTools_PublicAPI.Controllers
     /// Manages CRUD operations for B2B care providers with support for multiple tiers:
     /// DayCare (50+ orders/year), ElderlyHome (100+ orders/year), HealthcareProvider (500+ orders/year)
     /// </summary>
+    [Authorize(Policy = "OktaAccess")]
     [ApiController]
     [Route("api/[controller]")]
     [Produces("application/json")]

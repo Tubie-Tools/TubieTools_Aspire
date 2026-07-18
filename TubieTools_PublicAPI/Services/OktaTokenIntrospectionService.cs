@@ -18,14 +18,14 @@ namespace TubieTools_PublicAPI.Services
 
         public OktaTokenIntrospectionService(
             IOptions<OktaSettings> oktaSettings,
-            HttpClient httpClient,
-            IDistributedCache cache,
-            ILogger<OktaTokenIntrospectionService> logger)
+           IDistributedCache cache,
+            ILogger<OktaTokenIntrospectionService> logger,
+            HttpClient httpClient = null)
         {
             _oktaSettings = oktaSettings.Value ?? throw new ArgumentNullException(nameof(oktaSettings));
-            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _httpClient = httpClient ?? new HttpClient();
 
             ValidateSettings();
         }

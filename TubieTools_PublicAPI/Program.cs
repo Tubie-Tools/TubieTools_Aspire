@@ -1,4 +1,9 @@
 
+using Microsoft.OpenApi;
+using TubieTools_PublicAPI.Middleware;
+using TubieTools_PublicAPI.Models;
+using TubieTools_PublicAPI.Services;
+
 namespace TubieTools_PublicAPI
 {
     public class Program
@@ -15,11 +20,36 @@ namespace TubieTools_PublicAPI
             builder.Services.AddSwaggerGen();
             builder.Services.AddHttpContextAccessor();
             // register okta authentication
+            builder.Services.Configure<OktaSettings>(builder.Configuration.GetSection("Okta"));
+            builder.Services.AddScoped<IOktaTokenIntrospectionService, OktaTokenIntrospectionService>();
+            // 1️⃣ Register IDistributedCache with in-memory implementation
+            builder.Services.AddDistributedMemoryCache();
+            //builder.Services.AddStackExchangeRedisCache(options => ...);// For token caching
+
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+                c.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    Description = "JWT Authorization header using the Bearer scheme."
+                });
+                c.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+                {
+                    [new OpenApiSecuritySchemeReference("bearer", document)] = []
+                });
+            });   
 
             SetDependencyInjectedTenant(builder);
 
             var app = builder.Build();
-
+            var oktaSettings = builder.Configuration.GetSection("Okta").Get<OktaSettings>();
+            if (oktaSettings != null && !string.IsNullOrEmpty(oktaSettings.Domain))
+            {
+                app.UseMiddleware<OktaAuthenticationMiddleware>();
+            }
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -29,6 +59,7 @@ namespace TubieTools_PublicAPI
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
