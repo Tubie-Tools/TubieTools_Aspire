@@ -9,5 +9,7 @@ namespace TubieTools_Aspire.Web.Models
         public string ImagePath { get; set; }
 
         public decimal TotalPrice => Price * Quantity;
+
+        public string? ProductDescription { get; internal set; }
     }
 }

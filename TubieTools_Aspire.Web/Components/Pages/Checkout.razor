@@ -1,0 +1,293 @@
+@page "/checkout"
+@using TubieTools_Aspire.Web.Models
+@rendermode InteractiveServer
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- Order Summary Column -->
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    @if (CurrentOrder?.OrderItems.Any() == true)
+                    {
+                        <div class="order-items mb-3" style="max-height: 300px; overflow-y: auto;">
+                            @foreach (var item in CurrentOrder.OrderItems)
+                            {
+                                <div class="border-bottom pb-2 mb-2">
+                                    <div class="d-flex justify-content-between">
+                                        <strong>@item.ProductName</strong>
+                                        <span class="badge bg-secondary">@item.Quantity</span>
+                                    </div>
+                                    <small class="text-muted">@item.ProductDescription</small>
+                                    <div class="d-flex justify-content-between mt-1">
+                                        <span>$@item.UnitPrice.ToString("F2")</span>
+                                        <span class="fw-bold">$@item.TotalPrice.ToString("F2")</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <hr />
+
+                        <div class="row mb-2">
+                            <div class="col-6">Subtotal:</div>
+                            <div class="col-6 text-end">$@CurrentOrder.Subtotal.ToString("F2")</div>
+                        </div>
+
+                        @if (CurrentOrder.TaxAmount > 0)
+                        {
+                            <div class="row mb-2">
+                                <div class="col-6">Tax:</div>
+                                <div class="col-6 text-end">$@CurrentOrder.TaxAmount.ToString("F2")</div>
+                            </div>
+                        }
+
+                        @if (CurrentOrder.ShippingAmount > 0)
+                        {
+                            <div class="row mb-2">
+                                <div class="col-6">Shipping:</div>
+                                <div class="col-6 text-end">$@CurrentOrder.ShippingAmount.ToString("F2")</div>
+                            </div>
+                        }
+
+                        @if (CurrentOrder.DiscountAmount > 0)
+                        {
+                            <div class="row mb-3 text-success">
+                                <div class="col-6">Discount:</div>
+                                <div class="col-6 text-end">-$@CurrentOrder.DiscountAmount.ToString("F2")</div>
+                            </div>
+                        }
+
+                        <hr />
+
+                        <div class="row">
+                            <div class="col-6"><strong>Total:</strong></div>
+                            <div class="col-6 text-end"><strong class="h5">$@CurrentOrder.TotalAmount.ToString("F2")</strong></div>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No items in cart</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Form Column -->
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Payment Information</h5>
+                </div>
+                <div class="card-body">
+                    @if (ShowPaymentForm)
+                    {
+                        <EditForm Model="PaymentRequest" OnValidSubmit="HandlePaymentSubmitAsync" class="needs-validation">
+                            <DataAnnotationsValidator />
+
+                            <!-- Alert Messages -->
+                            @if (!string.IsNullOrEmpty(PaymentMessage))
+                            {
+                                <div class="alert @(IsPaymentError ? "alert-danger" : "alert-info") alert-dismissible fade show" role="alert">
+                                    @PaymentMessage
+                                    <button type="button" class="btn-close" @onclick="() => PaymentMessage = string.Empty"></button>
+                                </div>
+                            }
+
+                            <!-- Customer Information Section -->
+                            <div class="section-header mb-3">
+                                <h6 class="border-bottom pb-2"><i class="bi bi-person"></i> Customer Information</h6>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="customerName" class="form-label">Full Name *</label>
+                                    <InputText id="customerName" class="form-control" @bind-Value="PaymentRequest.CustomerName" placeholder="John Doe" required />
+                                    <ValidationMessage For="() => PaymentRequest.CustomerName" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="customerEmail" class="form-label">Email *</label>
+                                    <InputText id="customerEmail" class="form-control" @bind-Value="PaymentRequest.CustomerEmail" type="email" placeholder="john@example.com" required />
+                                    <ValidationMessage For="() => PaymentRequest.CustomerEmail" />
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="customerPhone" class="form-label">Phone</label>
+                                <InputText id="customerPhone" class="form-control" @bind-Value="PaymentRequest.CustomerPhone" placeholder="(555) 123-4567" />
+                            </div>
+
+                            <!-- Billing Address Section -->
+                            <div class="section-header mb-3">
+                                <h6 class="border-bottom pb-2"><i class="bi bi-house"></i> Billing Address</h6>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="billingAddress" class="form-label">Street Address *</label>
+                                <InputText id="billingAddress" class="form-control" @bind-Value="PaymentRequest.BillingAddress" placeholder="123 Main Street" required />
+                                <ValidationMessage For="() => PaymentRequest.BillingAddress" />
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="billingCity" class="form-label">City *</label>
+                                    <InputText id="billingCity" class="form-control" @bind-Value="PaymentRequest.BillingCity" placeholder="New York" required />
+                                    <ValidationMessage For="() => PaymentRequest.BillingCity" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="billingState" class="form-label">State *</label>
+                                    <InputText id="billingState" class="form-control" @bind-Value="PaymentRequest.BillingState" placeholder="NY" maxlength="2" required />
+                                    <ValidationMessage For="() => PaymentRequest.BillingState" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="billingZip" class="form-label">ZIP Code *</label>
+                                    <InputText id="billingZip" class="form-control" @bind-Value="PaymentRequest.BillingZip" placeholder="10001" required />
+                                    <ValidationMessage For="() => PaymentRequest.BillingZip" />
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="billingCountry" class="form-label">Country</label>
+                                <InputSelect id="billingCountry" class="form-select" @bind-Value="PaymentRequest.BillingCountry">
+                                    <option value="US">United States</option>
+                                    <option value="CA">Canada</option>
+                                    <option value="MX">Mexico</option>
+                                    <option value="GB">United Kingdom</option>
+                                    <option value="AU">Australia</option>
+                                    <option value="DE">Germany</option>
+                                    <option value="FR">France</option>
+                                    <option value="JP">Japan</option>
+                                    <option value="Other">Other</option>
+                                </InputSelect>
+                            </div>
+
+                            <!-- Card Information Section -->
+                            <div class="section-header mb-3">
+                                <h6 class="border-bottom pb-2"><i class="bi bi-credit-card"></i> Card Information</h6>
+                            </div>
+
+                            <div class="alert alert-info" role="alert">
+                                <i class="bi bi-shield-check"></i> Your card information is securely processed by Authorize.Net using Accept.js. Your card data is never sent to our servers.
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="cardNumber" class="form-label">Card Number *</label>
+                                <input type="text" id="cardNumber" class="form-control" placeholder="4111 1111 1111 1111" inputmode="numeric" required />
+                                <small class="form-text text-muted">We accept Visa, Mastercard, American Express, and Discover</small>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-8">
+                                    <label for="cardExpiresMonth" class="form-label">Expiration Date *</label>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <input type="text" id="cardExpiresMonth" class="form-control" placeholder="MM" maxlength="2" inputmode="numeric" required />
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="text" id="cardExpiresYear" class="form-control" placeholder="YY" maxlength="2" inputmode="numeric" required />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="cardCvv" class="form-label">CVV *</label>
+                                    <input type="password" id="cardCvv" class="form-control" placeholder="123" maxlength="4" inputmode="numeric" required />
+                                </div>
+                            </div>
+
+                            <!-- Payment Options -->
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <InputCheckbox id="saveCard" class="form-check-input" @bind-Value="PaymentRequest.CreatePaymentProfile" />
+                                    <label for="saveCard" class="form-check-label">
+                                        Save card for future purchases (optional)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex gap-2 mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg flex-grow-1" disabled="@IsProcessing">
+                                    @if (IsProcessing)
+                                    {
+                                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        <span>Processing...</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Complete Purchase - $@CurrentOrder?.TotalAmount.ToString("F2")</span>
+                                    }
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-lg" @onclick="CancelCheckout" disabled="@IsProcessing">
+                                    Cancel
+                                </button>
+                            </div>
+
+                            <!-- Security Information -->
+                            <div class="alert alert-light mt-4" role="alert">
+                                <small>
+                                    <i class="bi bi-lock"></i> <strong>Secure & PCI Compliant:</strong> All payment transactions are encrypted and PCI DSS compliant. Your financial information is never stored on our servers.
+                                </small>
+                            </div>
+                        </EditForm>
+                    }
+                    else
+                    {
+                        <!-- Payment Success Message -->
+                        <div class="text-center">
+                            <div class="mb-3">
+                                <i class="bi bi-check-circle" style="font-size: 4rem; color: #28a745;"></i>
+                            </div>
+                            <h4 class="text-success">Payment Successful!</h4>
+                            <p class="text-muted mb-3">
+                                Your payment has been processed successfully.
+                            </p>
+                            @if (LastPaymentResponse != null)
+                            {
+                                <div class="alert alert-info" role="alert">
+                                    <div><strong>Transaction ID:</strong> @LastPaymentResponse.TransactionId</div>
+                                    <div><strong>Amount:</strong> $@LastPaymentResponse.Amount.ToString("F2")</div>
+                                    <div><strong>Date:</strong> @LastPaymentResponse.TransactionDateTime.ToString("g")</div>
+                                </div>
+                            }
+                            <p>You will be redirected to order confirmation shortly...</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .section-header h6 {
+        color: #333;
+        font-weight: 600;
+    }
+
+    .card {
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+    }
+
+    .card-header {
+        border-radius: 8px 8px 0 0;
+    }
+
+    .order-items {
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        padding: 10px;
+    }
+
+    input[type="password"] {
+        font-family: 'Times New Roman', serif;
+        letter-spacing: 0.2em;
+    }
+
+    .btn-close {
+        background-size: 1.25em;
+    }
+</style>

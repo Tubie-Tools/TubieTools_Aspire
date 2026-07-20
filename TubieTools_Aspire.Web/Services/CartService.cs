@@ -70,5 +70,15 @@ namespace TubieTools_Aspire.Web.Services
         {
             OnCartChanged?.Invoke();
         }
+
+        internal async Task ClearCartAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal async Task<IEnumerable<CartItem>> GetCartItemsAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

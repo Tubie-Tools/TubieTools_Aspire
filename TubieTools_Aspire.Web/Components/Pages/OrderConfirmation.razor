@@ -1,0 +1,235 @@
+@page "/order-confirmation/{OrderId}"
+@using TubieTools_Aspire.Web.Models
+@rendermode InteractiveServer
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-body text-center py-5">
+                    <!-- Success Icon -->
+                    <div class="mb-4">
+                        <i class="bi bi-check-circle text-success" style="font-size: 5rem;"></i>
+                    </div>
+
+                    <!-- Success Message -->
+                    <h1 class="card-title text-success mb-2">Order Confirmed!</h1>
+                    <p class="card-text text-muted mb-4">
+                        Thank you for your purchase. Your order has been successfully processed.
+                    </p>
+
+                    <!-- Order Details -->
+                    @if (Order != null)
+                    {
+                        <div class="alert alert-light text-start" role="alert">
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <strong>Order ID:</strong><br />
+                                    <code>@Order.OrderId</code>
+                                </div>
+                                <div class="col-6">
+                                    <strong>Transaction ID:</strong><br />
+                                    <code>@Order.TransactionId</code>
+                                </div>
+                            </div>
+
+                            <hr />
+
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <strong>Order Date:</strong><br />
+                                    @Order.CreatedDate.ToString("MMMM d, yyyy h:mm tt")
+                                </div>
+                                <div class="col-6">
+                                    <strong>Status:</strong><br />
+                                    <span class="badge bg-success">@Order.PaymentStatus</span>
+                                </div>
+                            </div>
+
+                            <hr />
+
+                            <div class="mb-3">
+                                <strong>Customer Name:</strong><br />
+                                @Order.CustomerName
+                            </div>
+
+                            <div class="mb-3">
+                                <strong>Email:</strong><br />
+                                <a href="mailto:@Order.CustomerEmail">@Order.CustomerEmail</a>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(Order.CustomerPhone))
+                            {
+                                <div class="mb-3">
+                                    <strong>Phone:</strong><br />
+                                    @Order.CustomerPhone
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Order Items -->
+                        <div class="alert alert-light text-start mb-4" role="alert">
+                            <h5 class="mb-3">Order Items</h5>
+                            <table class="table table-sm table-borderless">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th class="text-center">Qty</th>
+                                        <th class="text-end">Price</th>
+                                        <th class="text-end">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Order.OrderItems)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@item.ProductName</strong><br />
+                                                <small class="text-muted">@item.ProductDescription</small>
+                                            </td>
+                                            <td class="text-center">@item.Quantity</td>
+                                            <td class="text-end">$@item.UnitPrice.ToString("F2")</td>
+                                            <td class="text-end">$@item.TotalPrice.ToString("F2")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                            <hr />
+
+                            <div class="row px-3">
+                                <div class="col-6 text-start">Subtotal:</div>
+                                <div class="col-6 text-end">$@Order.Subtotal.ToString("F2")</div>
+                            </div>
+
+                            @if (Order.TaxAmount > 0)
+                            {
+                                <div class="row px-3">
+                                    <div class="col-6 text-start">Tax:</div>
+                                    <div class="col-6 text-end">$@Order.TaxAmount.ToString("F2")</div>
+                                </div>
+                            }
+
+                            @if (Order.ShippingAmount > 0)
+                            {
+                                <div class="row px-3">
+                                    <div class="col-6 text-start">Shipping:</div>
+                                    <div class="col-6 text-end">$@Order.ShippingAmount.ToString("F2")</div>
+                                </div>
+                            }
+
+                            @if (Order.DiscountAmount > 0)
+                            {
+                                <div class="row px-3 text-success">
+                                    <div class="col-6 text-start">Discount:</div>
+                                    <div class="col-6 text-end">-$@Order.DiscountAmount.ToString("F2")</div>
+                                </div>
+                            }
+
+                            <div class="row px-3 border-top pt-3 mt-3">
+                                <div class="col-6 text-start"><strong>Total:</strong></div>
+                                <div class="col-6 text-end"><strong class="h5">$@Order.TotalAmount.ToString("F2")</strong></div>
+                            </div>
+                        </div>
+
+                        <!-- Billing Address -->
+                        @if (Order.BillingAddress != null)
+                        {
+                            <div class="alert alert-light text-start mb-4" role="alert">
+                                <h5 class="mb-3">Billing Address</h5>
+                                <address>
+                                    @Order.BillingAddress.Street<br />
+                                    @Order.BillingAddress.City, @Order.BillingAddress.State @Order.BillingAddress.ZipCode<br />
+                                    @Order.BillingAddress.Country
+                                </address>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning" role="alert">
+                            <i class="bi bi-exclamation-triangle"></i> Order details not found. Please contact support.
+                        </div>
+                    }
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2 justify-content-center mt-4">
+                        <a href="/shop" class="btn btn-primary btn-lg">
+                            <i class="bi bi-shop"></i> Continue Shopping
+                        </a>
+                        <a href="/cart" class="btn btn-secondary btn-lg">
+                            <i class="bi bi-bag"></i> View Cart
+                        </a>
+                        <button type="button" class="btn btn-outline-primary btn-lg" @onclick="PrintOrder">
+                            <i class="bi bi-printer"></i> Print Receipt
+                        </button>
+                    </div>
+
+                    <!-- Email Notification -->
+                    <div class="alert alert-info mt-4" role="alert">
+                        <small>
+                            <i class="bi bi-info-circle"></i> A confirmation email has been sent to <strong>@Order?.CustomerEmail</strong>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string? OrderId { get; set; }
+
+    [Inject]
+    private ILogger<OrderConfirmation> Logger { get; set; } = null!;
+
+    private Order? Order { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (string.IsNullOrEmpty(OrderId))
+        {
+            Logger.LogWarning("OrderId parameter is missing");
+            return;
+        }
+
+        try
+        {
+            // In a real application, fetch the order from a database
+            // For now, we'll simulate retrieving the order
+            Order = new Order
+            {
+                OrderId = OrderId,
+                CustomerName = "Sample Customer",
+                CustomerEmail = "customer@example.com",
+                CustomerPhone = "(555) 123-4567",
+                PaymentStatus = PaymentStatus.Approved,
+                TransactionId = "1234567890",
+                CreatedDate = DateTime.UtcNow,
+                ModifiedDate = DateTime.UtcNow,
+                BillingAddress = new Address
+                {
+                    Street = "123 Main Street",
+                    City = "New York",
+                    State = "NY",
+                    ZipCode = "10001",
+                    Country = "US"
+                }
+            };
+
+            Logger.LogInformation($"Order confirmation loaded for OrderId: {OrderId}");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, $"Error loading order confirmation for OrderId: {OrderId}");
+        }
+    }
+
+    private void PrintOrder()
+    {
+        // Trigger browser print dialog
+        // This would typically be done with JavaScript interop
+        Logger.LogInformation("Print order requested");
+    }
+}
