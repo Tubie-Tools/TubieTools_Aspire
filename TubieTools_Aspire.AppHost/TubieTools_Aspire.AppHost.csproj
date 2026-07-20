@@ -16,7 +16,6 @@
     <ProjectReference Include="..\TubieTools_PublicAPI\TubieTools_PublicAPI.csproj" />
     <ProjectReference Include="..\TubieTools_SentimentModel_ProductApi\TubieTools_SentimentModel_ProductApi.csproj" />
     <ProjectReference Include="..\TubieTools_SentimentModel_WebApi\TubieTools_SentimentModel_WebApi.csproj" />
-    <ProjectReference Include="..\TubieTools_TensorFlow\TubieTools_TensorFlow.csproj" />
   </ItemGroup>
 
   <ItemGroup>

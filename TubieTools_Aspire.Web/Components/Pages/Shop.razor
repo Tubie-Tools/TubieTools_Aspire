@@ -1,190 +1,124 @@
-﻿<!-- TubieTools_Aspire.Web/Components/Pages/Shop.razor -->
-@page "/shop"
+﻿@page "/shop"
 @using TubieTools_Aspire.Web.Models
 @using TubieTools_Aspire.Web.Services
-@using ImageMagick;
+@rendermode InteractiveServer
 @inject CartService CartService
 @inject NavigationManager Navigation
 
-<div class="container mt-4">
-    <h1 class="mb-4">Product Shop</h1>
+<div class="container mt-5">
+    <h1>Shop</h1>
 
     <div class="row">
         @foreach (var product in products)
         {
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100 shadow-sm">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
                     <img src="@product.ImagePath" class="card-img-top" alt="@product.Name" style="height: 250px; object-fit: cover;">
-                    <div class="card-body d-flex flex-column">
+                    <div class="card-body">
                         <h5 class="card-title">@product.Name</h5>
-                        <p class="card-text text-muted">@product.Description</p>
-                        <p class="card-text">
-                            <strong class="text-success">$@product.Price.ToString("F2")</strong>
-                        </p>
-                        <p class="card-text text-secondary">
-                            <small>Stock: @product.Stock</small>
-                        </p>
-                        <div class="mt-auto">
-                            <div class="input-group mb-2">
-                                <input type="number" @bind="quantities[product.Id]" min="1" max="@product.Stock" class="form-control" />
-                                <button class="btn btn-primary" @onclick="() => AddToCart(product)">Add to Cart</button>
-                            </div>
+                        <p class="card-text">@product.Description</p>
+                        <p class="card-text"><strong>$@product.Price.ToString("F2")</strong></p>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <div class="input-group mb-3">
+                            <button class="btn btn-outline-secondary" type="button" @onclick="() => DecreaseQuantity(product.Id.ToString())">-</button>
+                            <input type="text" class="form-control text-center" value="@GetQuantity(product.Id)" readonly>
+                            <button class="btn btn-outline-secondary" type="button" @onclick="() => IncreaseQuantity(product.Id.ToString())">+</button>
                         </div>
+                        <button class="btn btn-primary w-100" @onclick="() => AddToCart(product)">
+                            Add to Cart
+                        </button>
                     </div>
                 </div>
             </div>
         }
     </div>
+
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @successMessage
+            <button type="button" class="btn-close" @onclick="() => successMessage = null"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @errorMessage
+            <button type="button" class="btn-close" @onclick="() => errorMessage = null"></button>
+        </div>
+    }
 </div>
 
 @code {
     private List<Product> products = new();
-    private Dictionary<int, int> quantities = new();
+    private Dictionary<string, int> quantities = new();
+    private string? successMessage = null;
+    private string? errorMessage = null;
 
     protected override void OnInitialized()
     {
-        // Initialize products with available images
+        // Initialize with sample products
         products = new List<Product>
         {
-            new Product
-            {
-                Id = 1,
-                Name = "Gtube Syringe Holder 60ml",
-                Description = "Premium 60ml facial serum for daily use",
-                Price = 29.99m,
-                ImagePath = "/60ml.png",
-                Stock = 50
-            },
-            new Product
-            {
-                Id = 2,
-                Name = "Gtube Syringe Holder 60ml",
-                Description = "Luminous glow serum 60ml bottle",
-                Price = 34.99m,
-                ImagePath = "/glow60ml.jpg",
-                Stock = 35
-            },
-            new Product
-            {
-                Id = 3,
-                Name = "Gtube Extension Holder",
-                Description = "Gtube Extension Holder",
-                Price = 24.99m,
-                ImagePath = "/extension.png",
-                Stock = 40
-            },
-            new Product
-            {
-                Id = 4,
-                Name = "Gtube Combo Syringe Holder",
-                Description = "Gtube Combo Syringe Holder",
-                Price = 19.99m,
-                ImagePath = "/combo.png",
-                Stock = 25
-            },
-            new Product
-            {
-                Id = 5,
-                Name = "Premium Bundle",
-                Description = "Exclusive premium product bundle",
-                Price = 89.99m,
-                ImagePath = "/il_794xN.3807071448_nq1q.webp",
-                Stock = 20
-            },
-            // new Product
-            // {
-            //     Id = 6,
-            //     Name = "Q5 10mL Syringe Holder",
-            //     Description = "10mL Syringe Holder",
-            //     Price = 89.99m,
-            //     ImagePath = "/IMG_0321.HEIC",
-            //     Stock = 20
-            // },
-            // new Product
-            // {
-            //     Id = 7,
-            //     Name = "Premium Bundle",
-            //     Description = "Exclusive premium product bundle",
-            //     Price = 89.99m,
-            //     ImagePath = "/IMG_0348.HEIC",
-            //     Stock = 20
-            // },
-            // new Product
-            // {
-            //     Id = 8,
-            //     Name = "Premium Bundle",
-            //     Description = "Exclusive premium product bundle",
-            //     Price = 89.99m,
-            //     ImagePath = "/IMG_0448.HEIC",
-            //     Stock = 20
-            // }
+            new Product { Id = 1, Name = "Premium Hair Oil 60ml", Price = 29.99m, Description = "Nourishing hair oil for deep conditioning", ImagePath = "/60ml.png" },
+            new Product { Id = 2, Name = "Hair Extension Combo", Price = 49.99m, Description = "Complete extension set with tools", ImagePath = "/extension.png" },
+            new Product { Id = 3, Name = "Glow 60ml Treatment", Price = 34.99m, Description = "Brightening hair treatment", ImagePath = "/glow60ml.jpg" }
         };
 
+        // Initialize quantities
         foreach (var product in products)
         {
-            quantities[product.Id] = 1;
-
-            ConvertHEICToJPEG(product);
+            quantities[product.Id.ToString()] = 1;
         }
     }
 
-    /// <summary>
-    /// Converts HEIC images to JPEG format and updates the product's ImagePath If and only if the image is in HEIC format.
-    /// Apparently a team of 36 created MagickImage that is an enhancement of ImageResizor and as far as I know 
-    /// is actually the team that created the precursor.
-    /// TBH there are dozens of interfaces with a single property, most likely to obfuscate everything but c'est la vie.
-    /// </summary>
-    /// <param name="product"></param>
-    public void ConvertHEICToJPEG(Product product)
+    private async Task AddToCart(Product product)
     {
-        if (product.ImagePath.Contains(".HEIC"))
+        try
         {
-            // Reads the raw HEIC file bytes directly
-            string filePath = product.ImagePath;
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", filePath.TrimStart('/'));
-            string rootFilePath = path + filePath;
-            // Example: byte array containing image data
-            byte[] heicData = ConvertHeicToJpegBytes(rootFilePath); // Replace with your byte array source
-            using var image = new MagickImage(heicData); // Load from byte array
-            image.Format = MagickFormat.Jpeg; // Set output format
+            int quantity = quantities[product.Id.ToString()];
 
-            using var memStream = new MemoryStream();
-            image.Write(memStream); // Save to memory stream
-            byte[] jpegData = memStream.ToArray(); // Get byte array
+            if (quantity <= 0)
+            {
+                errorMessage = "Please select a valid quantity";
+                return;
+            }
 
-            // Now jpegData contains the JPEG image
-            File.WriteAllBytes(path + product.ImagePath.Split('.')[0] + ".jpg", jpegData);
-        }
-    }
-
-    public byte[] ConvertHeicToJpegBytes(string heicFilePath)
-    {
-        // Define reading settings specifically for HEIC
-        var settings = new MagickReadSettings
-        {
-            Format = MagickFormat.Heic
-        };
-
-        // Load the file using Magick.NET
-        using (var image = new MagickImage(heicFilePath, settings))
-        {
-            // Set the output format you want for your byte array
-            image.Format = MagickFormat.Jpeg;
-
-            // Convert the image data directly to a byte array
-            byte[] jpegBytes = image.ToByteArray();
-
-            return jpegBytes;
-        }
-    }
-
-    private void AddToCart(Product product)
-    {
-        int quantity = quantities[product.Id];
-        if (quantity > 0 && quantity <= product.Stock)
-        {
             CartService.AddToCart(product, quantity);
-            quantities[product.Id] = 1;
+
+            successMessage = $"Added {quantity} x {product.Name} to cart!";
+            quantities[product.Id.ToString()] = 1; // Reset quantity after adding
+
+            // Clear success message after 3 seconds
+            await Task.Delay(3000);
+            successMessage = null;
         }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error adding to cart: {ex.Message}";
+        }
+    }
+
+    private void IncreaseQuantity(string productId)
+    {
+        if (quantities.ContainsKey(productId))
+        {
+            quantities[productId]++;
+        }
+    }
+
+    private void DecreaseQuantity(string productId)
+    {
+        if (quantities.ContainsKey(productId) && quantities[productId] > 1)
+        {
+            quantities[productId]--;
+        }
+    }
+
+    private int GetQuantity(int productId)
+    {
+        return quantities.ContainsKey(productId.ToString()) ? quantities[productId.ToString()] : 1;
     }
 }
