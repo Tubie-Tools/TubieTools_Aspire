@@ -46,6 +46,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TubieTools_SentimentModel_P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TubieTools_Forecasting_API", "TubieTools_Forecasting_API\TubieTools_Forecasting_API.csproj", "{2E95569B-1941-BEEF-4ACA-1D7A62BF7177}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TensorFlow", "TensorFlow\TensorFlow.csproj", "{58FB9205-C88B-4E5C-BD6A-396BBA03505B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -108,6 +110,10 @@ Global
 		{2E95569B-1941-BEEF-4ACA-1D7A62BF7177}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E95569B-1941-BEEF-4ACA-1D7A62BF7177}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E95569B-1941-BEEF-4ACA-1D7A62BF7177}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58FB9205-C88B-4E5C-BD6A-396BBA03505B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58FB9205-C88B-4E5C-BD6A-396BBA03505B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58FB9205-C88B-4E5C-BD6A-396BBA03505B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58FB9205-C88B-4E5C-BD6A-396BBA03505B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -127,6 +133,7 @@ Global
 		{F9FF8D44-6E1C-66A1-6840-85A953348236} = {E1A7387B-8C42-4E1E-95DF-35677B0E333A}
 		{FEEDA94B-085D-3A95-8E47-3810A40CE724} = {E1A7387B-8C42-4E1E-95DF-35677B0E333A}
 		{2E95569B-1941-BEEF-4ACA-1D7A62BF7177} = {E1A7387B-8C42-4E1E-95DF-35677B0E333A}
+		{58FB9205-C88B-4E5C-BD6A-396BBA03505B} = {A98DB97D-3B9D-4781-A248-D2043F614879}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {69CB4A26-DBDB-4782-90E2-E94AFCA83ED5}

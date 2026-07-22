@@ -1,6 +1,8 @@
 ﻿using Microsoft.ML;
 using Microsoft.ML.Data;
+using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.Trainers;
+using Microsoft.ML.Transforms.Onnx;
 
 HousingData[] housingData = new HousingData[]
 {
@@ -43,5 +45,30 @@ ITransformer trainedModel = pipelineEstimator.Fit(data);
 // Save model
 mlContext.Model.Save(trainedModel, data.Schema, "model.zip");
 
-//save onnx model
-using FileStream stream = File.Create("onnx_model.onnx");
+using (FileStream stream = File.Create("onnx_model.onnx"))
+{
+    mlContext.Model.ConvertToOnnx(trainedModel, data, stream);
+    stream.Flush();
+    stream.Dispose(); // Explicit dispose
+}
+string modelPath = Path.GetFullPath("onnx_model.onnx");
+System.Threading.Thread.Sleep(100); // Brief delay to ensure file is synced
+
+OnnxScoringEstimator estimator = mlContext.Transforms.ApplyOnnxModel(modelPath);
+
+HousingData[] newHousingData = new HousingData[]
+{
+    new()
+    {
+        Size = 1000f,
+        HistoricalPrices = new[] { 300_000f, 350_000f, 450_000f },
+        CurrentPrice = 550_00f
+    }
+};
+
+IDataView newHousingDataView = mlContext.Data.LoadFromEnumerable(newHousingData);
+
+
+estimator.Fit(newHousingDataView);
+
+Console.WriteLine("WTF SHUT UP EVERYONE");
