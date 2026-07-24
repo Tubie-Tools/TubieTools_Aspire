@@ -69,6 +69,6 @@ HousingData[] newHousingData = new HousingData[]
 IDataView newHousingDataView = mlContext.Data.LoadFromEnumerable(newHousingData);
 
 
-estimator.Fit(newHousingDataView);
+var result = estimator.Fit(newHousingDataView);
 
 Console.WriteLine("WTF SHUT UP EVERYONE");

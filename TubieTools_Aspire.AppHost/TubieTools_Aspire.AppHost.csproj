@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TensorFlow\TensorFlow.csproj" />
     <ProjectReference Include="..\TubieTools_Aspire.Web\TubieTools_Aspire.Web.csproj" />
     <ProjectReference Include="..\TubieTools_Forecasting_API\TubieTools_Forecasting_API.csproj" />
     <ProjectReference Include="..\TubieTools_PublicAPI\TubieTools_PublicAPI.csproj" />
@@ -21,6 +22,7 @@
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.AppHost" Version="13.2.2" />
     <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.2.2" />
+    <PackageReference Include="MessagePack" Version="2.5.301" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
