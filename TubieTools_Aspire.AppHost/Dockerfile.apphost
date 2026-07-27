@@ -10,6 +10,7 @@ WORKDIR /src
 COPY ["TubieTools_Aspire.AppHost/TubieTools_Aspire.AppHost.csproj", "TubieTools_Aspire.AppHost/"]
 COPY ["TubieTools_Aspire.ServiceDefaults/TubieTools_Aspire.ServiceDefaults.csproj", "TubieTools_Aspire.ServiceDefaults/"]
 COPY ["TubieTools_Aspire.Web/TubieTools_Aspire.Web.csproj", "TubieTools_Aspire.Web/"]
+COPY ["TubieTools_PublicAPI/TubieTools_PublicAPI.csproj", "TubieTools_PublicAPI/"]
 
 RUN dotnet restore "TubieTools_Aspire.AppHost/TubieTools_Aspire.AppHost.csproj"
 
@@ -18,7 +19,7 @@ WORKDIR "/src/TubieTools_Aspire.AppHost"
 RUN dotnet build "TubieTools_Aspire.AppHost.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "TubieTools_Aspire.AppHost.csproj" -c Release -o /app/publish
+RUN dotnet publish "TubieTools_Aspire.AppHost.csproj" -c Release -o /app/publish -p:IsAspireHost=false
 
 FROM base AS final
 WORKDIR /app
