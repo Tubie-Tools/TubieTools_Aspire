@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Sdk Name="Aspire.AppHost.Sdk" Version="9.5.0" />
 
@@ -11,7 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TensorFlow\TensorFlow.csproj" />
     <ProjectReference Include="..\TubieTools_Aspire.Web\TubieTools_Aspire.Web.csproj" />
     <ProjectReference Include="..\TubieTools_Forecasting_API\TubieTools_Forecasting_API.csproj" />
     <ProjectReference Include="..\TubieTools_PublicAPI\TubieTools_PublicAPI.csproj" />
