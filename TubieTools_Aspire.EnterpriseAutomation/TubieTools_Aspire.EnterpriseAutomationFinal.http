@@ -1,0 +1,6 @@
+@TubieTools_Aspire.EnterpriseAutomationFinal_HostAddress = http://localhost:5167
+
+GET {{TubieTools_Aspire.EnterpriseAutomationFinal_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

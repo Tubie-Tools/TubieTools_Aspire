@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalizationEnabled>true</InvariantGlobalizationEnabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- ASP.NET Core - Core dependencies only -->
+    <PackageReference Include="Azure.ResourceManager.Automation" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
+    <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="20.256.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="20.256.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.6" />
+
+    <!-- Azure SDK -->
+    <PackageReference Include="Azure.Identity" Version="1.21.0" />
+    <PackageReference Include="Azure.ResourceManager" Version="1.14.0" />
+    <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.11.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
+
+    <!-- Kubernetes -->
+    <PackageReference Include="KubernetesClient" Version="19.0.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="10.2.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.2.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.10" />
+
+    <!-- Aspire SDK -->
+
+    <!-- Optional: Azure DevOps - uncomment if needed -->
+    <!-- <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="19.232.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="19.232.0" /> -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TubieTools_Aspire.ServiceDefaults\TubieTools_Aspire.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+</Project>

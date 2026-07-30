@@ -40,6 +40,18 @@ builder.AddProject<Projects.TubieTools_Aspire_Web>("webfrontend")
     .WithReference(publicApi)
     .WaitFor(publicApi);
 */
+// Add Enterprise Automation MCP Server
+var enterpriseAutomation = builder.AddProject<Projects.TubieTools_Aspire_EnterpriseAutomation>("enterpriseautomation")
+    .WithExternalHttpEndpoints()
+    .WithReference(publicApi)
+    .WaitFor(publicApi);
+
+//test
+//test2
+
+
+builder.AddProject<Projects.TubieTools_Aspire_EnterpriseAutomation>("tubietools-aspire-enterpriseautomation");
+
 //test
 //test2
 
