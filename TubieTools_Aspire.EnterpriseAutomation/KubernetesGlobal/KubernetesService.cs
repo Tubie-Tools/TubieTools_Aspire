@@ -30,17 +30,16 @@ public class KubernetesService : IKubernetesService
         {
             _logger.LogInformation($"Fetching deployments from namespace: {ns}");
 
-            //var deployments = await _client.ListNamespacedDeploymentAsync(ns);
+            var deployments = await _client.AppsV1.ListNamespacedDeploymentWithHttpMessagesAsync(ns);
 
-            //return deployments.Items.Select(d => new Deployment
-            //{
-            //    Name = d.Metadata.Name,
-            //    Replicas = (int)(d.Spec.Replicas ?? 1),
-            //    ReadyReplicas = (int)(d.Status?.ReadyReplicas ?? 0),
-            //    Image = d.Spec.Template.Spec.Containers.FirstOrDefault()?.Image,
-            //    CreatedDate = d.Metadata.CreationTimestamp.GetValueOrDefault()
-            //}).ToList();
-            return null;
+            return deployments.Body.Items.Select(d => new Deployment
+            {
+                Name = d.Metadata.Name,
+                Replicas = (int)(d.Spec.Replicas ?? 1),
+                ReadyReplicas = (int)(d.Status?.ReadyReplicas ?? 0),
+                Image = d.Spec.Template.Spec.Containers.FirstOrDefault()?.Image,
+                CreatedDate = d.Metadata.CreationTimestamp.GetValueOrDefault()
+            }).ToList(); 
         }
         catch (Exception ex)
         {
