@@ -2,11 +2,12 @@ using Microsoft.Extensions.Logging;
 
 namespace TubieTools_Aspire.Tests;
 
+[TestClass]
 public class Puzzles
 {
     private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(30);
 
-    [Test]
+    [TestMethod]
     public async Task TestZebraAndWater()
     {
         var houses = new List<House>();

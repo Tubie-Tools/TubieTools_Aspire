@@ -1,0 +1,312 @@
+{
+  "tenants": [
+    {
+      "tenantId": "acme-corp-001",
+      "tenantName": "Acme Corporation",
+      "description": "Enterprise automation for ACME Corp",
+      "currentTier": 3,
+      "subscriptionStartDate": "2024-01-01T00:00:00Z",
+      "subscriptionEndDate": "2025-01-01T00:00:00Z",
+      "isActive": true,
+      "customMetadata": {
+        "industry": "Technology",
+        "region": "North America",
+        "dataResidency": "US-EAST",
+        "complianceRequirements": ["SOC2", "GDPR"]
+      }
+    },
+    {
+      "tenantId": "startup-inc-002",
+      "tenantName": "Startup Inc",
+      "description": "Incident management for Startup",
+      "currentTier": 1,
+      "subscriptionStartDate": "2024-06-15T00:00:00Z",
+      "subscriptionEndDate": "2024-07-15T00:00:00Z",
+      "isActive": true,
+      "customMetadata": {
+        "industry": "Finance",
+        "region": "Europe",
+        "maxTeamSize": 5
+      }
+    },
+    {
+      "tenantId": "dev-team-003",
+      "tenantName": "Dev Team",
+      "description": "Development team testing",
+      "currentTier": 0,
+      "subscriptionStartDate": "2024-01-01T00:00:00Z",
+      "subscriptionEndDate": "2024-02-01T00:00:00Z",
+      "isActive": true,
+      "customMetadata": {
+        "environment": "testing",
+        "maxUsers": 1
+      }
+    }
+  ],
+  "subscriptions": [
+    {
+      "tenantId": "acme-corp-001",
+      "subscriptionId": "sub-acme-001",
+      "tier": 3,
+      "startDate": "2024-01-01T00:00:00Z",
+      "endDate": "2025-01-01T00:00:00Z",
+      "renewalDate": "2024-12-01T00:00:00Z",
+      "autoRenew": true,
+      "billingAmount": 5000,
+      "billingInterval": "monthly",
+      "status": "active",
+      "addOns": [
+        {
+          "addOnId": "priority-support",
+          "name": "24/7 Priority Support",
+          "monthlyPrice": 500
+        },
+        {
+          "addOnId": "sso",
+          "name": "Single Sign-On (SAML)",
+          "monthlyPrice": 200
+        },
+        {
+          "addOnId": "data-residency",
+          "name": "Data Residency - US-EAST",
+          "monthlyPrice": 300
+        }
+      ]
+    },
+    {
+      "tenantId": "startup-inc-002",
+      "subscriptionId": "sub-startup-002",
+      "tier": 1,
+      "startDate": "2024-06-15T00:00:00Z",
+      "endDate": "2024-07-15T00:00:00Z",
+      "renewalDate": "2024-07-15T00:00:00Z",
+      "autoRenew": true,
+      "billingAmount": 29,
+      "billingInterval": "monthly",
+      "status": "active",
+      "addOns": [
+        {
+          "addOnId": "advanced-analytics",
+          "name": "Advanced Analytics Dashboard",
+          "monthlyPrice": 25
+        }
+      ]
+    },
+    {
+      "tenantId": "dev-team-003",
+      "subscriptionId": "sub-dev-003",
+      "tier": 0,
+      "startDate": "2024-01-01T00:00:00Z",
+      "endDate": "2024-02-01T00:00:00Z",
+      "renewalDate": "2024-02-01T00:00:00Z",
+      "autoRenew": false,
+      "billingAmount": 0,
+      "billingInterval": "monthly",
+      "status": "active",
+      "addOns": []
+    }
+  ],
+  "quotas": [
+    {
+      "tenantId": "acme-corp-001",
+      "monthlyApiCallLimit": -1,
+      "monthlyApiCallsUsed": 45000,
+      "dailyApiCallLimit": -1,
+      "dailyApiCallsUsed": 3200,
+      "resetDate": "2024-02-01T00:00:00Z",
+      "quotaExceeded": false
+    },
+    {
+      "tenantId": "startup-inc-002",
+      "monthlyApiCallLimit": 5000,
+      "monthlyApiCallsUsed": 3450,
+      "dailyApiCallLimit": 200,
+      "dailyApiCallsUsed": 145,
+      "resetDate": "2024-07-15T00:00:00Z",
+      "quotaExceeded": false
+    },
+    {
+      "tenantId": "dev-team-003",
+      "monthlyApiCallLimit": 100,
+      "monthlyApiCallsUsed": 87,
+      "dailyApiCallLimit": 20,
+      "dailyApiCallsUsed": 18,
+      "resetDate": "2024-02-01T00:00:00Z",
+      "quotaExceeded": false
+    }
+  ],
+  "customAgents": [
+    {
+      "agentId": "agent-acme-001",
+      "tenantId": "acme-corp-001",
+      "agentName": "Incident Response Specialist",
+      "systemPrompt": "You are an expert incident response specialist for ACME Corp. Always follow ITIL best practices and escalation procedures. Prioritize critical incidents and provide detailed incident reports.",
+      "assignedTools": [
+        "create_incident",
+        "search_incident",
+        "close_incident"
+      ],
+      "preferredModel": "gpt-4-turbo",
+      "modelParameters": {
+        "temperature": 0.5,
+        "maxTokens": 2000
+      },
+      "isActive": true,
+      "createdDate": "2024-01-15T10:30:00Z",
+      "updatedDate": "2024-01-20T14:20:00Z"
+    },
+    {
+      "agentId": "agent-acme-002",
+      "tenantId": "acme-corp-001",
+      "agentName": "Change Management Assistant",
+      "systemPrompt": "You are a change management assistant. Help users plan, review, and execute changes with proper CAB approval and rollback procedures.",
+      "assignedTools": [
+        "search_incident",
+        "create_incident"
+      ],
+      "preferredModel": "gpt-4",
+      "modelParameters": {
+        "temperature": 0.6,
+        "maxTokens": 1500
+      },
+      "isActive": true,
+      "createdDate": "2024-01-20T09:00:00Z",
+      "updatedDate": "2024-01-21T11:30:00Z"
+    },
+    {
+      "agentId": "agent-startup-001",
+      "tenantId": "startup-inc-002",
+      "agentName": "Quick Support Bot",
+      "systemPrompt": "You are a helpful support bot for Startup Inc. Answer questions about incident management and help create tickets quickly.",
+      "assignedTools": [
+        "create_incident",
+        "search_incident",
+        "close_incident"
+      ],
+      "preferredModel": "gpt-3.5-turbo",
+      "modelParameters": {
+        "temperature": 0.7,
+        "maxTokens": 1000
+      },
+      "isActive": true,
+      "createdDate": "2024-06-20T08:00:00Z",
+      "updatedDate": "2024-06-25T16:45:00Z"
+    }
+  ],
+  "teamMembers": [
+    {
+      "memberId": "member-acme-001",
+      "tenantId": "acme-corp-001",
+      "email": "john.doe@acmecorp.com",
+      "role": "admin",
+      "availableAgents": ["agent-acme-001", "agent-acme-002"],
+      "isActive": true,
+      "joinedDate": "2024-01-01T00:00:00Z"
+    },
+    {
+      "memberId": "member-acme-002",
+      "tenantId": "acme-corp-001",
+      "email": "jane.smith@acmecorp.com",
+      "role": "user",
+      "availableAgents": ["agent-acme-001"],
+      "isActive": true,
+      "joinedDate": "2024-01-05T10:00:00Z"
+    },
+    {
+      "memberId": "member-acme-003",
+      "tenantId": "acme-corp-001",
+      "email": "bob.wilson@acmecorp.com",
+      "role": "viewer",
+      "availableAgents": [],
+      "isActive": true,
+      "joinedDate": "2024-01-10T14:30:00Z"
+    },
+    {
+      "memberId": "member-startup-001",
+      "tenantId": "startup-inc-002",
+      "email": "founder@startup.com",
+      "role": "admin",
+      "availableAgents": ["agent-startup-001"],
+      "isActive": true,
+      "joinedDate": "2024-06-15T00:00:00Z"
+    },
+    {
+      "memberId": "member-dev-001",
+      "tenantId": "dev-team-003",
+      "email": "developer@example.com",
+      "role": "admin",
+      "availableAgents": [],
+      "isActive": true,
+      "joinedDate": "2024-01-01T00:00:00Z"
+    }
+  ],
+  "usageStatistics": [
+    {
+      "tenantId": "acme-corp-001",
+      "date": "2024-01-20T00:00:00Z",
+      "apiCallsUsed": 3200,
+      "transactionAmount": 150.50,
+      "toolUsageStats": {
+        "create_incident": 450,
+        "search_incident": 2100,
+        "close_incident": 650
+      },
+      "modelUsageStats": {
+        "gpt-4": 1500,
+        "gpt-4-turbo": 1700
+      },
+      "conversationsCreated": 85,
+      "tokensUsed": 450000
+    },
+    {
+      "tenantId": "startup-inc-002",
+      "date": "2024-06-20T00:00:00Z",
+      "apiCallsUsed": 145,
+      "transactionAmount": 0,
+      "toolUsageStats": {
+        "create_incident": 30,
+        "search_incident": 80,
+        "close_incident": 35
+      },
+      "modelUsageStats": {
+        "gpt-3.5-turbo": 145
+      },
+      "conversationsCreated": 12,
+      "tokensUsed": 25000
+    }
+  ],
+  "billingRecords": [
+    {
+      "billingId": "bill-acme-001",
+      "tenantId": "acme-corp-001",
+      "subscriptionId": "sub-acme-001",
+      "amount": 6000,
+      "currency": "USD",
+      "billingDate": "2024-01-01T00:00:00Z",
+      "dueDate": "2024-01-31T23:59:59Z",
+      "status": "paid",
+      "paymentMethod": "credit_card",
+      "lineItems": {
+        "Enterprise Subscription": 5000,
+        "Priority Support": 500,
+        "Single Sign-On": 200,
+        "Data Residency": 300
+      }
+    },
+    {
+      "billingId": "bill-startup-001",
+      "tenantId": "startup-inc-002",
+      "subscriptionId": "sub-startup-002",
+      "amount": 54,
+      "currency": "USD",
+      "billingDate": "2024-06-15T00:00:00Z",
+      "dueDate": "2024-07-15T23:59:59Z",
+      "status": "pending",
+      "paymentMethod": "invoice",
+      "lineItems": {
+        "Starter Subscription": 29,
+        "Advanced Analytics": 25
+      }
+    }
+  ]
+}

@@ -1,0 +1,319 @@
+{
+  "multiTenantArchitecture": {
+    "description": "Complete multi-tenant AI Agent system with subscription tiers",
+    "version": "1.0.0",
+    "endpoints": {
+      "tenant_management": {
+        "register_tenant": {
+          "method": "POST",
+          "path": "/api/v1/tenants/register",
+          "description": "Register a new tenant",
+          "request": {
+            "tenantName": "string (required)",
+            "description": "string (optional)"
+          },
+          "response": {
+            "tenantId": "string",
+            "apiKey": "string",
+            "message": "string"
+          }
+        },
+        "get_tenant": {
+          "method": "GET",
+          "path": "/api/v1/tenants/{tenantId}",
+          "description": "Get tenant details including subscription and tier config"
+        },
+        "upgrade_tier": {
+          "method": "POST",
+          "path": "/api/v1/tenants/{tenantId}/upgrade",
+          "description": "Upgrade tenant subscription tier",
+          "request": {
+            "newTier": "0-3 (Free, Starter, Professional, Enterprise)"
+          }
+        },
+        "get_subscription": {
+          "method": "GET",
+          "path": "/api/v1/tenants/{tenantId}/subscription",
+          "description": "Get subscription details"
+        }
+      },
+      "ai_agent_operations": {
+        "ask_agent": {
+          "method": "POST",
+          "path": "/api/v1/tenants/{tenantId}/agent/ask",
+          "description": "Send request to tenant's AI agent",
+          "headers": {
+            "X-Tenant-ID": "string (optional, can be in path)"
+          },
+          "request": {
+            "message": "string (required)"
+          },
+          "response": {
+            "success": "boolean",
+            "message": "string",
+            "result": "object",
+            "executedTools": ["string"],
+            "conversationHistory": [
+              {
+                "role": "user|assistant|system",
+                "content": "string",
+                "timestamp": "ISO8601"
+              }
+            ]
+          }
+        }
+      },
+      "usage_and_analytics": {
+        "get_usage": {
+          "method": "GET",
+          "path": "/api/v1/tenants/{tenantId}/usage?daysBack=30",
+          "description": "Get usage statistics for tenant"
+        },
+        "get_billing": {
+          "method": "GET",
+          "path": "/api/v1/tenants/{tenantId}/billing",
+          "description": "Get billing records"
+        }
+      },
+      "agent_management": {
+        "create_agent": {
+          "method": "POST",
+          "path": "/api/v1/tenants/{tenantId}/agents",
+          "description": "Create custom agent for tenant (requires multiple_agents feature)",
+          "request": {
+            "agentName": "string (required)",
+            "systemPrompt": "string (required)",
+            "assignedTools": ["string"],
+            "preferredModel": "string (optional)"
+          }
+        },
+        "get_agents": {
+          "method": "GET",
+          "path": "/api/v1/tenants/{tenantId}/agents",
+          "description": "Get all custom agents for tenant"
+        }
+      },
+      "team_management": {
+        "add_member": {
+          "method": "POST",
+          "path": "/api/v1/tenants/{tenantId}/team",
+          "description": "Add team member to tenant",
+          "request": {
+            "email": "string (required)",
+            "role": "admin|user|viewer"
+          }
+        },
+        "get_members": {
+          "method": "GET",
+          "path": "/api/v1/tenants/{tenantId}/team",
+          "description": "Get team members"
+        }
+      }
+    },
+    "subscriptionTiers": {
+      "free": {
+        "tier": 0,
+        "name": "Free",
+        "monthlyPrice": 0,
+        "monthlyApiCallLimit": 100,
+        "dailyApiCallLimit": 20,
+        "concurrentRequests": 1,
+        "features": {
+          "tools": ["search_incident"],
+          "customPrompts": false,
+          "multipleAgents": false,
+          "workflowOrchestration": false,
+          "analytics": false,
+          "apiAccess": false,
+          "webhooks": false,
+          "prioritySupport": false,
+          "dataExport": false
+        },
+        "models": ["gpt-3.5-turbo"],
+        "retention": {
+          "conversations": 7,
+          "logs": 7
+        },
+        "maxTeamMembers": 1,
+        "maxIntegrations": 0
+      },
+      "starter": {
+        "tier": 1,
+        "name": "Starter",
+        "monthlyPrice": 29,
+        "monthlyApiCallLimit": 5000,
+        "dailyApiCallLimit": 200,
+        "concurrentRequests": 5,
+        "features": {
+          "tools": [
+            "create_incident",
+            "search_incident",
+            "close_incident"
+          ],
+          "customPrompts": true,
+          "multipleAgents": false,
+          "workflowOrchestration": false,
+          "analytics": true,
+          "apiAccess": true,
+          "webhooks": false,
+          "prioritySupport": false,
+          "dataExport": true
+        },
+        "models": [
+          "gpt-3.5-turbo",
+          "gpt-4"
+        ],
+        "retention": {
+          "conversations": 30,
+          "logs": 30
+        },
+        "maxTeamMembers": 3,
+        "maxIntegrations": 1
+      },
+      "professional": {
+        "tier": 2,
+        "name": "Professional",
+        "monthlyPrice": 99,
+        "monthlyApiCallLimit": 50000,
+        "dailyApiCallLimit": 2000,
+        "concurrentRequests": 20,
+        "features": {
+          "tools": [
+            "create_incident",
+            "search_incident",
+            "close_incident"
+          ],
+          "customPrompts": true,
+          "multipleAgents": true,
+          "workflowOrchestration": true,
+          "analytics": true,
+          "apiAccess": true,
+          "webhooks": true,
+          "prioritySupport": true,
+          "dataExport": true
+        },
+        "models": [
+          "gpt-3.5-turbo",
+          "gpt-4",
+          "gpt-4-turbo"
+        ],
+        "retention": {
+          "conversations": 90,
+          "logs": 90
+        },
+        "maxTeamMembers": 10,
+        "maxIntegrations": 5,
+        "sla": "99.5% uptime"
+      },
+      "enterprise": {
+        "tier": 3,
+        "name": "Enterprise",
+        "monthlyPrice": "Custom",
+        "monthlyApiCallLimit": -1,
+        "dailyApiCallLimit": -1,
+        "concurrentRequests": 100,
+        "features": {
+          "tools": [
+            "create_incident",
+            "search_incident",
+            "close_incident"
+          ],
+          "customPrompts": true,
+          "multipleAgents": true,
+          "workflowOrchestration": true,
+          "analytics": true,
+          "apiAccess": true,
+          "webhooks": true,
+          "prioritySupport": true,
+          "dataExport": true,
+          "sso": true,
+          "dataResidency": true
+        },
+        "models": [
+          "gpt-3.5-turbo",
+          "gpt-4",
+          "gpt-4-turbo"
+        ],
+        "retention": {
+          "conversations": 365,
+          "logs": 365
+        },
+        "maxTeamMembers": -1,
+        "maxIntegrations": -1,
+        "sla": "99.99% uptime, dedicated support"
+      }
+    },
+    "authentication": {
+      "methods": [
+        {
+          "type": "API Key (Bearer Token)",
+          "header": "Authorization: Bearer {apiKey}",
+          "ttl": "No expiration (revokable)"
+        },
+        {
+          "type": "Tenant Header",
+          "header": "X-Tenant-ID: {tenantId}",
+          "ttl": "Session"
+        },
+        {
+          "type": "JWT Claims",
+          "claim": "tenant_id",
+          "ttl": "Token expiration"
+        }
+      ]
+    },
+    "rateLimit": {
+      "byTier": {
+        "free": {
+          "requestsPerMinute": 5,
+          "dailyLimit": 20,
+          "monthlyLimit": 100
+        },
+        "starter": {
+          "requestsPerMinute": 30,
+          "dailyLimit": 200,
+          "monthlyLimit": 5000
+        },
+        "professional": {
+          "requestsPerMinute": 100,
+          "dailyLimit": 2000,
+          "monthlyLimit": 50000
+        },
+        "enterprise": {
+          "requestsPerMinute": 1000,
+          "dailyLimit": -1,
+          "monthlyLimit": -1
+        }
+      }
+    },
+    "usage tracking": {
+      "tracked metrics": [
+        "api_calls",
+        "tokens_used",
+        "conversations_created",
+        "tools_executed",
+        "models_used"
+      ],
+      "reset schedule": {
+        "daily": "00:00 UTC",
+        "monthly": "1st day of month, 00:00 UTC"
+      }
+    },
+    "billing": {
+      "supported intervals": [
+        "monthly",
+        "annual"
+      ],
+      "payment methods": [
+        "credit_card",
+        "bank_transfer",
+        "invoice"
+      ],
+      "overage charges": {
+        "professional": {
+          "per_1k_api_calls": 0.10
+        }
+      }
+    }
+  }
+}

@@ -5,10 +5,13 @@ using TubieTools_Aspire.EnterpriseAutomation.Security;
 using TubieTools_Aspire.EnterpriseAutomation.Health;
 using TubieTools_Aspire.EnterpriseAutomation.KubernetesGlobal;
 using TubieTools_Aspire.EnterpriseAutomation.ServiceNow;
+using TubieTools_Aspire.EnterpriseAutomation.ServiceNow.Tools;
 using TubieTools_Aspire.EnterpriseAutomation.Terraform;
 using TubieTools_Aspire.EnterpriseAutomation.MCP;
 using TubieTools_Aspire.EnterpriseAutomation.Azure;
 using TubieTools_Aspire.EnterpriseAutomation.AzureDevOps;
+using TubieTools_Aspire.EnterpriseAutomation.AIAgent;
+using TubieTools_Aspire.EnterpriseAutomation.MultiTenant;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +32,33 @@ builder.Services.AddScoped<IKubernetesService, KubernetesService>();
 builder.Services.AddScoped<ISecurityService, SecurityService>();
 builder.Services.AddScoped<IMcpProtocolHandler, McpProtocolHandler>();
 
+// Register ServiceNow Tools
+builder.Services.AddScoped<ICreateIncidentTool, CreateIncidentTool>();
+builder.Services.AddScoped<ISearchIncidentTool, SearchIncidentTool>();
+builder.Services.AddScoped<ICloseIncidentTool, CloseIncidentTool>();
+builder.Services.AddScoped<IServiceNowToolsFactory, ServiceNowToolsFactory>();
+
+// Register AI Agent Services
+var chatGPTConfig = new ChatGPTAgentConfig
+{
+    ApiKey = builder.Configuration["ChatGPT:ApiKey"] ?? "",
+    Model = builder.Configuration["ChatGPT:Model"] ?? "gpt-4",
+    Temperature = decimal.TryParse(builder.Configuration["ChatGPT:Temperature"], out var temp) ? temp : 0.7m,
+    MaxTokens = int.TryParse(builder.Configuration["ChatGPT:MaxTokens"], out var tokens) ? tokens : 2000
+};
+
+builder.Services.AddSingleton(chatGPTConfig);
+builder.Services.AddScoped<IMCPClient, MCPClient>();
+builder.Services.AddScoped<IAIAgent, ChatGPTAgent>();
+builder.Services.AddScoped<IAgentOrchestrator, AgentOrchestrator>();
+builder.Services.AddHttpClient<IAIAgent, ChatGPTAgent>();
+
+// Register Multi-Tenant Services
+builder.Services.AddScoped<ITenantContextAccessor, TenantContextAccessor>();
+builder.Services.AddScoped<ITenantService, TenantService>();
+builder.Services.AddScoped<ISubscriptionManager, SubscriptionManager>();
+builder.Services.AddScoped<IMultiTenantAIAgent, MultiTenantAIAgent>();
+
 // Add HTTP clients for external services
 builder.Services.AddHttpClient<ServiceNowService>();
 
@@ -39,6 +69,9 @@ builder.Services.AddHealthChecks()
     .AddCheck<KubernetesHealthCheck>("kubernetes");
 
 var app = builder.Build();
+
+// Add tenant resolver middleware
+app.UseTenantResolver();
 
 // Configure HTTP pipeline
 if (app.Environment.IsDevelopment())

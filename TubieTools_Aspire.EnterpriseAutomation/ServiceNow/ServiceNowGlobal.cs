@@ -53,4 +53,48 @@
         public string ChangeType { get; set; }
         public string Priority { get; set; }
     }
+
+    // ServiceNow Tools Interfaces and Result Classes
+    public interface IServiceNowTool
+    {
+        string Name { get; }
+        string Description { get; }
+        Task<object> ExecuteAsync(Dictionary<string, object> parameters);
+    }
+
+    public interface ICreateIncidentTool : IServiceNowTool
+    {
+    }
+
+    public interface ISearchIncidentTool : IServiceNowTool
+    {
+    }
+
+    public interface ICloseIncidentTool : IServiceNowTool
+    {
+    }
+
+    public class CreateIncidentResult
+    {
+        public bool Success { get; set; }
+        public string IncidentNumber { get; set; }
+        public string Message { get; set; }
+        public Incident CreatedIncident { get; set; }
+    }
+
+    public class SearchIncidentResult
+    {
+        public bool Success { get; set; }
+        public int TotalCount { get; set; }
+        public List<Incident> Incidents { get; set; } = new();
+        public string Message { get; set; }
+    }
+
+    public class CloseIncidentResult
+    {
+        public bool Success { get; set; }
+        public string IncidentNumber { get; set; }
+        public string ClosureNotes { get; set; }
+        public string Message { get; set; }
+    }
 }

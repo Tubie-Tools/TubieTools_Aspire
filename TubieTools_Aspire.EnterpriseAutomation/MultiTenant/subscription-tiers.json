@@ -1,0 +1,232 @@
+{
+  "subscriptionTiers": [
+    {
+      "tier": 0,
+      "name": "Free",
+      "description": "Perfect for getting started with AI agents",
+      "monthlyPrice": 0,
+      "annualPrice": 0,
+      "monthlyApiCallLimit": 100,
+      "dailyApiCallLimit": 20,
+      "concurrentRequestLimit": 1,
+      "maxConversationHistorySize": 10,
+      "availableTools": [
+        "search_incident"
+      ],
+      "allowCustomPrompts": false,
+      "allowMultipleAgents": false,
+      "allowWorkflowOrchestration": false,
+      "allowAnalytics": false,
+      "allowAPIAccess": false,
+      "allowWebhooks": false,
+      "prioritySupport": false,
+      "availableModels": [
+        "gpt-3.5-turbo"
+      ],
+      "maxTemperature": 0.7,
+      "maxTokens": 500,
+      "conversationRetentionDays": 7,
+      "logRetentionDays": 7,
+      "maxTeamMembers": 1,
+      "maxCustomIntegrations": 0,
+      "allowDataExport": false,
+      "publicAPI": false,
+      "sla": "Best effort"
+    },
+    {
+      "tier": 1,
+      "name": "Starter",
+      "description": "Great for individual developers and small teams",
+      "monthlyPrice": 29,
+      "annualPrice": 290,
+      "monthlyApiCallLimit": 5000,
+      "dailyApiCallLimit": 200,
+      "concurrentRequestLimit": 5,
+      "maxConversationHistorySize": 50,
+      "availableTools": [
+        "create_incident",
+        "search_incident",
+        "close_incident"
+      ],
+      "allowCustomPrompts": true,
+      "allowMultipleAgents": false,
+      "allowWorkflowOrchestration": false,
+      "allowAnalytics": true,
+      "allowAPIAccess": true,
+      "allowWebhooks": false,
+      "prioritySupport": false,
+      "availableModels": [
+        "gpt-3.5-turbo",
+        "gpt-4"
+      ],
+      "maxTemperature": 1.0,
+      "maxTokens": 1000,
+      "conversationRetentionDays": 30,
+      "logRetentionDays": 30,
+      "maxTeamMembers": 3,
+      "maxCustomIntegrations": 1,
+      "allowDataExport": true,
+      "publicAPI": false,
+      "sla": "99% uptime"
+    },
+    {
+      "tier": 2,
+      "name": "Professional",
+      "description": "For growing teams and production use cases",
+      "monthlyPrice": 99,
+      "annualPrice": 990,
+      "monthlyApiCallLimit": 50000,
+      "dailyApiCallLimit": 2000,
+      "concurrentRequestLimit": 20,
+      "maxConversationHistorySize": 200,
+      "availableTools": [
+        "create_incident",
+        "search_incident",
+        "close_incident"
+      ],
+      "allowCustomPrompts": true,
+      "allowMultipleAgents": true,
+      "allowWorkflowOrchestration": true,
+      "allowAnalytics": true,
+      "allowAPIAccess": true,
+      "allowWebhooks": true,
+      "prioritySupport": true,
+      "availableModels": [
+        "gpt-3.5-turbo",
+        "gpt-4",
+        "gpt-4-turbo"
+      ],
+      "maxTemperature": 2.0,
+      "maxTokens": 2000,
+      "conversationRetentionDays": 90,
+      "logRetentionDays": 90,
+      "maxTeamMembers": 10,
+      "maxCustomIntegrations": 5,
+      "allowDataExport": true,
+      "publicAPI": true,
+      "sla": "99.5% uptime"
+    },
+    {
+      "tier": 3,
+      "name": "Enterprise",
+      "description": "For large organizations with advanced requirements",
+      "monthlyPrice": "Custom",
+      "annualPrice": "Custom",
+      "monthlyApiCallLimit": -1,
+      "dailyApiCallLimit": -1,
+      "concurrentRequestLimit": 100,
+      "maxConversationHistorySize": -1,
+      "availableTools": [
+        "create_incident",
+        "search_incident",
+        "close_incident"
+      ],
+      "allowCustomPrompts": true,
+      "allowMultipleAgents": true,
+      "allowWorkflowOrchestration": true,
+      "allowAnalytics": true,
+      "allowAPIAccess": true,
+      "allowWebhooks": true,
+      "prioritySupport": true,
+      "availableModels": [
+        "gpt-3.5-turbo",
+        "gpt-4",
+        "gpt-4-turbo"
+      ],
+      "maxTemperature": 2.0,
+      "maxTokens": -1,
+      "conversationRetentionDays": 365,
+      "logRetentionDays": 365,
+      "maxTeamMembers": -1,
+      "maxCustomIntegrations": -1,
+      "allowDataExport": true,
+      "publicAPI": true,
+      "sla": "99.99% uptime, dedicated support"
+    }
+  ],
+  "toolFeatureMatrix": [
+    {
+      "toolName": "create_incident",
+      "minimumTier": 1,
+      "rateLimit": 10
+    },
+    {
+      "toolName": "search_incident",
+      "minimumTier": 0,
+      "rateLimit": 20
+    },
+    {
+      "toolName": "close_incident",
+      "minimumTier": 1,
+      "rateLimit": 5
+    }
+  ],
+  "modelFeatureMatrix": [
+    {
+      "modelName": "gpt-3.5-turbo",
+      "minimumTier": 0,
+      "costPerThousandTokens": 0.0015
+    },
+    {
+      "modelName": "gpt-4",
+      "minimumTier": 1,
+      "costPerThousandTokens": 0.03
+    },
+    {
+      "modelName": "gpt-4-turbo",
+      "minimumTier": 2,
+      "costPerThousandTokens": 0.01
+    }
+  ],
+  "addOns": [
+    {
+      "addOnId": "priority-support",
+      "name": "Priority Support",
+      "description": "24/7 priority support with 1-hour response time",
+      "monthlyPrice": 50,
+      "enabledForTiers": [
+        "Professional",
+        "Enterprise"
+      ]
+    },
+    {
+      "addOnId": "advanced-analytics",
+      "name": "Advanced Analytics",
+      "description": "Deep insights into agent performance and usage patterns",
+      "monthlyPrice": 25,
+      "enabledForTiers": [
+        "Starter",
+        "Professional",
+        "Enterprise"
+      ]
+    },
+    {
+      "addOnId": "custom-integrations",
+      "name": "Custom Integration Development",
+      "description": "Custom integrations with your existing systems",
+      "monthlyPrice": 100,
+      "enabledForTiers": [
+        "Professional",
+        "Enterprise"
+      ]
+    },
+    {
+      "addOnId": "sso",
+      "name": "Single Sign-On (SSO)",
+      "description": "Enterprise SSO with SAML 2.0 and OAuth support",
+      "monthlyPrice": 75,
+      "enabledForTiers": [
+        "Enterprise"
+      ]
+    },
+    {
+      "addOnId": "data-residency",
+      "name": "Data Residency",
+      "description": "Keep your data in your selected region",
+      "monthlyPrice": 150,
+      "enabledForTiers": [
+        "Enterprise"
+      ]
+    }
+  ]
+}

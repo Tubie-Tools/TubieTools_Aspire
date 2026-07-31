@@ -10,7 +10,7 @@ public class WebTests
     public async Task GetWebResourceRootReturnsOkStatusCode()
     {
         // Arrange
-        var cancellationToken = TestContext.CurrentContext.CancellationToken;
+        var cancellationToken = CancellationToken.None;
 
         var appHost = await DistributedApplicationTestingBuilder.CreateAsync<Projects.TubieTools_Aspire_AppHost>(cancellationToken);
         appHost.Services.AddLogging(logging =>
@@ -34,6 +34,6 @@ public class WebTests
         var response = await httpClient.GetAsync("/", cancellationToken);
 
         // Assert
-        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
     }
 }

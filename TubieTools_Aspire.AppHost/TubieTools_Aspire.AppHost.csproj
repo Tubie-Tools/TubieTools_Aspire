@@ -6,6 +6,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
+    <IsTestProject>true</IsTestProject>
     <Nullable>enable</Nullable>
     <UserSecretsId>e7c704ef-d914-487f-a7cb-a893f94dfd40</UserSecretsId>
   </PropertyGroup>
