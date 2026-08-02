@@ -42,6 +42,10 @@ namespace TubieTools_Aspire.EnterpriseAutomation.MultiTenant
         private readonly Dictionary<string, List<TenantTeamMember>> _teamMembers; // Replace with DB
         private readonly Dictionary<string, List<TenantUsage>> _usageStats; // Replace with DB
 
+        /// <summary>
+        /// tenantConfig does not seem to be binding to the json file 7/30/2026. figure it out later. remember your training.
+        /// </summary>
+        /// <param name="logger"></param>
         public TenantService(ILogger<TenantService> logger)
         {
             _logger = logger;
