@@ -53,7 +53,19 @@ builder.Services.AddScoped<IAIAgent, ChatGPTAgent>();
 builder.Services.AddScoped<IAgentOrchestrator, AgentOrchestrator>();
 builder.Services.AddHttpClient<IAIAgent, ChatGPTAgent>();
 
-// Register Multi-Tenant Services
+// Load tenant sample data from JSON
+var tenantConfigurationPath = Path.Combine(builder.Environment.ContentRootPath, "MultiTenant", "sample-tenants.json");
+if (File.Exists(tenantConfigurationPath))
+{
+    builder.Configuration.AddJsonFile("MultiTenant/sample-tenants.json", optional: false, reloadOnChange: true);
+}
+
+// Register tenant configuration options
+// Around line 64-65
+builder.Services.Configure<TenantConfigurationOptions>(
+    builder.Configuration); // Bind from root with case-insensitive JSON property names
+
+// Register Multi-Tenant Services - Updated to accept options
 builder.Services.AddScoped<ITenantContextAccessor, TenantContextAccessor>();
 builder.Services.AddScoped<ITenantService, TenantService>();
 builder.Services.AddScoped<ISubscriptionManager, SubscriptionManager>();

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace TubieTools_Aspire.EnterpriseAutomation.MultiTenant
 {
     /// <summary>
@@ -60,6 +62,7 @@ namespace TubieTools_Aspire.EnterpriseAutomation.MultiTenant
     /// </summary>
     public class TenantConfig
     {
+        [JsonPropertyName("tenant_id")]
         public string TenantId { get; set; }
         public string TenantName { get; set; }
         public string Description { get; set; }

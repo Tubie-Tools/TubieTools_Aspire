@@ -46,14 +46,4 @@ var enterpriseAutomation = builder.AddProject<Projects.TubieTools_Aspire_Enterpr
     .WithReference(publicApi)
     .WaitFor(publicApi);
 
-//test
-//test2
-
-
-builder.AddProject<Projects.TubieTools_Aspire_EnterpriseAutomation>("tubietools-aspire-enterpriseautomation");
-
-//test
-//test2
-
-
 builder.Build().Run();

@@ -1,9 +1,11 @@
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace TubieTools_Aspire.EnterpriseAutomation.MultiTenant
 {
+
     /// <summary>
     /// Interface for tenant service operations
     /// </summary>
@@ -29,10 +31,10 @@ namespace TubieTools_Aspire.EnterpriseAutomation.MultiTenant
         Task<TenantBillingRecord> GenerateBillingRecordAsync(string tenantId);
     }
 
-    /// <summary>
-    /// Implementation of tenant service
-    /// </summary>
-    public class TenantService : ITenantService
+/// <summary>
+/// Implementation of tenant service
+/// </summary>
+public class TenantService : ITenantService
     {
         private readonly ILogger<TenantService> _logger;
         private readonly Dictionary<string, TenantConfig> _tenants; // Replace with DB
@@ -46,7 +48,9 @@ namespace TubieTools_Aspire.EnterpriseAutomation.MultiTenant
         /// tenantConfig does not seem to be binding to the json file 7/30/2026. figure it out later. remember your training.
         /// </summary>
         /// <param name="logger"></param>
-        public TenantService(ILogger<TenantService> logger)
+        public TenantService(
+    ILogger<TenantService> logger,
+    IOptions<TenantConfigurationOptions> tenantOptions)
         {
             _logger = logger;
             _tenants = new Dictionary<string, TenantConfig>();
@@ -55,6 +59,24 @@ namespace TubieTools_Aspire.EnterpriseAutomation.MultiTenant
             _customAgents = new Dictionary<string, List<TenantCustomAgent>>();
             _teamMembers = new Dictionary<string, List<TenantTeamMember>>();
             _usageStats = new Dictionary<string, List<TenantUsage>>();
+
+            // Load tenants from configuration
+            if (tenantOptions?.Value?.Tenants != null)
+            {
+                foreach (var tenant in tenantOptions.Value.Tenants)
+                {
+                    _tenants[tenant.TenantId] = tenant;
+                }
+            }
+
+            // Load subscriptions from configuration
+            if (tenantOptions?.Value?.Subscriptions != null)
+            {
+                foreach (var subscription in tenantOptions.Value.Subscriptions)
+                {
+                    _subscriptions[subscription.SubscriptionId] = subscription;
+                }
+            }
         }
 
         public async Task<TenantConfig> GetTenantAsync(string tenantId)
