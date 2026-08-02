@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Resource Include="CosmosDbPowershellSetupScript.ps" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.6">

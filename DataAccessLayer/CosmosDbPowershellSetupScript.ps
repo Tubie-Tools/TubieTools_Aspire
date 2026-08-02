@@ -1,0 +1,62 @@
+﻿# PowerShell Script to create Cosmos DB containers
+# Requirements: Azure.Cosmos PowerShell module
+
+using System.Collections.Concurrent;
+using System.ComponentModel;
+
+param(
+    [Parameter(Mandatory =$true)]
+    [string]$ResourceGroupName,
+
+    [Parameter(Mandatory =$true)]
+    [string]$CosmosAccountName,
+
+    [Parameter(Mandatory =$true)]
+    [string]$DatabaseName = "TubieCosmos"
+)
+
+# Connect to Azure
+Connect - AzAccount
+
+# Get Cosmos DB account
+$cosmosAccount = Get - AzCosmosDBAccount - ResourceGroupName $ResourceGroupName - Name $CosmosAccountName
+
+# Create database
+$database = New-AzCosmosDBSqlDatabase `
+    -ResourceGroupName $ResourceGroupName `
+    -AccountName $CosmosAccountName `
+    -Name $DatabaseName
+
+Write-Host "Database created: $DatabaseName"
+
+# Array of containers to create
+$containers = @(
+    @{ Id = "Tenants"; PartitionKey = "/tenantId"; Throughput = 400 },
+    @{ Id = "Subscriptions"; PartitionKey = "/tenantId"; Throughput = 400 },
+    @{ Id = "Quotas"; PartitionKey = "/tenantId"; Throughput = 400 },
+    @{ Id = "CustomAgents"; PartitionKey = "/tenantId"; Throughput = 400 },
+    @{ Id = "TeamMembers"; PartitionKey = "/tenantId"; Throughput = 400 },
+    @{ Id = "UsageStats"; PartitionKey = "/tenantId"; Throughput = 400; Ttl = 7776000 },
+    @{ Id = "BillingRecords"; PartitionKey = "/tenantId"; Throughput = 400 }
+)
+
+# Create each container
+foreach ($container in $containers) {
+    $containerParams = @{
+        ResourceGroupName = $ResourceGroupName
+        AccountName = $CosmosAccountName
+        DatabaseName = $DatabaseName
+        Name = $container.Id
+        PartitionKeyPath = $container.PartitionKey
+        Throughput = $container.Throughput
+    }
+    
+    if ($container.Ttl) {
+        $containerParams.TtlInSeconds = $container.Ttl
+    }
+
+New - AzCosmosDBSqlContainer @containerParams
+    Write-Host "Container created: $($container.Id)"
+}
+
+Write - Host "Cosmos DB setup completed successfully!"

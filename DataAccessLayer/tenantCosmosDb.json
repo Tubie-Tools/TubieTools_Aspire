@@ -1,0 +1,146 @@
+﻿{
+  "cosmosDbSetup": {
+    "databaseName": "TubieCosmos",
+    "containers": [
+      {
+        "id": "Tenants",
+        "partitionKey": "/tenantId",
+        "throughput": 400,
+        "indexingPolicy": {
+          "indexingMode": "consistent",
+          "includedPaths": [
+            {
+              "path": "/*"
+            }
+          ],
+          "excludedPaths": [
+            {
+              "path": "/\"_etag\"/?"
+            }
+          ]
+        },
+        "uniqueKeyPolicy": {
+          "uniqueKeys": [
+            {
+              "paths": [ "/apiKey" ]
+            }
+          ]
+        },
+        "sampleDocument": {
+          "id": "tenant-001",
+          "tenantId": "tenant-001",
+          "tenantName": "Acme Corporation",
+          "description": "Enterprise customer",
+          "apiKey": "sk_live_abc123xyz",
+          "secretKey": "sk_secret_xyz789",
+          "currentTier": "Professional",
+          "isActive": true,
+          "createdDate": "2026-08-01T00:00:00Z",
+          "updatedDate": "2026-08-01T00:00:00Z"
+        }
+      },
+      {
+        "id": "Subscriptions",
+        "partitionKey": "/tenantId",
+        "throughput": 400,
+        "sampleDocument": {
+          "id": "sub-001",
+          "subscriptionId": "sub-001",
+          "tenantId": "tenant-001",
+          "tier": "Professional",
+          "status": "active",
+          "startDate": "2026-08-01T00:00:00Z",
+          "endDate": "2027-08-01T00:00:00Z",
+          "renewalDate": "2027-07-01T00:00:00Z",
+          "billingInterval": "monthly",
+          "autoRenew": true
+        }
+      },
+      {
+        "id": "Quotas",
+        "partitionKey": "/tenantId",
+        "throughput": 400,
+        "sampleDocument": {
+          "id": "quota-001",
+          "tenantId": "tenant-001",
+          "monthlyApiCallLimit": 10000,
+          "monthlyApiCallsUsed": 2500,
+          "dailyApiCallLimit": 500,
+          "dailyApiCallsUsed": 75,
+          "quotaExceeded": false,
+          "resetDate": "2026-09-01T00:00:00Z"
+        }
+      },
+      {
+        "id": "CustomAgents",
+        "partitionKey": "/tenantId",
+        "throughput": 400,
+        "sampleDocument": {
+          "id": "agent-001",
+          "agentId": "agent-001",
+          "tenantId": "tenant-001",
+          "agentName": "Support Bot",
+          "systemPrompt": "You are a helpful customer support agent...",
+          "assignedTools": [ "search_knowledge_base", "create_ticket", "escalate" ],
+          "preferredModel": "gpt-4",
+          "isActive": true,
+          "createdDate": "2026-08-01T00:00:00Z",
+          "updatedDate": "2026-08-01T00:00:00Z"
+        }
+      },
+      {
+        "id": "TeamMembers",
+        "partitionKey": "/tenantId",
+        "throughput": 400,
+        "uniqueKeyPolicy": {
+          "uniqueKeys": [
+            {
+              "paths": [ "/tenantId", "/email" ]
+            }
+          ]
+        },
+        "sampleDocument": {
+          "id": "member-001",
+          "memberId": "member-001",
+          "tenantId": "tenant-001",
+          "email": "john.doe@acmecorp.com",
+          "role": "admin",
+          "isActive": true,
+          "joinedDate": "2026-08-01T00:00:00Z"
+        }
+      },
+      {
+        "id": "UsageStats",
+        "partitionKey": "/tenantId",
+        "throughput": 400,
+        "ttl": 7776000,
+        "sampleDocument": {
+          "id": "usage-001",
+          "usageId": "usage-001",
+          "tenantId": "tenant-001",
+          "date": "2026-08-01T12:00:00Z",
+          "apiCallsCount": 150,
+          "tokensUsed": 45000,
+          "costInCents": 7500
+        }
+      },
+      {
+        "id": "BillingRecords",
+        "partitionKey": "/tenantId",
+        "throughput": 400,
+        "sampleDocument": {
+          "id": "billing-001",
+          "billingRecordId": "billing-001",
+          "tenantId": "tenant-001",
+          "billingPeriodStart": "2026-08-01T00:00:00Z",
+          "billingPeriodEnd": "2026-08-31T23:59:59Z",
+          "totalApiCalls": 4500,
+          "totalTokensUsed": 1350000,
+          "totalCostInCents": 225000,
+          "status": "pending",
+          "createdDate": "2026-09-01T00:00:00Z"
+        }
+      }
+    ]
+  }
+}
