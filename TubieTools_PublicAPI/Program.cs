@@ -3,6 +3,8 @@ using Microsoft.OpenApi;
 using TubieTools_PublicAPI.Middleware;
 using TubieTools_PublicAPI.Models;
 using TubieTools_PublicAPI.Services;
+using TubieTools_Aspire.Security.Extensions;
+using Microsoft.Extensions.Hosting;
 
 namespace TubieTools_PublicAPI
 {
@@ -19,12 +21,14 @@ namespace TubieTools_PublicAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddHttpContextAccessor();
-            // register okta authentication
-            builder.Services.Configure<OktaSettings>(builder.Configuration.GetSection("Okta"));
-            builder.Services.AddScoped<IOktaTokenIntrospectionService, OktaTokenIntrospectionService>();
-            // 1️⃣ Register IDistributedCache with in-memory implementation
+
+            // Add Entra ID authentication (replaces Okta)
+            builder.AddServiceDefaults();
+            builder.AddEntraIdAuthentication();
+
+            // Add distributed cache for token caching
             builder.Services.AddDistributedMemoryCache();
-            //builder.Services.AddStackExchangeRedisCache(options => ...);// For token caching
+            //builder.Services.AddStackExchangeRedisCache(options => ...);// For token caching in production
 
             builder.Services.AddSwaggerGen(c =>
             {
@@ -45,11 +49,7 @@ namespace TubieTools_PublicAPI
             SetDependencyInjectedTenant(builder);
 
             var app = builder.Build();
-            var oktaSettings = builder.Configuration.GetSection("Okta").Get<OktaSettings>();
-            if (oktaSettings != null && !string.IsNullOrEmpty(oktaSettings.Domain))
-            {
-                app.UseMiddleware<OktaAuthenticationMiddleware>();
-            }
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -58,9 +58,10 @@ namespace TubieTools_PublicAPI
             }
 
             app.UseHttpsRedirection();
-
+            app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseEntraIdAuthentication();
 
 
             app.MapControllers();

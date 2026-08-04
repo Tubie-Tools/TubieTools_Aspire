@@ -1,11 +1,15 @@
     using TubieTools_Aspire.Web;
 using TubieTools_Aspire.Web.Components;
 using TubieTools_Aspire.Web.Services;
+using TubieTools_Aspire.Security.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add service defaults & Aspire client integrations.
 builder.AddServiceDefaults();
+
+// Add Entra ID authentication (OIDC flow for interactive Blazor app)
+builder.AddEntraIdAuthentication();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -33,6 +37,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseAntiforgery();
 
 app.UseOutputCache();

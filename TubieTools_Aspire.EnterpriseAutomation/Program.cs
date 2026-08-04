@@ -12,16 +12,23 @@ using TubieTools_Aspire.EnterpriseAutomation.Azure;
 using TubieTools_Aspire.EnterpriseAutomation.AzureDevOps;
 using TubieTools_Aspire.EnterpriseAutomation.AIAgent;
 using TubieTools_Aspire.EnterpriseAutomation.MultiTenant;
+using TubieTools_Aspire.Security.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add service defaults
 builder.AddServiceDefaults();
 
+// Add Entra ID authentication and authorization
+builder.AddEntraIdAuthentication();
+
 // Add services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Add HTTP context accessor for services that need request context
+builder.Services.AddHttpContextAccessor();
 
 // Register Enterprise Automation Services
 builder.Services.AddScoped<IAzureAutomationService, AzureAutomationService>();
@@ -78,12 +85,19 @@ builder.Services.AddHttpClient<ServiceNowService>();
 builder.Services.AddHealthChecks()
     .AddCheck<AzureHealthCheck>("azure")
     .AddCheck<ServiceNowHealthCheck>("servicenow")
-    .AddCheck<KubernetesHealthCheck>("kubernetes");
+    .AddCheck<KubernetesHealthCheck>("kubernetes")
+    .AddCheck<TubieTools_Aspire.Security.Health.EntraIdHealthCheck>("entra-id");
 
 var app = builder.Build();
 
 // Add tenant resolver middleware
 app.UseTenantResolver();
+
+// Add Entra ID authentication middleware
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseEntraIdAuthentication();
 
 // Configure HTTP pipeline
 if (app.Environment.IsDevelopment())

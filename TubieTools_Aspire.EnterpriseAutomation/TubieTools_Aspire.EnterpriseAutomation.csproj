@@ -37,6 +37,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TubieTools_Aspire.ServiceDefaults\TubieTools_Aspire.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\TubieTools_Aspire.Security\TubieTools_Aspire.Security.csproj" />
   </ItemGroup>
 
 </Project>

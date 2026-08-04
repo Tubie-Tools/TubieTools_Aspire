@@ -6,19 +6,33 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 
 namespace TubieTools_Aspire.Tests.Mulitenant
 {
     [TestClass]
     public class TenantServiceTests
     {
-        private readonly Mock<ILogger<TenantService>> _mockLogger;
+        private readonly Mock<ILogger<TenantService>> _mockLogger; 
+        private readonly Mock<IOptions<TenantConfigurationOptions>> _mockTenantOptions;
         private readonly TenantService _tenantService;
 
         public TenantServiceTests()
         {
             _mockLogger = new Mock<ILogger<TenantService>>();
-            _tenantService = new TenantService(_mockLogger.Object);
+            _mockTenantOptions = new Mock<IOptions<TenantConfigurationOptions>>();
+            
+            // Setup the options mock to return a valid TenantConfigurationOptions object
+            _mockTenantOptions.Setup(x => x.Value).Returns(new TenantConfigurationOptions
+            {
+                // Add any required properties here based on TenantConfigurationOptions type
+                // For example:
+                // DefaultMonthlyApiCallLimit = 100,
+                // DefaultDailyApiCallLimit = 20,
+                // etc.
+            });
+            
+            _tenantService = new TenantService(_mockLogger.Object, _mockTenantOptions.Object);
         }
 
         #region Tenant CRUD Tests

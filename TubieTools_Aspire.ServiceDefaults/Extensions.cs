@@ -1,12 +1,20 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.ServiceDiscovery;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using TubieTools_Aspire.Security.Authorization;
+using TubieTools_Aspire.Security.Claims;
+using TubieTools_Aspire.Security.Configuration;
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -19,6 +27,70 @@ public static class Extensions
     private const string AlivenessEndpointPath = "/alive";
 
     //  add user service exteinsions here, for example:
+
+    /// <summary>
+    /// Add Entra ID (Azure AD) authentication and authorization services
+    /// </summary>
+    public static TBuilder AddEntraIdAuthentication<TBuilder>(this TBuilder builder) 
+        where TBuilder : IHostApplicationBuilder
+    {
+        var config = builder.Configuration;
+        var services = builder.Services;
+        var logger = services.BuildServiceProvider().GetRequiredService<ILogger<object>>();
+
+        // Load Entra ID configuration
+        var entraIdOptions = new EntraIdOptions();
+        var entraIdSection = config.GetSection(EntraIdOptions.SectionName);
+        entraIdSection.Bind(entraIdOptions);
+
+        // Validate required configuration
+        if (string.IsNullOrEmpty(entraIdOptions.TenantId) || string.IsNullOrEmpty(entraIdOptions.ClientId))
+        {
+            logger.LogWarning("Entra ID configuration is incomplete. Please configure {SectionName} section in appsettings.json", 
+                EntraIdOptions.SectionName);
+        }
+
+        // Build authority URLs
+        entraIdOptions.Authority ??= $"https://login.microsoftonline.com/{entraIdOptions.TenantId}/v2.0";
+        entraIdOptions.Scope ??= $"api://{entraIdOptions.ClientId}/.default";
+
+        // Register configuration
+        services.Configure<EntraIdOptions>(entraIdSection);
+        services.AddSingleton(entraIdOptions);
+
+        // Register security services
+        services.AddScoped<IEntraIdClaimsTransformer, EntraIdClaimsTransformer>();
+        services.AddScoped<IAuthorizationService, AuthorizationService>();
+
+        // Add authentication
+        services.AddAuthentication(options =>
+        {
+            options.DefaultScheme = "MultiScheme";
+            options.DefaultChallengeScheme = "MultiScheme";
+        })
+        .AddJwtBearer("Bearer", options =>
+        {
+            options.Authority = entraIdOptions.Authority;
+            options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+            {
+                ValidateIssuer = entraIdOptions.TokenValidation.ValidateIssuer,
+                ValidIssuer = entraIdOptions.TokenValidation.Issuer ?? entraIdOptions.Authority,
+                ValidateAudience = entraIdOptions.TokenValidation.ValidateAudience,
+                ValidAudience = entraIdOptions.TokenValidation.Audience ?? entraIdOptions.ClientId,
+                ValidateLifetime = entraIdOptions.TokenValidation.ValidateLifetime,
+                ClockSkew = TimeSpan.FromSeconds(entraIdOptions.TokenValidation.ClockSkewSeconds)
+            };
+            options.SaveToken = true;
+        })
+        .AddCookie("Interactive");
+
+        // Add policy-based authorization
+        services.AddAuthorization();
+
+        logger.LogInformation("Entra ID authentication configured for tenant {TenantId}", entraIdOptions.TenantId);
+
+        return builder;
+    }
 
     public static TBuilder AddServiceDefaults<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
@@ -104,6 +176,17 @@ public static class Extensions
         builder.Services.AddHealthChecks()
             // Add a default liveness check to ensure app is responsive
             .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
+
+        return builder;
+    }
+
+    /// <summary>
+    /// Add Entra ID health check to validate token endpoint accessibility
+    /// </summary>
+    public static TBuilder AddEntraIdHealthCheck<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
+    {
+        builder.Services.AddHealthChecks()
+            .AddCheck<TubieTools_Aspire.Security.Health.EntraIdHealthCheck>("entra-id");
 
         return builder;
     }
