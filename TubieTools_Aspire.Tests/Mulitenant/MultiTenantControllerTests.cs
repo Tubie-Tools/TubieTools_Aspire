@@ -42,9 +42,8 @@ namespace TubieTools_Aspire.Tests.Mulitenant
         public async Task RegisterTenant_WithValidData_ReturnsCreatedAtAction()
         {
             // Arrange
-            var request = new TenantConfig
+            var registerRequest = new RegisterTenantRequest
             {
-                TenantId = "new-tenant-001",
                 TenantName = "New Tenant Corp",
                 Description = "A new customer"
             };
@@ -56,44 +55,38 @@ namespace TubieTools_Aspire.Tests.Mulitenant
                 Description = "A new customer",
                 IsActive = true,
                 ApiKey = "sk_1234567890",
-                SecretKey = "secret_0987654321",
                 CurrentTier = SubscriptionTier.Free
-            };
-
-            var registerRequest = new RegisterTenantRequest
-            {
-                TenantName = request.TenantName,
-                Description = request.Description
             };
 
             _mockTenantService.Setup(ts => ts.CreateTenantAsync(It.IsAny<TenantConfig>()))
                 .ReturnsAsync(createdTenant);
 
             // Act
-            var result = await _controller.RegisterTenant(registerRequest);
+            var result = await _controller.RegisterTenant(registerRequest) as OkObjectResult;
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            Assert.IsNotNull(result);
+            Assert.AreEqual(200, result.StatusCode);
+            Assert.IsNotNull(result.Value);
+            _mockTenantService.Verify(ts => ts.CreateTenantAsync(It.IsAny<TenantConfig>()), Times.Once);
         }
 
         [TestMethod]
-        public async Task RegisterTenant_WithMissingTenantId_ReturnsBadRequest()
+        public async Task RegisterTenant_WithMissingTenantName_ReturnsBadRequest()
         {
             // Arrange
             var registerRequest = new RegisterTenantRequest
             {
-                TenantName = "Invalid Tenant",
+                TenantName = null,
                 Description = null
             };
 
-            _mockTenantService.Setup(ts => ts.CreateTenantAsync(It.IsAny<TenantConfig>()))
-                .ThrowsAsync(new ArgumentException("TenantId is required"));
-
             // Act
-            var result = await _controller.RegisterTenant(registerRequest);
+            var result = await _controller.RegisterTenant(registerRequest) as BadRequestObjectResult;
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            Assert.IsNotNull(result);
+            Assert.AreEqual(400, result.StatusCode);
         }
 
         #endregion
@@ -133,10 +126,11 @@ namespace TubieTools_Aspire.Tests.Mulitenant
                 .ReturnsAsync(tierConfig);
 
             // Act
-            var result = await _controller.GetTenant("get-tenant-001");
+            var result = await _controller.GetTenant("get-tenant-001") as OkObjectResult;
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            Assert.IsNotNull(result);
+            Assert.AreEqual(200, result.StatusCode);
         }
 
         [TestMethod]
@@ -147,10 +141,11 @@ namespace TubieTools_Aspire.Tests.Mulitenant
                 .ReturnsAsync((TenantConfig)null);
 
             // Act
-            var result = await _controller.GetTenant("non-existent");
+            var result = await _controller.GetTenant("non-existent") as NotFoundResult;
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(NotFoundResult));
+            Assert.IsNotNull(result);
+            Assert.AreEqual(404, result.StatusCode);
         }
 
         #endregion
@@ -161,25 +156,41 @@ namespace TubieTools_Aspire.Tests.Mulitenant
         public async Task UpgradeTier_WithValidData_ReturnsOkResult()
         {
             // Arrange
+            var tenantId = "upgrade-tenant-001";
             var upgradeRequest = new UpgradeTierRequest { NewTier = SubscriptionTier.Professional };
 
-            _mockTenantService.Setup(ts => ts.GetTenantAsync("upgrade-tenant-001"))
-                .ReturnsAsync(new TenantConfig { TenantId = "upgrade-tenant-001" });
+            var existingTenant = new TenantConfig
+            {
+                TenantId = tenantId,
+                CurrentTier = SubscriptionTier.Starter
+            };
+
+            var existingSubscription = new TenantSubscription
+            {
+                TenantId = tenantId,
+                Tier = SubscriptionTier.Starter
+            };
+
+            _mockTenantService.Setup(ts => ts.GetTenantAsync(tenantId))
+                .ReturnsAsync(existingTenant);
+
+            _mockTenantService.Setup(ts => ts.GetSubscriptionAsync(tenantId))
+                .ReturnsAsync(existingSubscription);
 
             _mockTenantService.Setup(ts => ts.UpdateTenantAsync(It.IsAny<TenantConfig>()))
                 .ReturnsAsync(true);
-
-            _mockTenantService.Setup(ts => ts.GetSubscriptionAsync("upgrade-tenant-001"))
-                .ReturnsAsync(new TenantSubscription { TenantId = "upgrade-tenant-001" });
 
             _mockTenantService.Setup(ts => ts.UpdateSubscriptionAsync(It.IsAny<TenantSubscription>()))
                 .ReturnsAsync(true);
 
             // Act
-            var result = await _controller.UpgradeTier("upgrade-tenant-001", upgradeRequest);
+            var result = await _controller.UpgradeTier(tenantId, upgradeRequest) as OkObjectResult;
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            Assert.IsNotNull(result);
+            Assert.AreEqual(200, result.StatusCode);
+            _mockTenantService.Verify(ts => ts.UpdateTenantAsync(It.IsAny<TenantConfig>()), Times.Once);
+            _mockTenantService.Verify(ts => ts.UpdateSubscriptionAsync(It.IsAny<TenantSubscription>()), Times.Once);
         }
 
         [TestMethod]
@@ -192,10 +203,11 @@ namespace TubieTools_Aspire.Tests.Mulitenant
                 .ReturnsAsync((TenantConfig)null);
 
             // Act
-            var result = await _controller.UpgradeTier("non-existent", upgradeRequest);
+            var result = await _controller.UpgradeTier("non-existent", upgradeRequest) as NotFoundResult;
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(NotFoundResult));
+            Assert.IsNotNull(result);
+            Assert.AreEqual(404, result.StatusCode);
         }
 
         #endregion
@@ -206,48 +218,55 @@ namespace TubieTools_Aspire.Tests.Mulitenant
         public async Task AskAgent_WithValidRequest_ReturnsOkResult()
         {
             // Arrange
+            var tenantId = "test-tenant";
             var agentRequest = new AskAgentRequest { Message = "Test request" };
 
-            _mockMultiTenantAgent.Setup(mta => mta.ProcessRequestAsync("test-tenant", agentRequest.Message))
-                .ReturnsAsync(new AgentResponse { Success = true, Message = "Success" });
+            _mockMultiTenantAgent.Setup(mta => mta.ProcessRequestAsync(tenantId, agentRequest.Message))
+                .ReturnsAsync(new AgentResponse { Success = true, Message = "Success", Data = new { result = "test result" } });
 
             // Act
-            var result = await _controller.AskAgent("test-tenant", agentRequest);
+            var result = await _controller.AskAgent(tenantId, agentRequest) as OkObjectResult;
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            Assert.IsNotNull(result);
+            Assert.AreEqual(200, result.StatusCode);
+            _mockMultiTenantAgent.Verify(mta => mta.ProcessRequestAsync(tenantId, agentRequest.Message), Times.Once);
         }
 
         [TestMethod]
-        public async Task AskAgent_WithQuotaExceeded_ReturnsForbidden()
+        public async Task AskAgent_WithQuotaExceeded_ReturnsForbiddenResult()
         {
             // Arrange
+            var tenantId = "quota-tenant";
             var agentRequest = new AskAgentRequest { Message = "Test request" };
 
-            _mockMultiTenantAgent.Setup(mta => mta.ProcessRequestAsync("quota-tenant", agentRequest.Message))
+            _mockMultiTenantAgent.Setup(mta => mta.ProcessRequestAsync(tenantId, agentRequest.Message))
                 .ReturnsAsync(new AgentResponse { Success = false, Message = "Quota exceeded" });
 
             // Act
-            var result = await _controller.AskAgent("quota-tenant", agentRequest);
+            var result = await _controller.AskAgent(tenantId, agentRequest) as ObjectResult;
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            Assert.IsNotNull(result);
+            Assert.AreEqual(403, result.StatusCode); // Forbidden
         }
 
         [TestMethod]
-        public async Task AskAgent_WithAccessDenied_ReturnsForbidden()
+        public async Task AskAgent_WithAccessDenied_ReturnsForbiddenResult()
         {
             // Arrange
+            var tenantId = "free-tenant";
             var agentRequest = new AskAgentRequest { Message = "Test request" };
 
-            _mockMultiTenantAgent.Setup(mta => mta.ProcessRequestAsync("free-tenant", agentRequest.Message))
+            _mockMultiTenantAgent.Setup(mta => mta.ProcessRequestAsync(tenantId, agentRequest.Message))
                 .ReturnsAsync(new AgentResponse { Success = false, Message = "Access denied" });
 
             // Act
-            var result = await _controller.AskAgent("free-tenant", agentRequest);
+            var result = await _controller.AskAgent(tenantId, agentRequest) as ObjectResult;
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            Assert.IsNotNull(result);
+            Assert.AreEqual(403, result.StatusCode); // Forbidden
         }
 
         #endregion
@@ -270,10 +289,12 @@ namespace TubieTools_Aspire.Tests.Mulitenant
                 .ReturnsAsync(subscription);
 
             // Act
-            var result = await _controller.GetSubscription("sub-test-001");
+            var result = await _controller.GetSubscription("sub-test-001") as OkObjectResult;
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            Assert.IsNotNull(result);
+            Assert.AreEqual(200, result.StatusCode);
+            Assert.IsNotNull(result.Value);
         }
 
         [TestMethod]
@@ -284,10 +305,11 @@ namespace TubieTools_Aspire.Tests.Mulitenant
                 .ReturnsAsync((TenantSubscription)null);
 
             // Act
-            var result = await _controller.GetSubscription("no-sub-tenant");
+            var result = await _controller.GetSubscription("no-sub-tenant") as NotFoundResult;
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(NotFoundResult));
+            Assert.IsNotNull(result);
+            Assert.AreEqual(404, result.StatusCode);
         }
 
         #endregion
@@ -313,14 +335,42 @@ namespace TubieTools_Aspire.Tests.Mulitenant
                 IsActive = true
             };
 
+            _mockTenantService.Setup(ts => ts.GetTenantAsync(tenantId))
+                .ReturnsAsync(new TenantConfig { TenantId = tenantId });
+
             _mockTenantService.Setup(ts => ts.CreateAgentAsync(It.IsAny<TenantCustomAgent>()))
                 .ReturnsAsync(createdAgent);
 
             // Act
-            var result = await _controller.CreateCustomAgent(tenantId, agentRequest);
+            var result = await _controller.CreateCustomAgent(tenantId, agentRequest) as CreatedAtActionResult;
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            Assert.IsNotNull(result);
+            Assert.AreEqual(201, result.StatusCode);
+            Assert.AreEqual("GetCustomAgent", result.ActionName);
+            _mockTenantService.Verify(ts => ts.CreateAgentAsync(It.IsAny<TenantCustomAgent>()), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task CreateCustomAgent_WithInvalidTenant_ReturnsNotFound()
+        {
+            // Arrange
+            var tenantId = "invalid-tenant";
+            var agentRequest = new CreateAgentRequest
+            {
+                AgentName = "Incident Handler",
+                SystemPrompt = "You are an incident management expert"
+            };
+
+            _mockTenantService.Setup(ts => ts.GetTenantAsync(tenantId))
+                .ReturnsAsync((TenantConfig)null);
+
+            // Act
+            var result = await _controller.CreateCustomAgent(tenantId, agentRequest) as NotFoundResult;
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(404, result.StatusCode);
         }
 
         #endregion
@@ -338,10 +388,16 @@ namespace TubieTools_Aspire.Tests.Mulitenant
                 Role = "admin"
             };
 
-            _mockTenantService.Setup(ts => ts.GetTenantAsync(tenantId))
-                .ReturnsAsync(new TenantConfig { TenantId = tenantId, CurrentTier = SubscriptionTier.Professional });
+            var tenantConfig = new TenantConfig
+            {
+                TenantId = tenantId,
+                CurrentTier = SubscriptionTier.Professional
+            };
 
-            _mockSubscriptionManager.Setup(sm => sm.GetTierConfigAsync(It.IsAny<SubscriptionTier>()))
+            _mockTenantService.Setup(ts => ts.GetTenantAsync(tenantId))
+                .ReturnsAsync(tenantConfig);
+
+            _mockSubscriptionManager.Setup(sm => sm.GetTierConfigAsync(SubscriptionTier.Professional))
                 .ReturnsAsync(new SubscriptionTierConfig { MaxTeamMembers = 10 });
 
             _mockTenantService.Setup(ts => ts.GetTeamMembersAsync(tenantId))
@@ -351,10 +407,52 @@ namespace TubieTools_Aspire.Tests.Mulitenant
                 .ReturnsAsync(true);
 
             // Act
-            var result = await _controller.AddTeamMember(tenantId, memberRequest);
+            var result = await _controller.AddTeamMember(tenantId, memberRequest) as OkObjectResult;
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+            Assert.IsNotNull(result);
+            Assert.AreEqual(200, result.StatusCode);
+            _mockTenantService.Verify(ts => ts.AddTeamMemberAsync(It.IsAny<TenantTeamMember>()), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task AddTeamMember_WithMaxMembersExceeded_ReturnsBadRequest()
+        {
+            // Arrange
+            var tenantId = "full-team-tenant";
+            var memberRequest = new AddTeamMemberRequest
+            {
+                Email = "new.member@example.com",
+                Role = "member"
+            };
+
+            var tenantConfig = new TenantConfig
+            {
+                TenantId = tenantId,
+                CurrentTier = SubscriptionTier.Free
+            };
+
+            _mockTenantService.Setup(ts => ts.GetTenantAsync(tenantId))
+                .ReturnsAsync(tenantConfig);
+
+            _mockSubscriptionManager.Setup(sm => sm.GetTierConfigAsync(SubscriptionTier.Free))
+                .ReturnsAsync(new SubscriptionTierConfig { MaxTeamMembers = 1 });
+
+            var existingMembers = new List<TenantTeamMember>
+            {
+                new TenantTeamMember { Email = "existing@example.com", TenantId = tenantId }
+            };
+
+            _mockTenantService.Setup(ts => ts.GetTeamMembersAsync(tenantId))
+                .ReturnsAsync(existingMembers);
+
+            // Act
+            var result = await _controller.AddTeamMember(tenantId, memberRequest) as BadRequestObjectResult;
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(400, result.StatusCode);
+            _mockTenantService.Verify(ts => ts.AddTeamMemberAsync(It.IsAny<TenantTeamMember>()), Times.Never);
         }
 
         #endregion

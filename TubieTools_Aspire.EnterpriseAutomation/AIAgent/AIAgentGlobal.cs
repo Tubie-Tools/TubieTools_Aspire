@@ -41,6 +41,7 @@ namespace TubieTools_Aspire.EnterpriseAutomation.AIAgent
         public object Result { get; set; }
         public List<string> ExecutedTools { get; set; } = new();
         public List<AgentMessage> ConversationHistory { get; set; } = new();
+        public object Data { get; set; }
     }
 
     /// <summary>
