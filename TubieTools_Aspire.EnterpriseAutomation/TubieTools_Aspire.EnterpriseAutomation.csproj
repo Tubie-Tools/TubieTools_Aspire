@@ -11,6 +11,7 @@
     <!-- ASP.NET Core - Core dependencies only -->
     <PackageReference Include="Azure.ResourceManager.Automation" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.6" />
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="20.256.2" />
     <PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="20.256.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.6" />
@@ -36,6 +37,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
+    <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj" />
     <ProjectReference Include="..\TubieTools_Aspire.ServiceDefaults\TubieTools_Aspire.ServiceDefaults.csproj" />
     <ProjectReference Include="..\TubieTools_Aspire.Security\TubieTools_Aspire.Security.csproj" />
   </ItemGroup>

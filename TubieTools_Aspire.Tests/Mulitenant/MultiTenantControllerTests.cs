@@ -8,6 +8,7 @@ using TubieTools_Aspire.EnterpriseAutomation.AIAgent;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace TubieTools_Aspire.Tests.Mulitenant
 {
@@ -366,11 +367,11 @@ namespace TubieTools_Aspire.Tests.Mulitenant
                 .ReturnsAsync((TenantConfig)null);
 
             // Act
-            var result = await _controller.CreateCustomAgent(tenantId, agentRequest) as NotFoundResult;
+            var result = await _controller.CreateCustomAgent(tenantId, agentRequest);
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(404, result.StatusCode);
+            Assert.AreEqual(400, (result as BadRequestResult)?.StatusCode);
         }
 
         #endregion

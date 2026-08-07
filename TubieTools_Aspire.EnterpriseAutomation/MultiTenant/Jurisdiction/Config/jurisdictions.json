@@ -1,0 +1,48 @@
+﻿{
+  "jurisdictions": [
+    {
+      "jurisdictionId": "juris-ca",
+      "jurisdictionName": "California",
+      "stateCode": "CA",
+      "description": "State of California jurisdiction with CCPA compliance",
+      "isActive": true,
+      "databaseSchema": "dbo_ca",
+      "connectionStringName": "FoundryConnection",
+      "regul ationsJson": "{\"stateCode\":\"CA\",\"dataRetentionPolicies\":{\"minRetentionDays\":90,\"maxRetentionDays\":2555,\"requiresEncryption\":true},\"complianceRequirements\":{\"ccpa\":true,\"gdprEquivalent\":true,\"requiresAuditLog\":true,\"breachNotificationDays\":30},\"securityStandards\":{\"minimumTlsVersion\":\"1.3\",\"requiresMfa\":false,\"passwordMinLength\":12,\"requiresSpecialCharacters\":true},\"restrictedFeatures\":{\"dataExport\":false,\"bulkDataTransfer\":false,\"publicSharing\":true}}",
+      "featuresJson": "{\"stateCode\":\"CA\",\"enabledFeatures\":[\"standard_ai_agent\",\"advanced_analytics\",\"compliance_reporting\",\"audit_logging\",\"data_residency\"],\"featureConfiguration\":{\"dataResidency\":{\"required\":true,\"allowedRegions\":[\"us-west-1\",\"us-west-2\"]},\"auditRetention\":{\"minimumDays\":365}},\"maxTeamMembers\":100,\"maxApiKeys\":20,\"requiresMfa\":false,\"requiresDataEncryption\":true}"
+    },
+    {
+      "jurisdictionId": "juris-tx",
+      "jurisdictionName": "Texas",
+      "stateCode": "TX",
+      "description": "State of Texas jurisdiction",
+      "isActive": true,
+      "databaseSchema": "dbo_tx",
+      "connectionStringName": "FoundryConnection",
+      "regulationsJson": "{\"stateCode\":\"TX\",\"dataRetentionPolicies\":{\"minRetentionDays\":60,\"maxRetentionDays\":1825,\"requiresEncryption\":true},\"complianceRequirements\":{\"ccpa\":false,\"gdprEquivalent\":false,\"requiresAuditLog\":true,\"breachNotificationDays\":60},\"securityStandards\":{\"minimumTlsVersion\":\"1.2\",\"requiresMfa\":false,\"passwordMinLength\":10,\"requiresSpecialCharacters\":false},\"restrictedFeatures\":{\"dataExport\":false,\"bulkDataTransfer\":true,\"publicSharing\":true}}",
+      "featuresJson": "{\"stateCode\":\"TX\",\"enabledFeatures\":[\"standard_ai_agent\",\"analytics\",\"audit_logging\"],\"featureConfiguration\":{\"dataResidency\":{\"required\":false,\"allowedRegions\":[]}},\"maxTeamMembers\":50,\"maxApiKeys\":10,\"requiresMfa\":false,\"requiresDataEncryption\":true}"
+    },
+    {
+      "jurisdictionId": "juris-ny",
+      "jurisdictionName": "New York",
+      "stateCode": "NY",
+      "description": "State of New York jurisdiction with BitLaw compliance",
+      "isActive": true,
+      "databaseSchema": "dbo_ny",
+      "connectionStringName": "FoundryConnection",
+      "regulationsJson": "{\"stateCode\":\"NY\",\"dataRetentionPolicies\":{\"minRetentionDays\":180,\"maxRetentionDays\":3650,\"requiresEncryption\":true},\"complianceRequirements\":{\"ccpa\":false,\"gdprEquivalent\":true,\"requiresAuditLog\":true,\"breachNotificationDays\":30,\"bitlawCompliance\":true},\"securityStandards\":{\"minimumTlsVersion\":\"1.3\",\"requiresMfa\":true,\"passwordMinLength\":14,\"requiresSpecialCharacters\":true},\"restrictedFeatures\":{\"dataExport\":false,\"bulkDataTransfer\":false,\"publicSharing\":false}}",
+      "featuresJson": "{\"stateCode\":\"NY\",\"enabledFeatures\":[\"standard_ai_agent\",\"advanced_analytics\",\"compliance_reporting\",\"audit_logging\",\"data_residency\",\"encryption_at_rest\"],\"featureConfiguration\":{\"dataResidency\":{\"required\":true,\"allowedRegions\":[\"us-east-1\"]},\"encryptionAtRest\":{\"algorithm\":\"AES-256\",\"keyRotationDays\":90}},\"maxTeamMembers\":150,\"maxApiKeys\":25,\"requiresMfa\":true,\"requiresDataEncryption\":true}"
+    },
+    {
+      "jurisdictionId": "juris-wa",
+      "jurisdictionName": "Washington",
+      "stateCode": "WA",
+      "description": "State of Washington jurisdiction",
+      "isActive": true,
+      "databaseSchema": "dbo_wa",
+      "connectionStringName": "FoundryConnection",
+      "regulationsJson": "{\"stateCode\":\"WA\",\"dataRetentionPolicies\":{\"minRetentionDays\":120,\"maxRetentionDays\":2920,\"requiresEncryption\":true},\"complianceRequirements\":{\"ccpa\":false,\"gdprEquivalent\":false,\"requiresAuditLog\":true,\"breachNotificationDays\":45},\"securityStandards\":{\"minimumTlsVersion\":\"1.2\",\"requiresMfa\":false,\"passwordMinLength\":11,\"requiresSpecialCharacters\":true},\"restrictedFeatures\":{\"dataExport\":false,\"bulkDataTransfer\":false,\"publicSharing\":true}}",
+      "featuresJson": "{\"stateCode\":\"WA\",\"enabledFeatures\":[\"standard_ai_agent\",\"advanced_analytics\",\"audit_logging\"],\"featureConfiguration\":{\"dataResidency\":{\"required\":false,\"allowedRegions\":[]}},\"maxTeamMembers\":75,\"maxApiKeys\":15,\"requiresMfa\":false,\"requiresDataEncryption\":true}"
+    }
+  ]
+}

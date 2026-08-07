@@ -1,17 +1,18 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TubieTools_Aspire.EnterpriseAutomation.Security;
+using TubieTools_Aspire.EnterpriseAutomation.AIAgent;
+using TubieTools_Aspire.EnterpriseAutomation.Azure;
+using TubieTools_Aspire.EnterpriseAutomation.AzureDevOps;
+using TubieTools_Aspire.EnterpriseAutomation.Extensions;
 using TubieTools_Aspire.EnterpriseAutomation.Health;
 using TubieTools_Aspire.EnterpriseAutomation.KubernetesGlobal;
+using TubieTools_Aspire.EnterpriseAutomation.MCP;
+using TubieTools_Aspire.EnterpriseAutomation.MultiTenant;
+using TubieTools_Aspire.EnterpriseAutomation.Security;
 using TubieTools_Aspire.EnterpriseAutomation.ServiceNow;
 using TubieTools_Aspire.EnterpriseAutomation.ServiceNow.Tools;
 using TubieTools_Aspire.EnterpriseAutomation.Terraform;
-using TubieTools_Aspire.EnterpriseAutomation.MCP;
-using TubieTools_Aspire.EnterpriseAutomation.Azure;
-using TubieTools_Aspire.EnterpriseAutomation.AzureDevOps;
-using TubieTools_Aspire.EnterpriseAutomation.AIAgent;
-using TubieTools_Aspire.EnterpriseAutomation.MultiTenant;
 using TubieTools_Aspire.Security.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,6 +45,9 @@ builder.Services.AddScoped<ICreateIncidentTool, CreateIncidentTool>();
 builder.Services.AddScoped<ISearchIncidentTool, SearchIncidentTool>();
 builder.Services.AddScoped<ICloseIncidentTool, CloseIncidentTool>();
 builder.Services.AddScoped<IServiceNowToolsFactory, ServiceNowToolsFactory>();
+
+// Add to your Program.cs/Startup
+builder.Services.AddJurisdictionServices(builder.Configuration);
 
 // Register AI Agent Services
 var chatGPTConfig = new ChatGPTAgentConfig

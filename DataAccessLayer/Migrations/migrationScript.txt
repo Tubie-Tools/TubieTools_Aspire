@@ -1,0 +1,3 @@
+﻿cd C:\Users\xeque\source\repos\TubieTools_Aspire
+dotnet ef migrations add AddJurisdictionSupport -p TubieTools_Aspire.EnterpriseAutomation -s TubieTools_Aspire.AppHost
+dotnet ef database update -p TubieTools_Aspire.EnterpriseAutomation -s TubieTools_Aspire.AppHost

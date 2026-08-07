@@ -1,0 +1,16 @@
+﻿// Add this to your Program.cs after building the app
+
+using TubieTools_Aspire.EnterpriseAutomation.Seeds;
+using TubieTools_Aspire.EnterpriseAutomation.MultiTenant;
+
+var app = builder.Build();
+
+// Seed jurisdictions
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<FoundryDbContext>();
+    await context.Database.MigrateAsync();
+    await JurisdictionSeeder.SeedJurisdictionsAsync(context);
+}
+
+await app.RunAsync();

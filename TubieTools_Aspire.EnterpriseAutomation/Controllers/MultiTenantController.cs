@@ -1,3 +1,4 @@
+﻿using TubieTools_Aspire.EnterpriseAutomation.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TubieTools_Aspire.EnterpriseAutomation.MultiTenant;
@@ -136,17 +137,50 @@ namespace TubieTools_Aspire.EnterpriseAutomation.Controllers
         /// <summary>
         /// Send request to AI agent for tenant
         /// </summary>
-        [HttpPost("{tenantId}/agent/ask")]
+        /// <summary>
+        /// Send request to AI agent for tenant
+        /// </summary>
+        /// <summary>
+        /// Send request to AI agent for tenant
+        /// </summary>
+                [HttpPost("{tenantId}/agent/ask")]
         public async Task<IActionResult> AskAgent(string tenantId, [FromBody] AskAgentRequest request)
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(tenantId))
+                    return BadRequest(new { error = "TenantId is required" });
+
+                if (request == null || string.IsNullOrWhiteSpace(request.Message))
+                    return BadRequest(new { error = "Message is required" });
+
                 var response = await _multiTenantAgent.ProcessRequestAsync(tenantId, request.Message);
+
+                if (response == null)
+                    return StatusCode(500, new { error = "Failed to process request" });
+
+                if (!response.Success)
+                {
+                    if (this.IsAccessDenialResponse(response.Message))
+                    {
+                        _logger.LogWarning("Access denied for tenant {TenantId}: {Message}", tenantId, response.Message);
+                        return this.HandleAccessDenial(response.Message ?? "Access denied");
+                    }
+
+                    return BadRequest(new { error = response.Message ?? "Request processing failed" });
+                }
+
+                _logger.LogInformation("Agent request processed successfully for tenant {TenantId}", tenantId);
                 return Ok(response);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogWarning(ex, "Unauthorized access for tenant {TenantId}", tenantId);
+                return this.HandleUnauthorizedAccess("Unauthorized access");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error processing agent request");
+                _logger.LogError(ex, "Error processing agent request for tenant {TenantId}", tenantId);
                 return StatusCode(500, new { error = ex.Message });
             }
         }
@@ -332,3 +366,5 @@ namespace TubieTools_Aspire.EnterpriseAutomation.Controllers
         public string Role { get; set; }
     }
 }
+
+
