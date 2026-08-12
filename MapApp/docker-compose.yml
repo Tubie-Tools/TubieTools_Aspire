@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # Backend API
+  mapapp-api:
+    build:
+      context: ./Backend/MapApp.API
+      dockerfile: Dockerfile
+    container_name: mapapp-api
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5000
+    networks:
+      - mapapp-network
+    depends_on:
+      - postgres
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend Application
+  mapapp-frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: mapapp-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://mapapp-api:5000/api
+    networks:
+      - mapapp-network
+    depends_on:
+      - mapapp-api
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # PostgreSQL Database (optional)
+  postgres:
+    image: postgres:16-alpine
+    container_name: mapapp-postgres
+    environment:
+      POSTGRES_DB: mapappdb
+      POSTGRES_USER: mapapp_user
+      POSTGRES_PASSWORD: mapapp_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - mapapp-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mapapp_user -d mapappdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # OSRM Routing Engine (optional)
+  osrm:
+    image: osrm/osrm-backend:latest
+    container_name: mapapp-osrm
+    ports:
+      - "5432:5000"
+    volumes:
+      - ./osrm-data:/data
+    networks:
+      - mapapp-network
+    environment:
+      - OSRM_ALGORITHM=CH
+
+volumes:
+  postgres_data:
+
+networks:
+  mapapp-network:
+    driver: bridge

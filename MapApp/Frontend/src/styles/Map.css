@@ -1,0 +1,78 @@
+/* Map.css - Styles for map component */
+
+.map-container {
+  width: 100%;
+  padding: 0;
+}
+
+.leaflet-container {
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.leaflet-popup-content {
+  margin: 8px 12px;
+  font-size: 12px;
+  color: #333;
+}
+
+.leaflet-popup-content h4 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1890ff;
+}
+
+.leaflet-popup-content p {
+  margin: 4px 0;
+  font-size: 12px;
+}
+
+.leaflet-popup-close-button {
+  cursor: pointer;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .leaflet-container {
+    height: 400px !important;
+  }
+
+  .map-container {
+    padding: 12px;
+  }
+}
+
+/* Animation for route lines */
+@keyframes dash {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.leaflet-interactive {
+  transition: all 0.3s ease;
+}
+
+.leaflet-interactive:hover {
+  opacity: 0.8;
+}
+
+/* Statistics cards */
+.ant-statistic {
+  text-align: left;
+}
+
+/* Tab styles */
+.ant-tabs-nav {
+  margin-bottom: 16px;
+}
+
+.ant-tabs-tab {
+  padding: 12px 24px;
+}

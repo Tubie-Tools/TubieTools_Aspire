@@ -1,0 +1,104 @@
+# MapApp - .gitignore
+
+# Backend
+## Rider IDE
+.idea/
+*.sln.iml
+
+## Visual Studio
+.vs/
+bin/
+obj/
+*.user
+*.userprefs
+*.VC.db
+*.suo
+
+## NuGet
+packages/
+.nuget/
+
+## Build results
+x86/
+x64/
+Debug/
+Release/
+build/
+dist/
+
+## Logs
+logs/
+*.log
+*.nlog
+
+# Frontend
+## Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+## Production build
+/build
+/dist
+
+## Testing
+/coverage
+.nyc_output
+
+## IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+## Environment variables
+.env
+.env.local
+.env.*.local
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# OS
+.DS_Store
+Thumbs.db
+.AppleDouble
+.LSOverride
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+.directory
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+*.mdf
+*.ldf
+
+# Logs
+logs/
+*.log
+
+# OS specific
+.vscode/launch.json
+.vscode/settings.json
+
+# API Keys and secrets
+secrets.json
+appsettings.Production.json
+.env.production
+
+# IDE
+*.sublime-project
+*.sublime-workspace
+
+# Package lock files (optional, for reproducibility keep these)
+# package-lock.json
+# yarn.lock
