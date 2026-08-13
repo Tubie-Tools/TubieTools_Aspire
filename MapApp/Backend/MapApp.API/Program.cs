@@ -28,7 +28,7 @@ namespace MapApp.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                options.SwaggerDoc("v1", new Microsoft.OpenApi.OpenApiInfo
                 {
                     Title = "Map Application API",
                     Version = "v1",
