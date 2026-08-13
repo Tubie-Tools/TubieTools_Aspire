@@ -55,7 +55,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TubieTools_Aspire.Security"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TubieTools_Foundry_Extensions", "TubieTools_Foundry_Extensions\TubieTools_Foundry_Extensions.csproj", "{0065B339-A3D9-4247-BAEC-D21F9E8C8FE8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapApp.API", "MapApp\Backend\MapApp.API\MapApp.API.csproj", "{5DCCE77D-2B81-A3EE-4FD1-63F08785BDD0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TubieTools_LogisticsOSRM", "MapApp\Backend\MapApp.API\TubieTools_LogisticsOSRM.csproj", "{5DCCE77D-2B81-A3EE-4FD1-63F08785BDD0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
