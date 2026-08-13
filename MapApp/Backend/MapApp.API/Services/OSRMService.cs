@@ -91,7 +91,9 @@ public class OSRMService : IOSRMService
                 coordinates = coordinates.Take(25).ToList();
             }
 
-            var client = _httpClientFactory.CreateClient();
+            // client should come from singleton IHttpClientFactory to avoid socket exhaustion
+
+            var client = _httpClientFactory.CreateClient("osrmClient");
             var coordString = string.Join(";", coordinates.Select(c => $"{c.lon},{c.lat}"));
             var url = $"{OsrmBaseUrl}/table/v1/driving/{coordString}";
 

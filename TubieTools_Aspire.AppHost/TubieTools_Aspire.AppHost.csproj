@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MapApp\Backend\MapApp.API\MapApp.API.csproj" />
     <ProjectReference Include="..\TensorFlow\TensorFlow.csproj" />
     <ProjectReference Include="..\TubieTools_Aspire.EnterpriseAutomation\TubieTools_Aspire.EnterpriseAutomation.csproj" />
     <ProjectReference Include="..\TubieTools_Aspire.Web\TubieTools_Aspire.Web.csproj" />

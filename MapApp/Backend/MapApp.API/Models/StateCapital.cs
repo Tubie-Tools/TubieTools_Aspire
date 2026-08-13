@@ -23,4 +23,5 @@ public class StateCapital
     public string Region { get; set; } = string.Empty; // Northeast, Southeast, Midwest, Southwest, West
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    public int Id { get; set; }
 }
