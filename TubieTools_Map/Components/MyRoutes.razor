@@ -1,0 +1,136 @@
+﻿@page "/my-routes"
+@using TubieTools_Map.Services
+@using TubieTools_Map.Data.Models
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inject RouteService RouteService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@rendermode InteractiveServer
+
+<PageTitle>My Routes - TubieTools Map</PageTitle>
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h3><span class="oi oi-action-redo"></span> My Routes</h3>
+        </div>
+        <div class="col-auto">
+            <NavLink class="btn btn-primary" href="">
+                <span class="oi oi-plus"></span> New Route
+            </NavLink>
+        </div>
+    </div>
+
+    @if (routes == null)
+    {
+        <div class="alert alert-info">
+            <span class="spinner-border spinner-border-sm me-2"></span> Loading routes...
+        </div>
+    }
+    else if (routes.Count == 0)
+    {
+        <div class="alert alert-warning">
+            No routes found. <NavLink href="">Create your first route</NavLink>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Distance</th>
+                        <th>Duration</th>
+                        <th>Vehicle</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var route in routes)
+                    {
+                        <tr>
+                            <td><strong>@route.RouteName</strong></td>
+                            <td>@route.DistanceKm.ToString("F2") km</td>
+                            <td>@route.EstimatedDuration.ToString(@"hh\:mm\:ss")</td>
+                            <td>
+                                <span class="badge bg-info">
+                                    @GetVehicleEmoji(route.VehicleType) @route.VehicleType
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-@GetStatusColor(route.Status)">@route.Status</span>
+                            </td>
+                            <td>@route.CreatedDate.ToShortDateString()</td>
+                            <td>
+                                <button class="btn btn-sm btn-info" @onclick="() => ViewRoute(route)" title="View route details">
+                                    <span class="oi oi-eye"></span>
+                                </button>
+                                <button class="btn btn-sm btn-warning" @onclick="() => CreateRedirection(route)" title="Create redirection">
+                                    <span class="oi oi-warning"></span>
+                                </button>
+                                <button class="btn btn-sm btn-danger" @onclick="() => DeleteRoute(route)" title="Delete route">
+                                    <span class="oi oi-trash"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@code {
+    private List<MapRoute>? routes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "unknown";
+        routes = await RouteService.GetRoutesByUserAsync(userId);
+    }
+
+    private void ViewRoute(MapRoute route)
+    {
+        // Show route details modal or navigate
+    }
+
+    private void CreateRedirection(MapRoute route)
+    {
+        // Show redirection modal
+    }
+
+    private async Task DeleteRoute(MapRoute route)
+    {
+        if (await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to delete '{route.RouteName}'?"))
+        {
+            var success = await RouteService.DeleteRouteAsync(route.RouteId);
+            if (success)
+            {
+                routes?.Remove(route);
+            }
+        }
+    }
+
+    private string GetVehicleEmoji(string? type) => type switch
+    {
+        "car" => "🚗",
+        "truck" => "🚚",
+        "van" => "🚐",
+        "motorcycle" => "🏍️",
+        _ => "🚗"
+    };
+
+    private string GetStatusColor(string status) => status switch
+    {
+        "Active" => "success",
+        "Inactive" => "warning",
+        "Archived" => "secondary",
+        _ => "primary"
+    };
+
+    public dynamic JS { get; private set; }
+}

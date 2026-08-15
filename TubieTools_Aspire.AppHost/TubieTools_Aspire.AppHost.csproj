@@ -17,6 +17,7 @@
     <ProjectReference Include="..\TubieTools_Aspire.EnterpriseAutomation\TubieTools_Aspire.EnterpriseAutomation.csproj" />
     <ProjectReference Include="..\TubieTools_Aspire.Web\TubieTools_Aspire.Web.csproj" />
     <ProjectReference Include="..\TubieTools_Forecasting_API\TubieTools_Forecasting_API.csproj" />
+    <ProjectReference Include="..\TubieTools_Map\TubieTools_Map.csproj" />
     <ProjectReference Include="..\TubieTools_PublicAPI\TubieTools_PublicAPI.csproj" />
     <ProjectReference Include="..\TubieTools_SentimentModel_ProductApi\TubieTools_SentimentModel_ProductApi.csproj" />
     <ProjectReference Include="..\TubieTools_SentimentModel_WebApi\TubieTools_SentimentModel_WebApi.csproj" />

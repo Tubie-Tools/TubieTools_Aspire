@@ -1,0 +1,47 @@
+﻿@page "/profile"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@rendermode InteractiveServer
+
+<PageTitle>My Profile - TubieTools Map</PageTitle>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><span class="oi oi-person"></span> My Profile</h4>
+                </div>
+                <div class="card-body">
+                    <AuthorizeView>
+                        <Authorized>
+                            <div class="row mb-3">
+                                <div class="col-sm-4 fw-bold">Name:</div>
+                                <div class="col-sm-8">@context.User.FindFirst(ClaimTypes.Name)?.Value</div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-4 fw-bold">Email:</div>
+                                <div class="col-sm-8">@context.User.FindFirst(ClaimTypes.Email)?.Value</div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-4 fw-bold">Role:</div>
+                                <div class="col-sm-8">
+                                    @foreach (var claim in context.User.FindAll(ClaimTypes.Role))
+                                    {
+                                        <span class="badge bg-info">@claim.Value</span>
+                                    }
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="alert alert-info small">
+                                <p><strong>Account Information:</strong></p>
+                                <p class="mb-0">You are logged in via Entra ID (Azure AD). Your profile is synchronized with your organization account.</p>
+                            </div>
+                        </Authorized>
+                    </AuthorizeView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

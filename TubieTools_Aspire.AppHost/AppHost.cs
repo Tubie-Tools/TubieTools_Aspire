@@ -26,7 +26,7 @@ var publicApi = builder.AddProject<Projects.TubieTools_PublicAPI>("publicapi");
 builder.AddProject<Projects.TubieTools_SentimentModel_WebApi>("sentimentapi");
 builder.AddProject<Projects.TubieTools_SentimentModel_ProductApi>("sentimentproductapi");
 builder.AddProject<Projects.TubieTools_Forecasting_API>("forecastingapi");
-builder.AddProject<Projects.TubieTools_LogisticsOSRM>("logisticsOSRM");
+var logisticsApi =builder.AddProject<Projects.TubieTools_LogisticsOSRM>("logisticsOSRM");
 
 // start tensorflow
 builder.AddProject<Projects.TensorFlow>("tensorflow");
@@ -47,5 +47,8 @@ var enterpriseAutomation = builder.AddProject<Projects.TubieTools_Aspire_Enterpr
     .WithExternalHttpEndpoints()
     .WithReference(publicApi)
     .WaitFor(publicApi);
+
+builder.AddProject<Projects.TubieTools_Map>("tubietools-map")
+    .WithReference(logisticsApi);
 
 builder.Build().Run();

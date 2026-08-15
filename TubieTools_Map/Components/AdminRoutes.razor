@@ -1,0 +1,117 @@
+﻿@page "/admin/routes"
+@using Microsoft.AspNetCore.Authorization
+@using TubieTools_Map.Data
+@using TubieTools_Map.Data.Models
+@using TubieTools_Map.Services
+@inject RouteService RouteService
+@inject MapAppDbContext Context
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Admin")]
+
+<PageTitle>Route Administration - TubieTools Map</PageTitle>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h3><span class="oi oi-cog"></span> Route Administration</h3>
+        </div>
+        <div class="col-auto">
+            <input type="text" class="form-control" placeholder="Search routes..." @bind="searchTerm" @onkeyup="SearchRoutes" />
+        </div>
+    </div>
+
+    @if (allRoutes == null)
+    {
+        <div class="alert alert-info">
+            <span class="spinner-border spinner-border-sm me-2"></span> Loading...
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Route ID</th>
+                        <th>Name</th>
+                        <th>Distance</th>
+                        <th>Owner</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var route in filteredRoutes)
+                    {
+                        <tr>
+                            <td><code style="font-size: 0.8em;">@route.RouteId.Substring(0, Math.Min(8, route.RouteId.Length))...</code></td>
+                            <td><strong>@route.RouteName</strong></td>
+                            <td>@route.DistanceKm.ToString("F2") km</td>
+                            <td>@route.CreatedBy</td>
+                            <td>
+                                <select class="form-select form-select-sm" @onchange="async (e) => await ChangeStatus(route, e.Value?.ToString() ?? string.Empty)">
+                                    <option value="Active" selected="@(route.Status == "Active")">Active</option>
+                                    <option value="Inactive" selected="@(route.Status == "Inactive")">Inactive</option>
+                                    <option value="Archived" selected="@(route.Status == "Archived")">Archived</option>
+                                </select>
+                            </td>
+                            <td>@route.CreatedDate.ToShortDateString()</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" @onclick="async () => await DeleteRoute(route)">
+                                    <span class="oi oi-trash"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@code {
+    private List<MapRoute>? allRoutes;
+    private List<MapRoute> filteredRoutes = new();
+    private string searchTerm = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        allRoutes = await RouteService.GetAllRoutesAsync();
+        filteredRoutes = allRoutes;
+    }
+
+    private void SearchRoutes()
+    {
+        if (allRoutes == null) return;
+        filteredRoutes = allRoutes
+            .Where(r => r.RouteName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                       r.CreatedBy.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                       r.RouteId.Contains(searchTerm))
+            .ToList();
+    }
+
+    private async Task ChangeStatus(MapRoute route, string newStatus)
+    {
+        var success = await RouteService.UpdateRouteStatusAsync(route.RouteId, newStatus);
+        if (success)
+        {
+            route.Status = newStatus;
+        }
+    }
+
+    private async Task DeleteRoute(MapRoute route)
+    {
+        if (await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to delete '{route.RouteName}'?"))
+        {
+            var success = await RouteService.DeleteRouteAsync(route.RouteId);
+            if (success)
+            {
+                allRoutes?.Remove(route);
+                SearchRoutes();
+            }
+        }
+    }
+
+    public dynamic JS { get; private set; }
+}

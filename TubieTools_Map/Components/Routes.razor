@@ -1,0 +1,51 @@
+﻿@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@namespace TubieTools_Map.Components
+@implements IAsyncDisposable
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <CascadingAuthenticationState>
+        <Router AppAssembly="@typeof(Routes).Assembly">
+            <Found Context="routeData">
+                <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                    <NotAuthorized>
+                        <RedirectToLogin />
+                    </NotAuthorized>
+                </AuthorizeRouteView>
+                <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+            </Found>
+            <NotFound>
+                <PageTitle>Not found</PageTitle>
+                <LayoutView Layout="@typeof(MainLayout)">
+                    <div class="alert alert-danger">
+                        <h1>Sorry</h1>
+                        <p>Sorry, there's nothing at this address.</p>
+                    </div>
+                </LayoutView>
+            </NotFound>
+        </Router>
+    </CascadingAuthenticationState>
+</body>
+</html>
+
+@code {
+    private HttpClient? Http;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Initialize any required services
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        if (Http is IAsyncDisposable asyncDisposable)
+        {
+            await asyncDisposable.DisposeAsync();
+        }
+    }
+}

@@ -1,0 +1,193 @@
+﻿@page "/"
+@using System.ComponentModel.DataAnnotations
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@using TubieTools_Map.Data.Models
+@using TubieTools_Map.Services
+@inject RouteService RouteService
+@inject LogisticsOSRMClient LogisticsClient
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>Home - TubieTools Map</PageTitle>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-body p-0" style="height: 600px;">
+                <div id="map" style="height: 100%; border-radius: 8px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><span class="oi oi-plus"></span> Create New Route</h5>
+            </div>
+            <div class="card-body">
+                <EditForm Model="@newRoute" OnValidSubmit="@CreateRouteAsync">
+                    <DataAnnotationsValidator />
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Route Name</label>
+                        <InputText class="form-control" @bind-Value="newRoute.RouteName" placeholder="e.g., Downtown Delivery" />
+                        <ValidationMessage For="@(() => newRoute.RouteName)" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Waypoints</label>
+                        @for (int i = 0; i < newRoute.Waypoints.Count; i++)
+                        {
+                            int index = i;
+                            <div class="input-group mb-2">
+                                <span class="input-group-text">@(index + 1)</span>
+                                <InputText class="form-control" placeholder="Address/Name"
+                                           @bind-Value="newRoute.Waypoints[index].Name" />
+                                <button type="button" class="btn btn-outline-danger"
+                                        @onclick="() => newRoute.Waypoints.RemoveAt(index)" disabled="@(newRoute.Waypoints.Count <= 2)">
+                                    ×
+                                </button>
+                            </div>
+                        }
+                        <button type="button" class="btn btn-outline-secondary btn-sm w-100"
+                                @onclick="AddWaypoint">
+                            <span class="oi oi-plus"></span> Add Waypoint
+                        </button>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Vehicle Type</label>
+                        <InputSelect class="form-select" @bind-Value="newRoute.VehicleType">
+                            <option value="car">🚗 Car</option>
+                            <option value="truck">🚚 Truck</option>
+                            <option value="van">🚐 Van</option>
+                            <option value="motorcycle">🏍️ Motorcycle</option>
+                        </InputSelect>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100" disabled="@isLoading">
+                        @if (isLoading)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                            <span>Calculating...</span>
+                        }
+                        else
+                        {
+                            <span><span class="oi oi-check"></span> Calculate & Save Route</span>
+                        }
+                    </button>
+                </EditForm>
+            </div>
+        </div>
+
+        @if (selectedRoute != null)
+        {
+            <div class="card bg-light shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><span class="oi oi-info"></span> Route Details</h6>
+                </div>
+                <div class="card-body small">
+                    <p class="mb-2"><strong>Name:</strong> @selectedRoute.RouteName</p>
+                    <p class="mb-2"><strong>Distance:</strong> <span class="badge bg-success">@selectedRoute.DistanceKm.ToString("F2") km</span></p>
+                    <p class="mb-2"><strong>Duration:</strong> <span class="badge bg-info">@selectedRoute.EstimatedDuration.ToString(@"hh\:mm")</span></p>
+                    <p class="mb-3"><strong>Created:</strong> @selectedRoute.CreatedDate.ToShortDateString()</p>
+                    <button class="btn btn-sm btn-warning w-100 mb-2" @onclick="ShowRedirectionModal" title="Redirect due to accident, weather, or construction">
+                        <span class="oi oi-warning"></span> Create Redirection
+                    </button>
+                    <button class="btn btn-sm btn-secondary w-100" @onclick="ClearSelection">
+                        <span class="oi oi-x"></span> Clear
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private RouteFormModel newRoute = new();
+    private MapRoute? selectedRoute;
+    private bool isLoading;
+    private string currentUserId = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        currentUserId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "unknown";
+
+        newRoute.Waypoints.Add(new Waypoint { Name = "Start Location" });
+        newRoute.Waypoints.Add(new Waypoint { Name = "Destination" });
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("mapManager.initMap", "map");
+        }
+    }
+
+    public dynamic JS { get; set; }
+    private void AddWaypoint()
+    {
+        newRoute.Waypoints.Add(new Waypoint());
+    }
+
+    private async Task CreateRouteAsync()
+    {
+        isLoading = true;
+        try
+        {
+            var validWaypoints = newRoute.Waypoints
+                .Where(w => !string.IsNullOrEmpty(w.Name))
+                .ToList();
+
+            if (validWaypoints.Count < 2)
+            {
+                // Show error
+                return;
+            }
+
+            selectedRoute = await RouteService.CreateRouteAsync(
+                newRoute.RouteName,
+                validWaypoints,
+                newRoute.VehicleType,
+                currentUserId);
+
+            if (selectedRoute != null)
+            {
+                // Clear form
+                newRoute = new();
+                newRoute.Waypoints.Add(new Waypoint { Name = "Start Location" });
+                newRoute.Waypoints.Add(new Waypoint { Name = "Destination" });
+            }
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private bool showRedirectionModal = false;
+
+    private void ShowRedirectionModal()
+    {
+        showRedirectionModal = true;
+    }
+
+    private void ClearSelection()
+    {
+        selectedRoute = null;
+    }
+
+    public class RouteFormModel
+    {
+        [Required(ErrorMessage = "Route name is required")]
+        [StringLength(255)]
+        public string RouteName { get; set; } = "";
+
+        public List<Waypoint> Waypoints { get; set; } = new();
+
+        public string VehicleType { get; set; } = "car";
+    }
+}

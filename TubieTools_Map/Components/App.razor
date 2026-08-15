@@ -1,0 +1,74 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Components.Web
+@namespace TubieTools_Map.Pages
+@* @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers *@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TubieTools Map - Logistics Management</title>
+    <base href="~/" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="TubieTools_Map.styles.css" asp-append-version="true" />
+    <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+</head>
+<body>
+    <component type="typeof(Routes)" render-mode="ServerPrerendered" />
+    <div id="blazor-error-ui">
+        An unhandled exception has occurred. <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <script src="_framework/blazor.server.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        window.mapManager = {
+            map: null,
+            markers: [],
+            polyline: null,
+
+            initMap: function (elementId) {
+                if (this.map) return;
+                this.map = L.map(elementId).setView([51.505, -0.09], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 19
+                }).addTo(this.map);
+            },
+
+            addMarker: function (lat, lng, title) {
+                if (!this.map) return;
+                const marker = L.marker([lat, lng]).addTo(this.map).bindPopup(title);
+                this.markers.push(marker);
+            },
+
+            drawRoute: function (coordinates) {
+                if (!this.map) return;
+                if (this.polyline) this.map.removeLayer(this.polyline);
+                this.polyline = L.polyline(coordinates, { color: 'blue' }).addTo(this.map);
+                this.map.fitBounds(this.polyline.getBounds());
+            },
+
+            fitBounds: function () {
+                if (this.map && this.markers.length > 0) {
+                    const group = new L.featureGroup(this.markers);
+                    this.map.fitBounds(group.getBounds());
+                }
+            },
+
+            clearMarkers: function () {
+                if (!this.map) return;
+                this.markers.forEach(m => this.map.removeLayer(m));
+                this.markers = [];
+                if (this.polyline) this.map.removeLayer(this.polyline);
+                this.polyline = null;
+            }
+        };
+    </script>
+</body>
+</html>
