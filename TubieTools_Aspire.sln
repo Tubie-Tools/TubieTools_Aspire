@@ -22,9 +22,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{C7580F7F-7269-406E-A350-651E9AAF3996}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DAL", "DAL", "{E3EE7E22-1EEA-483B-BA6F-09E926E325EE}"
-	ProjectSection(SolutionItems) = preProject
-		DataAccessLayer\Data\TubieDbContext.cs = DataAccessLayer\Data\TubieDbContext.cs
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BLL", "BLL", "{A265A754-0A87-40D1-8D94-7E37D334798B}"
 EndProject
