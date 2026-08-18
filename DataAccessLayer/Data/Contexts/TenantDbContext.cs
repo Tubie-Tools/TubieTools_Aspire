@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
 using System.Collections.Generic;
 
-namespace DataAccessLayer.Data
+namespace DataAccessLayer.Data.Contexts
 {
     /// <summary>
     /// Entity Framework DbContext for multi-tenant data management

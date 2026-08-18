@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using DataAccessLayer;
 using System;
+using DataAccessLayer.Data.Contexts;
 
 namespace DataAccessLayer.Migrations
 {

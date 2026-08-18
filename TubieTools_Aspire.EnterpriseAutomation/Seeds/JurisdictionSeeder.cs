@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using TubieTools_Aspire.EnterpriseAutomation.MultiTenant.Jurisdiction;
+using DataAccessLayer.Data.Contexts;
 
 namespace TubieTools_Aspire.EnterpriseAutomation.Seeds
 {

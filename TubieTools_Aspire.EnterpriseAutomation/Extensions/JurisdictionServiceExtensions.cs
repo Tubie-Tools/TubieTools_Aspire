@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using TubieTools_Aspire.EnterpriseAutomation.MultiTenant.Jurisdiction;
 using System.Text.Json;
 using System.IO;
+using DataAccessLayer.Data.Contexts;
 
 public static class JurisdictionServiceExtensions
 {

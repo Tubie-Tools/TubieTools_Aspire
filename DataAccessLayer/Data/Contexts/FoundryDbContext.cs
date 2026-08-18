@@ -1,4 +1,4 @@
-﻿namespace TubieTools_Aspire.EnterpriseAutomation.MultiTenant.Jurisdiction;
+﻿namespace DataAccessLayer.Data.Contexts;
 
 using Microsoft.EntityFrameworkCore;
 using TubieTools_Aspire.EnterpriseAutomation.MultiTenant.Jurisdiction;

@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DataAccessLayer
+namespace DataAccessLayer.Data.Contexts
 {
 
     /// <summary>

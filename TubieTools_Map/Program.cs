@@ -92,7 +92,7 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
+//app.MapFallbackToPage("/_Host");
 
 // Initialize database
 using (var scope = app.Services.CreateScope())

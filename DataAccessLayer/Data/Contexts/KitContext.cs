@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace DataAccessLayer
+namespace DataAccessLayer.Data.Contexts
 {
     /// <summary>
     /// Unable to create a 'DbContext' of type 'KitContext'.

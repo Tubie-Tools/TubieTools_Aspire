@@ -1,7 +1,7 @@
 using DataAccessLayer.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace DataAccessLayer.Data
+namespace DataAccessLayer.Data.Contexts
 {
     /// <summary>
     /// Entity Framework Core DbContext for Tubie B2B Care Provider API
