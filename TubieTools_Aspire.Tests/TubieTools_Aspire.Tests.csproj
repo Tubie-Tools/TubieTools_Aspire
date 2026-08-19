@@ -29,6 +29,7 @@
     <ProjectReference Include="..\MapApp\Backend\MapApp.API\TubieTools_LogisticsOSRM.csproj" />
     <ProjectReference Include="..\TubieTools_Aspire.AppHost\TubieTools_Aspire.AppHost.csproj" />
     <ProjectReference Include="..\TubieTools_Aspire.EnterpriseAutomation\TubieTools_Aspire.EnterpriseAutomation.csproj" />
+    <ProjectReference Include="..\TubieTools_Aspire.Web\TubieTools_Aspire.Web.csproj" />
     <ProjectReference Include="..\TubieTools_PublicAPI\TubieTools_PublicAPI.csproj" />
   </ItemGroup>
 
