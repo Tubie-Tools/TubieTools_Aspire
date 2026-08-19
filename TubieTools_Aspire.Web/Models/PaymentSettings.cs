@@ -39,4 +39,6 @@ public class PaymentSettings
     /// Enable Authorize.Net payment processing
     /// </summary>
     public bool Enabled { get; set; } = true;
+    public bool PayPalEnabled { get; set; }
+    public bool AuthorizeNetEnabled { get; set; }
 }

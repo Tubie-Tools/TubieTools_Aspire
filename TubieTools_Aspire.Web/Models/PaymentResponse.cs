@@ -84,6 +84,7 @@ public class PaymentResponse
     /// Split result if using Authorize.Net payment split functionality
     /// </summary>
     public SplitFundingResult? SplitFundingResult { get; set; }
+    public bool Success { get; set; }
 }
 
 /// <summary>

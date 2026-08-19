@@ -20,7 +20,7 @@ public abstract class PaymentServiceTestBase
     protected PaymentSettings TestPaymentSettings { get; set; }
 
     [TestInitialize]
-    public virtual void Setup()
+    public void Setup()
     {
         Services = new ServiceCollection();
 
@@ -69,7 +69,7 @@ public abstract class PaymentServiceTestBase
     }
 
     [TestCleanup]
-    public virtual void TearDown()
+    public void TearDown()
     {
         ServiceProvider?.Dispose();
     }
@@ -202,6 +202,8 @@ public class TestOrder
     public List<LineItem> Items { get; set; } = new();
     public DateTime CreatedDate { get; set; }
     public OrderStatus Status { get; set; }
+    public string CustomerId { get; internal set; }
+    public List<Payment> Payments { get; internal set; }
 }
 
 /// <summary>

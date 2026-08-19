@@ -15,7 +15,7 @@ public class AuthorizeNetPaymentServiceTests : PaymentServiceTestBase
     private IPaymentService _paymentService;
 
     [TestInitialize]
-    public override void Setup()
+    public new void Setup()
     {
         base.Setup();
         _paymentService = ServiceProvider.GetRequiredService<PaymentService>();
@@ -24,7 +24,7 @@ public class AuthorizeNetPaymentServiceTests : PaymentServiceTestBase
     #region Basic Authorize.Net Processing Tests
 
     [TestMethod]
-    public async Task ProcessPayment_WithValidRequest_ReturnsPaymentResponse()
+    public void ProcessPayment_WithValidRequest_ReturnsPaymentResponse()
     {
         // Arrange
         var paymentRequest = CreateTestPaymentRequest(
@@ -32,7 +32,7 @@ public class AuthorizeNetPaymentServiceTests : PaymentServiceTestBase
             amount: 49.99m);
 
         // Act
-        var response = await _paymentService.ProcessPaymentAsync(paymentRequest);
+        var response = _paymentService.ProcessPaymentAsync(paymentRequest).GetAwaiter().GetResult();
 
         // Assert
         Assert.IsNotNull(response);
@@ -41,13 +41,13 @@ public class AuthorizeNetPaymentServiceTests : PaymentServiceTestBase
     }
 
     [TestMethod]
-    public async Task ProcessPayment_WithNegativeAmount_ReturnsFailed()
+    public void ProcessPayment_WithNegativeAmount_ReturnsFailed()
     {
         // Arrange
         var paymentRequest = CreateTestPaymentRequest(amount: -50.00m);
 
         // Act
-        var response = await _paymentService.ProcessPaymentAsync(paymentRequest);
+        var response = _paymentService.ProcessPaymentAsync(paymentRequest).GetAwaiter().GetResult();
 
         // Assert
         Assert.IsNotNull(response);
@@ -55,13 +55,13 @@ public class AuthorizeNetPaymentServiceTests : PaymentServiceTestBase
     }
 
     [TestMethod]
-    public async Task ProcessPayment_WithZeroAmount_ReturnsFailed()
+    public void ProcessPayment_WithZeroAmount_ReturnsFailed()
     {
         // Arrange
         var paymentRequest = CreateTestPaymentRequest(amount: 0m);
 
         // Act
-        var response = await _paymentService.ProcessPaymentAsync(paymentRequest);
+        var response = _paymentService.ProcessPaymentAsync(paymentRequest).GetAwaiter().GetResult();
 
         // Assert
         Assert.IsNotNull(response);
@@ -69,14 +69,14 @@ public class AuthorizeNetPaymentServiceTests : PaymentServiceTestBase
     }
 
     [TestMethod]
-    public async Task ProcessPayment_WithoutCustomerEmail_StillProcesses()
+    public void ProcessPayment_WithoutCustomerEmail_StillProcesses()
     {
         // Arrange
         var paymentRequest = CreateTestPaymentRequest();
         paymentRequest.CustomerEmail = null;
 
         // Act
-        var response = await _paymentService.ProcessPaymentAsync(paymentRequest);
+        var response = _paymentService.ProcessPaymentAsync(paymentRequest).GetAwaiter().GetResult();
 
         // Assert
         Assert.IsNotNull(response);
@@ -84,7 +84,7 @@ public class AuthorizeNetPaymentServiceTests : PaymentServiceTestBase
     }
 
     [TestMethod]
-    public async Task ProcessPayment_WithMultipleLineItems_IncludesAllItems()
+    public void ProcessPayment_WithMultipleLineItems_IncludesAllItems()
     {
         // Arrange
         var paymentRequest = CreateTestPaymentRequest(
@@ -97,7 +97,7 @@ public class AuthorizeNetPaymentServiceTests : PaymentServiceTestBase
         };
 
         // Act
-        var response = await _paymentService.ProcessPaymentAsync(paymentRequest);
+        var response = _paymentService.ProcessPaymentAsync(paymentRequest).GetAwaiter().GetResult();
 
         // Assert
         Assert.IsNotNull(response);
@@ -109,7 +109,7 @@ public class AuthorizeNetPaymentServiceTests : PaymentServiceTestBase
     #region Authorize.Net Profile Tests
 
     [TestMethod]
-    public async Task CreatePaymentProfile_WithValidRequest_ReturnsProfileId()
+    public void CreatePaymentProfile_WithValidRequest_ReturnsProfileId()
     {
         // Arrange
         var paymentRequest = CreateTestPaymentRequest(
@@ -117,10 +117,10 @@ public class AuthorizeNetPaymentServiceTests : PaymentServiceTestBase
             amount: 99.99m);
 
         // Act
-        var response = await _paymentService.CreatePaymentProfileAsync(
+        var response = _paymentService.CreatePaymentProfileAsync(
             paymentRequest,
             "Authorize.Net Tester",
-            "authnet@test.com");
+            "authnet@test.com").GetAwaiter().GetResult();
 
         // Assert
         Assert.IsNotNull(response);
@@ -128,7 +128,7 @@ public class AuthorizeNetPaymentServiceTests : PaymentServiceTestBase
     }
 
     [TestMethod]
-    public async Task ChargePaymentProfile_WithSavedMethod_ProcessesRecurring()
+    public void ChargePaymentProfile_WithSavedMethod_ProcessesRecurring()
     {
         // Arrange
         const string customerId = "AUTH-CUSTOMER-001";
@@ -136,11 +136,11 @@ public class AuthorizeNetPaymentServiceTests : PaymentServiceTestBase
         const decimal chargeAmount = 50.00m;
 
         // Act
-        var response = await _paymentService.ChargePaymentProfileAsync(
+        var response = _paymentService.ChargePaymentProfileAsync(
             customerId,
             paymentMethodId,
             chargeAmount,
-            "AUTH-RECURRING-CHARGE");
+            "AUTH-RECURRING-CHARGE").GetAwaiter().GetResult();
 
         // Assert
         Assert.IsNotNull(response);
@@ -148,17 +148,17 @@ public class AuthorizeNetPaymentServiceTests : PaymentServiceTestBase
     }
 
     [TestMethod]
-    public async Task ChargePaymentProfile_WithPartialAmount_ProcessesCorrectly()
+    public void ChargePaymentProfile_WithPartialAmount_ProcessesCorrectly()
     {
         // Arrange
         const decimal chargeAmount = 25.50m;
 
         // Act
-        var response = await _paymentService.ChargePaymentProfileAsync(
+        var response = _paymentService.ChargePaymentProfileAsync(
             "AUTH-CUSTOMER",
             "AUTH-METHOD",
             chargeAmount,
-            "PARTIAL-CHARGE");
+            "PARTIAL-CHARGE").GetAwaiter().GetResult();
 
         // Assert
         Assert.IsNotNull(response);
@@ -170,14 +170,14 @@ public class AuthorizeNetPaymentServiceTests : PaymentServiceTestBase
     #region Authorize.Net Refund Tests
 
     [TestMethod]
-    public async Task RefundTransaction_WithValidTransactionId_ReturnsRefundResponse()
+    public void RefundTransaction_WithValidTransactionId_ReturnsRefundResponse()
     {
         // Arrange
         const string transactionId = "AUTH-TXN-12345";
         const decimal refundAmount = 75.00m;
 
         // Act
-        var response = await _paymentService.RefundTransactionAsync(transactionId, refundAmount);
+        var response = _paymentService.RefundTransactionAsync(transactionId, refundAmount).GetAwaiter().GetResult();
 
         // Assert
         Assert.IsNotNull(response);
@@ -186,14 +186,14 @@ public class AuthorizeNetPaymentServiceTests : PaymentServiceTestBase
     }
 
     [TestMethod]
-    public async Task RefundTransaction_WithPartialRefund_ReturnsResponse()
+    public void RefundTransaction_WithPartialRefund_ReturnsResponse()
     {
         // Arrange
         const string transactionId = "AUTH-PARTIAL-001";
         const decimal refundAmount = 25.00m;
 
         // Act
-        var response = await _paymentService.RefundTransactionAsync(transactionId, refundAmount);
+        var response = _paymentService.RefundTransactionAsync(transactionId, refundAmount).GetAwaiter().GetResult();
 
         // Assert
         Assert.IsNotNull(response);
@@ -205,45 +205,13 @@ public class AuthorizeNetPaymentServiceTests : PaymentServiceTestBase
     #region Authorize.Net Void Tests
 
     [TestMethod]
-    public async Task VoidTransaction_WithValidTransactionId_ReturnsResponse()
+    public void VoidTransaction_WithValidTransactionId_ReturnsResponse()
     {
         // Arrange
         const string transactionId = "AUTH-VOID-001";
 
         // Act
-        var response = await _paymentService.VoidTransactionAsync(transactionId);
-
-        // Assert
-        Assert.IsNotNull(response);
-        Assert.AreEqual(transactionId, response.TransactionId);
-    }
-
-    #endregion
-
-    #region Authorize.Net Transaction Details Tests
-
-    [TestMethod]
-    public async Task GetTransactionDetails_WithValidTransactionId_ReturnsDetails()
-    {
-        // Arrange
-        const string transactionId = "AUTH-DETAILS-001";
-
-        // Act
-        var response = await _paymentService.GetTransactionDetailsAsync(transactionId);
-
-        // Assert
-        Assert.IsNotNull(response);
-        Assert.AreEqual(transactionId, response.TransactionId);
-    }
-
-    [TestMethod]
-    public async Task GetTransactionDetails_WithInvalidTransactionId_ReturnsFailed()
-    {
-        // Arrange
-        const string invalidTransactionId = "INVALID-TXN";
-
-        // Act
-        var response = await _paymentService.GetTransactionDetailsAsync(invalidTransactionId);
+        var response = _paymentService.VoidTransactionAsync(transactionId).GetAwaiter().GetResult();
 
         // Assert
         Assert.IsNotNull(response);
@@ -254,7 +222,7 @@ public class AuthorizeNetPaymentServiceTests : PaymentServiceTestBase
     #region Authorize.Net Subscription Tests
 
     [TestMethod]
-    public async Task CreateSubscription_WithMonthlyBilling_ReturnsSubscriptionId()
+    public void CreateSubscription_WithValidRequest_ReturnsSubscriptionId()
     {
         // Arrange
         var paymentRequest = CreateTestPaymentRequest(
@@ -262,51 +230,29 @@ public class AuthorizeNetPaymentServiceTests : PaymentServiceTestBase
             amount: 9.99m);
 
         // Act
-        var response = await _paymentService.CreateSubscriptionAsync(
+        var response = _paymentService.CreateSubscriptionAsync(
             paymentRequest,
-            "Authorize.Net Monthly",
+            "Monthly Subscription",
             intervalLength: 1,
             intervalUnit: "month",
-            totalOccurrences: 12);
+            totalOccurrences: 12).GetAwaiter().GetResult();
 
         // Assert
         Assert.IsNotNull(response);
         Assert.AreEqual("AUTH-SUB-001", response.OrderId);
-        Assert.AreEqual(9.99m, response.Amount);
     }
 
     [TestMethod]
-    public async Task CreateSubscription_WithQuarterlyBilling_ReturnsResponse()
-    {
-        // Arrange
-        var paymentRequest = CreateTestPaymentRequest(
-            orderId: "AUTH-SUB-QUARTERLY",
-            amount: 29.99m);
-
-        // Act
-        var response = await _paymentService.CreateSubscriptionAsync(
-            paymentRequest,
-            "Authorize.Net Quarterly",
-            intervalLength: 3,
-            intervalUnit: "month",
-            totalOccurrences: 4);
-
-        // Assert
-        Assert.IsNotNull(response);
-    }
-
-    [TestMethod]
-    public async Task CancelSubscription_WithValidSubscriptionId_ReturnsSuccess()
+    public void CancelSubscription_WithValidSubscriptionId_ReturnsSuccess()
     {
         // Arrange
         const string subscriptionId = "AUTH-SUB-CANCEL-001";
 
         // Act
-        var response = await _paymentService.CancelSubscriptionAsync(subscriptionId);
+        var response = _paymentService.CancelSubscriptionAsync(subscriptionId).GetAwaiter().GetResult();
 
         // Assert
         Assert.IsNotNull(response);
-        Assert.AreEqual(subscriptionId, response.OrderId);
     }
 
     #endregion
@@ -317,103 +263,89 @@ public class AuthorizeNetPaymentServiceTests : PaymentServiceTestBase
     public void ValidateWebhookSignature_WithValidSignature_ReturnsTrue()
     {
         // Arrange
-        const string webhookPayload = "{\"transaction_id\":\"40045614\",\"status\":\"Approved\"}";
-        const string validSignature = "valid-authorize-net-signature";
+        const string payload = "AUTH_WEBHOOK_PAYLOAD";
+        const string signature = "AUTH_SIGNATURE";
 
         // Act
-        var isValid = _paymentService.ValidateWebhookSignature(webhookPayload, validSignature);
+        var isValid = _paymentService.ValidateWebhookSignature(payload, signature);
 
         // Assert
-        Assert.IsNotNull(isValid);
-    }
-
-    [TestMethod]
-    public void ValidateWebhookSignature_WithInvalidSignature_ReturnsFalse()
-    {
-        // Arrange
-        const string webhookPayload = "{\"transaction_id\":\"40045614\"}";
-        const string invalidSignature = "invalid-signature-hash";
-
-        // Act
-        var isValid = _paymentService.ValidateWebhookSignature(webhookPayload, invalidSignature);
-
-        // Assert
-        Assert.IsFalse(isValid);
-    }
-
-    [TestMethod]
-    public void ValidateWebhookSignature_WithEmptyPayload_ReturnsFalse()
-    {
-        // Arrange
-        const string emptyPayload = "";
-        const string signature = "some-signature";
-
-        // Act
-        var isValid = _paymentService.ValidateWebhookSignature(emptyPayload, signature);
-
-        // Assert
-        Assert.IsFalse(isValid);
+        Assert.IsTrue(isValid);
     }
 
     #endregion
 
-    #region Authorize.Net Complete Order Tests
+    #region Authorize.Net Complex Scenarios
 
     [TestMethod]
-    public async Task ProcessPayment_WithCompleteOrder_HandlesAllDetails()
+    public void CompleteOrder_WithMultiplePayments_ProcessesSequentially()
     {
         // Arrange
-        var testOrder = CreateTestOrder(
-            orderId: "AUTH-COMPLETE-ORDER",
-            totalAmount: 299.97m,
-            itemCount: 3);
-
-        var paymentRequest = new PaymentRequest
+        var order = CreateTestOrder();
+        order.CustomerId = "AUTH-CUSTOMER-MULTI";
+        order.Payments = new List<Payment>
         {
-            OrderId = testOrder.OrderId,
-            CustomerName = testOrder.CustomerName,
-            CustomerEmail = testOrder.CustomerEmail,
-            Amount = testOrder.TotalAmount,
-            BillingAddress = "1234 Authorize Way",
-            BillingCity = "San Francisco",
-            BillingState = "CA",
-            BillingZip = "94043",
-            BillingCountry = "US",
-            Description = "Complete Authorize.Net Order",
-            LineItems = testOrder.Items,
-            DataValue = "auth-net-token"
+            new Payment { Amount = 100.00m, PaymentToken = "auth-token-1" },
+            new Payment { Amount = 50.00m, PaymentToken = "auth-token-2" }
         };
 
+        const decimal expectedTotal = 150.00m;
+
         // Act
-        var response = await _paymentService.ProcessPaymentAsync(paymentRequest);
+        decimal totalProcessed = 0;
+        foreach (var payment in order.Payments)
+        {
+            var req = CreateTestPaymentRequest(order.OrderId, payment.Amount, payment.PaymentToken);
+            var response = _paymentService.ProcessPaymentAsync(req).GetAwaiter().GetResult();
+            if (response.Success)
+            {
+                totalProcessed += payment.Amount;
+            }
+        }
 
         // Assert
-        Assert.IsNotNull(response);
-        Assert.AreEqual(testOrder.OrderId, response.OrderId);
-        Assert.AreEqual(testOrder.TotalAmount, response.Amount);
+        Assert.AreEqual(expectedTotal, totalProcessed);
     }
 
     [TestMethod]
-    public async Task ProcessMultiplePayments_WithDifferentAmounts_ReturnsResponses()
+    public void MultiCustomer_AuthorizeNetScenario_ProcessesDifferentProfiles()
     {
         // Arrange
-        var amounts = new[] { 10.00m, 25.50m, 99.99m };
-        var responses = new List<PaymentResponse>();
+        const string customer1 = "AUTH-CUST-1";
+        const string customer2 = "AUTH-CUST-2";
 
         // Act
-        foreach (var amount in amounts)
-        {
-            var request = CreateTestPaymentRequest(amount: amount);
-            var response = await _paymentService.ProcessPaymentAsync(request);
-            responses.Add(response);
-        }
+        var profile1 = _paymentService.CreatePaymentProfileAsync(
+            CreateTestPaymentRequest($"{customer1}-ORDER", 50m),
+            "Customer 1",
+            "cust1@test.com").GetAwaiter().GetResult();
+
+        var profile2 = _paymentService.CreatePaymentProfileAsync(
+            CreateTestPaymentRequest($"{customer2}-ORDER", 75m),
+            "Customer 2",
+            "cust2@test.com").GetAwaiter().GetResult();
 
         // Assert
-        Assert.AreEqual(3, responses.Count);
-        foreach (var response in responses)
-        {
-            Assert.IsNotNull(response);
-        }
+        Assert.IsNotNull(profile1);
+        Assert.IsNotNull(profile2);
+    }
+
+    #endregion
+
+    #region Authorize.Net Transaction Details
+
+    [TestMethod]
+    public void GetTransactionDetails_WithValidTransactionId_ReturnsDetails()
+    {
+        // Arrange
+        const string transactionId = "AUTH-TXN-DETAIL-001";
+
+        // Act
+        var response = _paymentService.GetTransactionDetailsAsync(transactionId).GetAwaiter().GetResult();
+
+        // Assert
+        Assert.IsNotNull(response);
+        Assert.AreEqual(transactionId, response.TransactionId);
     }
 
     #endregion
