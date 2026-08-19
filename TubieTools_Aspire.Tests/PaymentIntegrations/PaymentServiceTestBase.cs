@@ -120,37 +120,37 @@ public abstract class PaymentServiceTestBase
     /// <summary>
     /// Create a test order for payment testing
     /// </summary>
-    protected TestOrder CreateTestOrder(
+    protected Order CreateTestOrder(
         string orderId = null,
         decimal totalAmount = 99.99m,
         int itemCount = 1)
     {
         orderId ??= $"ORDER-{Guid.NewGuid():N}".Substring(0, 15);
 
-        var items = new List<LineItem>();
+        var items = new List<OrderItem>();
         var itemAmount = totalAmount / itemCount;
 
         for (int i = 0; i < itemCount; i++)
         {
-            items.Add(new LineItem
+            items.Add(new OrderItem
             {
-                ItemId = $"ITEM-{i + 1:D3}",
-                Name = $"Test Item {i + 1}",
-                Description = $"Test item number {i + 1}",
+                ProductId = i + 1,
+                ProductName = $"Test Product {i + 1}",
+                ProductDescription = $"Test product number {i + 1}",
                 Quantity = 1,
                 UnitPrice = itemAmount
             });
         }
 
-        return new TestOrder
+        return new Order
         {
             OrderId = orderId,
             CustomerName = "Test Customer",
             CustomerEmail = "customer@test.com",
             TotalAmount = totalAmount,
-            Items = items,
+            OrderItems = items,
             CreatedDate = DateTime.UtcNow,
-            Status = OrderStatus.Pending
+            PaymentStatus = PaymentStatus.Pending
         };
     }
 

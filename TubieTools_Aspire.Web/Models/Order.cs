@@ -62,6 +62,11 @@ public class Order
     public string OrderId { get; set; } = Guid.NewGuid().ToString();
 
     /// <summary>
+    /// Unique customer ID (for tracking customers across multiple orders)
+    /// </summary>
+    public string? CustomerId { get; set; }
+
+    /// <summary>
     /// Customer name
     /// </summary>
     public string CustomerName { get; set; } = string.Empty;
@@ -100,6 +105,11 @@ public class Order
     /// Order items
     /// </summary>
     public List<OrderItem> OrderItems { get; set; } = new();
+
+    /// <summary>
+    /// Payment records for this order (for multi-payment scenarios)
+    /// </summary>
+    public List<Payment> Payments { get; set; } = new();
 
     /// <summary>
     /// Payment status
@@ -222,4 +232,45 @@ public class Address
     /// Full address string
     /// </summary>
     public string FullAddress => $"{Street}, {City}, {State} {ZipCode}, {Country}";
+}
+
+/// <summary>
+/// Represents a single payment within an order (for multi-payment scenarios)
+/// </summary>
+public class Payment
+{
+    /// <summary>
+    /// Payment ID
+    /// </summary>
+    public string PaymentId { get; set; } = Guid.NewGuid().ToString();
+
+    /// <summary>
+    /// Payment amount
+    /// </summary>
+    public decimal Amount { get; set; }
+
+    /// <summary>
+    /// Payment token or method (card token, PayPal token, etc.)
+    /// </summary>
+    public string PaymentToken { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Payment method type
+    /// </summary>
+    public string PaymentMethod { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Transaction ID from payment processor
+    /// </summary>
+    public string TransactionId { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Payment status
+    /// </summary>
+    public PaymentStatus Status { get; set; } = PaymentStatus.Pending;
+
+    /// <summary>
+    /// Payment timestamp
+    /// </summary>
+    public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 }

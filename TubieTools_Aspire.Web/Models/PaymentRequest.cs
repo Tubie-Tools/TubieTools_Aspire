@@ -94,6 +94,16 @@ public class PaymentRequest
     /// IP address of the customer making the purchase
     /// </summary>
     public string CustomerIPAddress { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Payment token/method (can be card token, PayPal token, Apple Pay token, Google Pay token, etc.)
+    /// </summary>
+    public string PaymentToken { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Payment method type indicator
+    /// </summary>
+    public string PaymentMethod { get; set; } = string.Empty;
 }
 
 /// <summary>
