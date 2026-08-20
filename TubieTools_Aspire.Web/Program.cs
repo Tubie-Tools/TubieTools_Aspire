@@ -17,6 +17,7 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddOutputCache();
 builder.Services.AddScoped<CartService>();
+builder.Services.AddTransient<IPaymentService, PaymentService>();
 
 builder.Services.AddHttpClient<WeatherApiClient>(client =>
     {

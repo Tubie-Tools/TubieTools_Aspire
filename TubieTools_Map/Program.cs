@@ -6,6 +6,7 @@ using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 //using Serilog; 
 using TubieTools_Map.Data;
+using TubieTools_Map.Exceptions;
 using TubieTools_Map.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -83,6 +84,7 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
 }
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

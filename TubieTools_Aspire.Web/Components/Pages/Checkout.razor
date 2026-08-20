@@ -1,5 +1,7 @@
 @page "/checkout"
 @using TubieTools_Aspire.Web.Models
+@using TubieTools_Aspire.Web.Services  @* Add this line with the correct namespace *@
+@inject IPaymentService paymentService
 @rendermode InteractiveServer
 
 <div class="container mt-5">
@@ -84,7 +86,7 @@
                 </div>
                 <div class="card-body">
                     @if (ShowPaymentForm)
-                    {
+                        {
                         <EditForm Model="PaymentRequest" OnValidSubmit="HandlePaymentSubmitAsync" class="needs-validation">
                             <DataAnnotationsValidator />
 

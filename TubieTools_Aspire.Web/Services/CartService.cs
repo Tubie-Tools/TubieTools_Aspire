@@ -76,9 +76,6 @@ namespace TubieTools_Aspire.Web.Services
             throw new NotImplementedException();
         }
 
-        internal async Task<IEnumerable<CartItem>> GetCartItemsAsync()
-        {
-            throw new NotImplementedException();
-        }
+        internal async Task<IEnumerable<CartItem>> GetCartItemsAsync() => cartItems;
     }
 }
