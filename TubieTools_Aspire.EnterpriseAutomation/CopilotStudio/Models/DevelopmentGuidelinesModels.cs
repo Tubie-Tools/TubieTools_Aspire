@@ -60,6 +60,9 @@ public class CopilotPerformanceMetrics
 
     /// <summary>Measurement period (days)</summary>
     public int MeasurementPeriodDays { get; set; } = 30;
+    public object? Id { get; set; }
+    public object? RecordedDate { get; set; }
+    public object? AverageResponseTime { get; set; }
 }
 
 /// <summary>
@@ -110,6 +113,10 @@ public class CopilotDeploymentConfig
 
     /// <summary>Blue-green switch over timeout (minutes)</summary>
     public int SwitchoverTimeoutMinutes { get; set; } = 30;
+    public object? Id { get; set; }
+    public object Version { get; set; }
+    public object? DeploymentDate { get; set; }
+    public object? Status { get; set; }
 }
 
 /// <summary>
@@ -178,6 +185,8 @@ public class CopilotVersion
 
     /// <summary>Support end date</summary>
     public DateTime? SupportEndDate { get; set; }
+    public object? Id { get; set; }
+    public object? ReleasedDate { get; set; }
 }
 
 public class VersionChange
@@ -323,6 +332,9 @@ public class DevelopmentGuidelines
 
     /// <summary>Documentation standards</summary>
     public DocumentationGuidelines DocumentationGuidelines { get; set; }
+    public object? Id { get; set; }
+    public object? CreatedDate { get; set; }
+    public string CreatedBy { get; set; }
 }
 
 /// <summary>
@@ -353,6 +365,10 @@ public class KnowledgeToolGuidelines
 
     /// <summary>Maximum results to return</summary>
     public int MaxResultsReturned { get; set; } = 10;
+    public double TargetAccuracy { get; set; }
+    public int RequiredDataSources { get; set; }
+    public bool RequiresVersioning { get; set; }
+    public bool RequiresAuditTrail { get; set; }
 }
 
 /// <summary>
@@ -389,6 +405,12 @@ public class ActionToolGuidelines
 
     /// <summary>Maximum concurrent requests</summary>
     public int MaxConcurrentRequests { get; set; } = 100;
+    public int TimeoutSeconds { get; set; }
+    public int MaxRetries { get; set; }
+    public bool RequiresApprovalWorkflow { get; set; }
+    public bool RequiresIdempotency { get; set; }
+    public bool RequiresErrorHandling { get; set; }
+    public bool RequiresAuditTrail { get; set; }
 }
 
 /// <summary>
@@ -419,6 +441,11 @@ public class TriggerGuidelines
 
     /// <summary>Trigger audit logging required</summary>
     public bool RequireAuditLogging { get; set; } = true;
+    public int MaxFrequencyPerMinute { get; set; }
+    public int MaxLatencyMs { get; set; }
+    public bool RequiresDeadLetterQueue { get; set; }
+    public bool RequiresMonitoring { get; set; }
+    public bool RequiresAuditTrail { get; set; }
 }
 
 /// <summary>
@@ -452,6 +479,11 @@ public class EvaluationGuidelines
 
     /// <summary>A/B testing recommended</summary>
     public bool RecommendABTesting { get; set; } = true;
+    public double MinCoveragePercent { get; set; }
+    public double TargetFailureThreshold { get; set; }
+    public bool RequiresAutomatedAlerts { get; set; }
+    public bool RequiresManualReview { get; set; }
+    public bool RequiresMetricsTracking { get; set; }
 }
 
 /// <summary>
@@ -488,6 +520,12 @@ public class TestingGuidelines
 
     /// <summary>Test data requirements</summary>
     public TestDataRequirements TestDataReqs { get; set; }
+    public double MinCodeCoverage { get; set; }
+    public bool RequiresUnitTests { get; set; }
+    public bool RequiresIntegrationTests { get; set; }
+    public bool RequiresE2ETests { get; set; }
+    public bool RequiresPerformanceTests { get; set; }
+    public bool RequiresSecurityTests { get; set; }
 }
 
 public class TestDataRequirements
@@ -543,6 +581,12 @@ public class SecurityGuidelines
 
     /// <summary>Prompt injection filtering</summary>
     public bool RequirePromptInjectionFiltering { get; set; } = true;
+    public bool RequiresSASTScanning { get; set; }
+    public bool RequiresDASTScanning { get; set; }
+    public bool RequiresSecretRotation { get; set; }
+    public string EncryptionAlgorithm { get; set; }
+    public bool RequiresMFAForAdmins { get; set; }
+    public string RequirerTLSVersion { get; set; }
 }
 
 /// <summary>
@@ -582,6 +626,11 @@ public class PerformanceGuidelines
 
     /// <summary>Connection pooling required</summary>
     public bool RequireConnectionPooling { get; set; } = true;
+    public int TargetP50ResponseTimeMs { get; set; }
+    public int TargetP99ResponseTimeMs { get; set; }
+    public double MinAvailabilityPercent { get; set; }
+    public int TargetP95ResponseTimeMs { get; set; }
+    public double MaxErrorRatePercent { get; set; }
 }
 
 /// <summary>
@@ -621,4 +670,9 @@ public class DocumentationGuidelines
 
     /// <summary>Video tutorials recommended</summary>
     public bool RecommendVideoTutorials { get; set; } = false;
+    public bool RequiresREADME { get; set; }
+    public bool RequiresAPIDocumentation { get; set; }
+    public bool RequiresRunbooks { get; set; }
+    public bool RequiresTroubleshootingGuide { get; set; }
+    public bool RequiresArchitectureDiagram { get; set; }
 }

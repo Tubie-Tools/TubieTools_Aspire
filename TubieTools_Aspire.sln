@@ -59,6 +59,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TubieTools_LogisticsOSRM", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TubieTools_Map", "TubieTools_Map\TubieTools_Map.csproj", "{B9275215-698C-500E-CBEE-F7183211BB65}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TubieTools_CopilotStudio_API", "TubieTools_CopilotStudio_API\TubieTools_CopilotStudio_API.csproj", "{31D588B0-405D-E8FD-9057-2EAB3F133FB1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -309,6 +311,18 @@ Global
 		{B9275215-698C-500E-CBEE-F7183211BB65}.Release|x64.Build.0 = Release|Any CPU
 		{B9275215-698C-500E-CBEE-F7183211BB65}.Release|x86.ActiveCfg = Release|Any CPU
 		{B9275215-698C-500E-CBEE-F7183211BB65}.Release|x86.Build.0 = Release|Any CPU
+		{31D588B0-405D-E8FD-9057-2EAB3F133FB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31D588B0-405D-E8FD-9057-2EAB3F133FB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31D588B0-405D-E8FD-9057-2EAB3F133FB1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{31D588B0-405D-E8FD-9057-2EAB3F133FB1}.Debug|x64.Build.0 = Debug|Any CPU
+		{31D588B0-405D-E8FD-9057-2EAB3F133FB1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{31D588B0-405D-E8FD-9057-2EAB3F133FB1}.Debug|x86.Build.0 = Debug|Any CPU
+		{31D588B0-405D-E8FD-9057-2EAB3F133FB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31D588B0-405D-E8FD-9057-2EAB3F133FB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31D588B0-405D-E8FD-9057-2EAB3F133FB1}.Release|x64.ActiveCfg = Release|Any CPU
+		{31D588B0-405D-E8FD-9057-2EAB3F133FB1}.Release|x64.Build.0 = Release|Any CPU
+		{31D588B0-405D-E8FD-9057-2EAB3F133FB1}.Release|x86.ActiveCfg = Release|Any CPU
+		{31D588B0-405D-E8FD-9057-2EAB3F133FB1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -334,6 +348,7 @@ Global
 		{0065B339-A3D9-4247-BAEC-D21F9E8C8FE8} = {A98DB97D-3B9D-4781-A248-D2043F614879}
 		{5DCCE77D-2B81-A3EE-4FD1-63F08785BDD0} = {E1A7387B-8C42-4E1E-95DF-35677B0E333A}
 		{B9275215-698C-500E-CBEE-F7183211BB65} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{31D588B0-405D-E8FD-9057-2EAB3F133FB1} = {E1A7387B-8C42-4E1E-95DF-35677B0E333A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {69CB4A26-DBDB-4782-90E2-E94AFCA83ED5}

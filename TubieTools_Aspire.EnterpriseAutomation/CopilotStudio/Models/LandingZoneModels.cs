@@ -51,6 +51,10 @@ public class CopilotGovernancePolicy
 
     /// <summary>Next review date</summary>
     public DateTime NextReviewDate { get; set; }
+    public object? Id { get; set; }
+    public object Name { get; set; }
+    public object Version { get; set; }
+    public object? CreatedDate { get; set; }
 }
 
 /// <summary>
@@ -452,6 +456,9 @@ public class LandingZoneConfiguration
 
     /// <summary>Created date</summary>
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+    public object? Id { get; set; }
+    public object ZoneType { get; set; }
+    public string CreatedBy { get; set; }
 }
 
 /// <summary>

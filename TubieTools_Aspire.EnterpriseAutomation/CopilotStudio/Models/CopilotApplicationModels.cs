@@ -82,6 +82,8 @@ public class CopilotApplication
 
     /// <summary>Is active</summary>
     public bool IsActive { get; set; } = true;
+    public object Version { get; set; }
+    public object? Id { get; set; }
 }
 
 /// <summary>
@@ -129,6 +131,7 @@ public class CopilotModelConfiguration
 
     /// <summary>Supports function calling</summary>
     public bool SupportsFunctionCalling { get; set; }
+    public object Id { get; set; }
 }
 
 /// <summary>
@@ -216,6 +219,8 @@ public class KnowledgeTool
 
     /// <summary>Created date</summary>
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+    public object CopilotApplicationId { get; set; }
+    public object? Id { get; set; }
 }
 
 /// <summary>
@@ -455,6 +460,8 @@ public class ActionTool
 
     /// <summary>Created date</summary>
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+    public object CopilotApplicationId { get; set; }
+    public object? Id { get; set; }
 }
 
 /// <summary>
@@ -721,6 +728,8 @@ public class TriggerConfiguration
 
     /// <summary>Created date</summary>
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+    public object CopilotApplicationId { get; set; }
+    public object? Id { get; set; }
 }
 
 /// <summary>
@@ -819,6 +828,8 @@ public class EvaluationConfiguration
 
     /// <summary>Created date</summary>
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+    public object CopilotApplicationId { get; set; }
+    public object? Id { get; set; }
 }
 
 /// <summary>

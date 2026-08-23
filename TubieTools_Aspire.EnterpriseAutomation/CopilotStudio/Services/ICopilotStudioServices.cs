@@ -158,12 +158,12 @@ public interface ITriggerManagementService
     /// <summary>
     /// Creates a new trigger configuration
     /// </summary>
-    Task<TriggerConfiguration> CreateTriggerAsync(string copilotId, TriggerConfiguration trigger);
+    Task<TriggerConfiguration> CreateTriggerAsync(TriggerConfiguration trigger, CancellationToken cancellationToken);
 
     /// <summary>
     /// Gets a trigger configuration
     /// </summary>
-    Task<TriggerConfiguration> GetTriggerAsync(string triggerId);
+    Task<TriggerConfiguration> GetTriggerAsync(Guid triggerId, CancellationToken cancellationToken);
 
     /// <summary>
     /// Lists triggers for a copilot
