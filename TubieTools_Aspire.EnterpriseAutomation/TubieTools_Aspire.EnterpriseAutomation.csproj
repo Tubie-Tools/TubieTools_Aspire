@@ -44,4 +44,8 @@
     <ProjectReference Include="..\TubieTools_Aspire.Security\TubieTools_Aspire.Security.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\Models\" />
+  </ItemGroup>
+
 </Project>

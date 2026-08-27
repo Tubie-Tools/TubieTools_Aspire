@@ -2,28 +2,6 @@ using Microsoft.Extensions.Logging;
 
 namespace TubieTools_Aspire.EnterpriseAutomation.AIAgent
 {
-    /// <summary>
-    /// Interface for AI Agent Orchestrator
-    /// </summary>
-    public interface IAgentOrchestrator
-    {
-        Task<OrchestrationResult> ExecuteWorkflowAsync(string workflowRequest);
-        Task<OrchestrationResult> ExecuteMultiStepRequestAsync(string userRequest, int maxSteps = 5);
-        void SetAgentContext(string contextDescription);
-    }
-
-    /// <summary>
-    /// Agent Orchestrator result
-    /// </summary>
-    public class OrchestrationResult
-    {
-        public bool Success { get; set; }
-        public string FinalMessage { get; set; }
-        public List<string> ExecutedSteps { get; set; } = new();
-        public Dictionary<string, object> FinalResult { get; set; }
-        public int StepsExecuted { get; set; }
-        public TimeSpan ExecutionTime { get; set; }
-    }
 
     /// <summary>
     /// Agent Orchestrator implementation

@@ -1,6 +1,8 @@
 namespace TubieTools_Aspire.EnterpriseAutomation.CopilotStudio.Services;
 
 using TubieTools_Aspire.EnterpriseAutomation.CopilotStudio.Models;
+using TubieTools_Aspire.EnterpriseAutomation.CopilotStudio.Models.Action;
+using TubieTools_Aspire.EnterpriseAutomation.CopilotStudio.Models.Evaluation;
 
 /// <summary>
 /// Interface for Copilot Application lifecycle management.
