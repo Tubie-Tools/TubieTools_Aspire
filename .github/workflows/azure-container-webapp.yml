@@ -119,6 +119,21 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Validate required secrets
+        run: |
+          missing=""
+          [ -z "${{ secrets.AZURE_CLIENT_ID }}" ] && missing="$missing AZURE_CLIENT_ID"
+          [ -z "${{ secrets.AZURE_TENANT_ID }}" ] && missing="$missing AZURE_TENANT_ID"
+          [ -z "${{ secrets.AZURE_SUBSCRIPTION_ID }}" ] && missing="$missing AZURE_SUBSCRIPTION_ID"
+          [ -z "${{ secrets.CONTAINER_APP_WEB_NAME }}" ] && missing="$missing CONTAINER_APP_WEB_NAME"
+          [ -z "${{ secrets.CONTAINER_APP_APPHOST_NAME }}" ] && missing="$missing CONTAINER_APP_APPHOST_NAME"
+          [ -z "${{ secrets.CONTAINER_APP_API_NAME }}" ] && missing="$missing CONTAINER_APP_API_NAME"
+          if [ -n "$missing" ]; then
+            echo "::error::The following required secrets are not configured:$missing"
+            echo "Please add these secrets in the repository Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+
       - name: Deploy Web Container App
         run: |
           az containerapp update \
