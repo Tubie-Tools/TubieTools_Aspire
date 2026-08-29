@@ -52,6 +52,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Validate required secrets
+        run: |
+          missing=""
+          [ -z "${{ secrets.AZURE_CLIENT_ID }}" ] && missing="$missing AZURE_CLIENT_ID"
+          [ -z "${{ secrets.AZURE_TENANT_ID }}" ] && missing="$missing AZURE_TENANT_ID"
+          [ -z "${{ secrets.AZURE_SUBSCRIPTION_ID }}" ] && missing="$missing AZURE_SUBSCRIPTION_ID"
+          [ -z "${{ secrets.ACR_LOGIN_SERVER }}" ] && missing="$missing ACR_LOGIN_SERVER"
+          if [ -n "$missing" ]; then
+            echo "::error::The following required secrets are not configured:$missing"
+            echo "Please add these secrets in the repository Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+
       - name: Azure Login
         uses: azure/login@v2
         with:
@@ -112,6 +125,21 @@ jobs:
       id-token: write
 
     steps:
+      - name: Validate required secrets
+        run: |
+          missing=""
+          [ -z "${{ secrets.AZURE_CLIENT_ID }}" ] && missing="$missing AZURE_CLIENT_ID"
+          [ -z "${{ secrets.AZURE_TENANT_ID }}" ] && missing="$missing AZURE_TENANT_ID"
+          [ -z "${{ secrets.AZURE_SUBSCRIPTION_ID }}" ] && missing="$missing AZURE_SUBSCRIPTION_ID"
+          [ -z "${{ secrets.CONTAINER_APP_WEB_NAME }}" ] && missing="$missing CONTAINER_APP_WEB_NAME"
+          [ -z "${{ secrets.CONTAINER_APP_APPHOST_NAME }}" ] && missing="$missing CONTAINER_APP_APPHOST_NAME"
+          [ -z "${{ secrets.CONTAINER_APP_API_NAME }}" ] && missing="$missing CONTAINER_APP_API_NAME"
+          if [ -n "$missing" ]; then
+            echo "::error::The following required secrets are not configured:$missing"
+            echo "Please add these secrets in the repository Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+
       - name: Azure Login
         uses: azure/login@v2
         with:
