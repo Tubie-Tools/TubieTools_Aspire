@@ -9,7 +9,7 @@ namespace TubieTools_Aspire.Tests.Algorithms
     /// Analyzes data characteristics using Markov chain principles to predict
     /// which sorting algorithm will perform best on given data.
     /// </summary>
-    public class MarkovChainAnalyzer
+    public partial class MarkovChainAnalyzer
     {
         private readonly Dictionary<(SortAlgorithmState, SortAlgorithmState), int> _transitionCounts;
         private readonly Dictionary<SortAlgorithmState, double> _statePerformance;
