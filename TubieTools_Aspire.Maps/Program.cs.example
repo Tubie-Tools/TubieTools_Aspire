@@ -1,0 +1,158 @@
+/**
+ * Program Configuration for TubieTools Blazor Route Planner
+ * Add this to your Blazor Web App's Program.cs file
+ */
+
+// ============================================
+// Services Configuration Section
+// ============================================
+
+using TubieTools_Aspire.Maps.Services;
+using TubieTools_Aspire.Tests.Algorithms;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container
+builder.Services.AddRazorComponents()
+	.AddInteractiveServerComponents();
+
+// Core Algorithm Services
+builder.Services.AddScoped<WeightedGraph>();
+builder.Services.AddScoped<DijkstraAlgorithm>();
+builder.Services.AddScoped<LogisticsDijkstraService>();
+
+// Map and Routing Services
+builder.Services.AddScoped<MapDijkstraService>();
+builder.Services.AddScoped<RouteCalculationService>();
+
+// Add HTTP client for any external API calls
+builder.Services.AddHttpClient();
+
+// Add session for maintaining user state
+builder.Services.AddSession(options =>
+{
+	options.IdleTimeout = TimeSpan.FromHours(1);
+	options.Cookie.HttpOnly = true;
+	options.Cookie.IsEssential = true;
+});
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline
+if (!app.Environment.IsDevelopment())
+{
+	app.UseExceptionHandler("/Error", createScopeForErrors: true);
+	app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseSession();
+app.UseAntiforgery();
+
+app.MapRazorComponents<App>()
+	.AddInteractiveServerRenderMode();
+
+app.Run();
+
+/* ============================================
+   CONFIGURATION NOTES
+   ============================================
+
+   1. SCOPED vs SINGLETON
+   - RouteCalculationService: Scoped (per user/request)
+   - WeightedGraph: Scoped (per route calculation)
+   - DijkstraAlgorithm: Scoped (per path finding)
+   - MapDijkstraService: Scoped (per map session)
+
+   If you want to share graph data across users:
+   builder.Services.AddSingleton<WeightedGraph>();
+
+   2. AUTHENTICATION
+   To add authentication:
+
+   builder.Services.AddAuthentication("Cookies")
+	   .AddCookie("Cookies");
+
+   builder.Services.AddAuthorizationBuilder()
+	   .AddPolicy("RequireLoggedIn", policy =>
+		   policy.RequireAuthenticatedUser());
+
+   3. LOGGING
+   builder.Services.AddLogging(config =>
+   {
+	   config.AddConsole();
+	   config.AddDebug();
+   });
+
+   4. CORS (if needed for APIs)
+   builder.Services.AddCors(options =>
+   {
+	   options.AddPolicy("AllowAll", builder =>
+	   {
+		   builder.AllowAnyOrigin()
+				  .AllowAnyMethod()
+				  .AllowAnyHeader();
+	   });
+   });
+
+   5. DATABASE (example with Entity Framework)
+   builder.Services.AddDbContext<RouteDbContext>(options =>
+	   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+   ============================================
+   FOR ADVANCED SCENARIOS
+   ============================================
+
+   If you need custom initialization:
+
+   builder.Services.AddScoped<RouteCalculationService>(provider =>
+   {
+	   var graph = new WeightedGraph(isDirected: false);
+	   var service = new RouteCalculationService();
+
+	   // Load initial data
+	   // service.InitializeAsync(locations, roads);
+
+	   return service;
+   });
+
+   For production scenarios with database:
+
+   builder.Services.AddScoped<RouteCalculationService>(provider =>
+   {
+	   var dbContext = provider.GetRequiredService<RouteDbContext>();
+	   var graph = new WeightedGraph(isDirected: false);
+	   var service = new RouteCalculationService();
+
+	   // Load locations and roads from database
+	   var locations = dbContext.Locations.ToList();
+	   var roads = dbContext.Roads.ToList();
+
+	   // Initialize service
+	   // service.InitializeAsync(locations, roads);
+
+	   return service;
+   });
+
+   ============================================
+   DEPENDENCY INJECTION EXAMPLE USAGE
+   ============================================
+
+   In a Blazor component:
+
+   @inject RouteCalculationService RouteService
+   @inject ILogger<RoutePlannerPage> Logger
+
+   @code {
+	   protected override async Task OnInitializedAsync()
+	   {
+		   Logger.LogInformation("Route Planner page initialized");
+
+		   // Use the injected service
+		   var locations = RouteService.GetAllLocations();
+	   }
+   }
+
+   ============================================
+*/

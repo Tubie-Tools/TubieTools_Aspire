@@ -1,0 +1,81 @@
+@using TubieTools_Aspire.Tests.Algorithms
+@using TubieTools_Aspire.Maps.Services
+@inject IJSRuntime JSRuntime
+
+<div id="@ContainerId" class="map-widget" style="width: @Width; height: @Height; @(string.IsNullOrEmpty(Style) ? "" : Style)"></div>
+
+@code {
+    [Parameter]
+    public string ContainerId { get; set; } = "mapContainer";
+
+    [Parameter]
+    public string Width { get; set; } = "100%";
+
+    [Parameter]
+    public string Height { get; set; } = "500px";
+
+    [Parameter]
+    public string Style { get; set; }
+
+    [Parameter]
+    public MapDijkstraService.MapRoute Route { get; set; }
+
+    [Parameter]
+    public List<MapDijkstraService.MapLocation> Locations { get; set; }
+
+    [Parameter]
+    public EventCallback<(double Lat, double Lon)> OnMapClicked { get; set; }
+
+    [Parameter]
+    public string RouteColor { get; set; } = "#0d6efd";
+
+    [Parameter]
+    public bool ShowLocationMarkers { get; set; } = true;
+
+    [Parameter]
+    public string MapType { get; set; } = "street"; // street, satellite, terrain
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(100); // Wait for DOM
+        await JSRuntime.InvokeVoidAsync("RouteMapInterop.initializeMap", ContainerId);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Route != null && Route.Coordinates.Any())
+        {
+            await JSRuntime.InvokeVoidAsync("RouteMapInterop.renderRoute", Route.Coordinates, RouteColor);
+        }
+
+        if (Locations != null && Locations.Any() && ShowLocationMarkers)
+        {
+            await JSRuntime.InvokeVoidAsync("RouteMapInterop.addLocationMarkers", Locations);
+        }
+
+        if (!string.IsNullOrEmpty(MapType))
+        {
+            await JSRuntime.InvokeVoidAsync("RouteMapInterop.setMapType", MapType);
+        }
+    }
+
+    public async Task ClearMap()
+    {
+        await JSRuntime.InvokeVoidAsync("RouteMapInterop.clearRoute");
+    }
+
+    public async Task SetCenter(double lat, double lon, int zoom = 12)
+    {
+        await JSRuntime.InvokeVoidAsync("RouteMapInterop.setMapCenter", lat, lon, zoom);
+    }
+
+    public async Task AddRadiusCircle(double lat, double lon, double radiusMeters, string color = "#0d6efd")
+    {
+        await JSRuntime.InvokeVoidAsync("RouteMapInterop.addRadiusCircle", lat, lon, radiusMeters, color);
+    }
+
+    public async Task ExportAsImage()
+    {
+        await JSRuntime.InvokeVoidAsync("RouteMapInterop.exportMapAsImage");
+    }
+}
