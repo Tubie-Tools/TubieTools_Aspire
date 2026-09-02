@@ -4,9 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using TubieTools_CopilotStudio_API.Data;
-using TubieTools_CopilotStudio_API.Data.Repositories;
+using DataAccessLayer.Data.Contexts; 
 using TubieTools_CopilotStudio_API.Services;
+using DataAccessLayer.Data.Repositories;
+using DataAccessLayer.Repositories;
 
 // Initialize builder
 var builder = WebApplication.CreateBuilder(args);

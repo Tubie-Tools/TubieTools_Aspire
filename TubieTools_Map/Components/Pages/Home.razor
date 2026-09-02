@@ -1,8 +1,8 @@
-﻿@page "/"
+﻿@* @page "/"
 @using System.ComponentModel.DataAnnotations
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Components.Authorization
-@using TubieTools_Map.Data.Models
+@using ModelLayer.Models
 @using TubieTools_Map.Services
 @inject RouteService RouteService
 @inject LogisticsOSRMClient LogisticsClient
@@ -190,4 +190,4 @@
 
         public string VehicleType { get; set; } = "car";
     }
-}
+} *@

@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 //using Serilog; 
-using TubieTools_Map.Data;
+using DataAccessLayer.Data.Contexts;
 using TubieTools_Map.Exceptions;
-using TubieTools_Map.Services;
+using ServiceLayer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,7 +74,7 @@ builder.Services
 
 // Add services
 builder.Services.AddScoped<RouteService>();
-builder.Services.AddScoped<AccountService>();
+//builder.Services.AddScoped<AccountService>();
 
 var app = builder.Build();
 

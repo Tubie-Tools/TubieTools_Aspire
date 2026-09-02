@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer;
 using DataAccessLayer.Data.Contexts;
 using ModelLayer;
+using ModelLayer.ViewModels;
 using SanityCheque.Common;
 
 namespace ServiceLayer

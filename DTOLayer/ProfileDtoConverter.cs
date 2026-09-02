@@ -1,5 +1,6 @@
 ﻿using DataAccessLayer;
 using ModelLayer;
+using ModelLayer.ViewModels;
 
 
 namespace SanityCheque.Common
@@ -8,12 +9,13 @@ namespace SanityCheque.Common
     {
         public static IProfile ToDto(Profile profile)
         {
-            var dto = new ProfileViewModel()
+            IProfile dto = new ProfileViewModel()
             {
                 Id = profile.Id,
                 Name = profile.Name,
                 Bio = profile.Bio,
-                DateOfBirth = profile.DateOfBirth
+                DateOfBirth = profile.DateOfBirth,
+                GenderId = profile.GenderId
             };
 
             return dto;

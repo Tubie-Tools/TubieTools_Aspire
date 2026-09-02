@@ -1,8 +1,8 @@
 ﻿@page "/admin/routes"
+@using DataAccessLayer.Data.Contexts
+@using DataAccessLayer.Data.Entities
 @using Microsoft.AspNetCore.Authorization
-@using TubieTools_Map.Data
-@using TubieTools_Map.Data.Models
-@using TubieTools_Map.Services
+@using ServiceLayer
 @inject RouteService RouteService
 @inject MapAppDbContext Context
 @rendermode InteractiveServer
@@ -45,7 +45,7 @@
                     @foreach (var route in filteredRoutes)
                     {
                         <tr>
-                            <td><code style="font-size: 0.8em;">@route.RouteId.Substring(0, Math.Min(8, route.RouteId.Length))...</code></td>
+                            <td><code style="font-size: 0.8em;">@route.Id...</code></td>
                             <td><strong>@route.RouteName</strong></td>
                             <td>@route.DistanceKm.ToString("F2") km</td>
                             <td>@route.CreatedBy</td>
@@ -71,6 +71,7 @@
 </div>
 
 @code {
+    //TODO do not  return entities directly to the UI, create a DTO for this purpose
     private List<MapRoute>? allRoutes;
     private List<MapRoute> filteredRoutes = new();
     private string searchTerm = "";
@@ -87,13 +88,13 @@
         filteredRoutes = allRoutes
             .Where(r => r.RouteName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
                        r.CreatedBy.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                       r.RouteId.Contains(searchTerm))
+                       r.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
             .ToList();
     }
 
     private async Task ChangeStatus(MapRoute route, string newStatus)
     {
-        var success = await RouteService.UpdateRouteStatusAsync(route.RouteId, newStatus);
+        var success = await RouteService.UpdateRouteStatusAsync(route.Id, newStatus);
         if (success)
         {
             route.Status = newStatus;
@@ -104,7 +105,7 @@
     {
         if (await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to delete '{route.RouteName}'?"))
         {
-            var success = await RouteService.DeleteRouteAsync(route.RouteId);
+            var success = await RouteService.DeleteRouteAsync(route.Id);
             if (success)
             {
                 allRoutes?.Remove(route);

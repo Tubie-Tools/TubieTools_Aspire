@@ -1,8 +1,8 @@
 ﻿@page "/my-routes"
-@using TubieTools_Map.Services
-@using TubieTools_Map.Data.Models
 @using System.Security.Claims
+@using DataAccessLayer.Data.Entities
 @using Microsoft.AspNetCore.Components.Authorization
+@using ServiceLayer
 @inject RouteService RouteService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @rendermode InteractiveServer
@@ -84,6 +84,7 @@
 </div>
 
 @code {
+    //todo fix return entity with a dto facet layer
     private List<MapRoute>? routes;
 
     protected override async Task OnInitializedAsync()
@@ -107,7 +108,7 @@
     {
         if (await JS.InvokeAsync<bool>("confirm", $"Are you sure you want to delete '{route.RouteName}'?"))
         {
-            var success = await RouteService.DeleteRouteAsync(route.RouteId);
+            var success = await RouteService.DeleteRouteAsync(route.Id);
             if (success)
             {
                 routes?.Remove(route);

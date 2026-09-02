@@ -20,5 +20,11 @@
 
   <ItemGroup>
     <ProjectReference Include="../TubieTools_Aspire.EnterpriseAutomation/TubieTools_Aspire.EnterpriseAutomation.csproj" />
+    <ProjectReference Include="../DataAccessLayer/DataAccessLayer.csproj" />
+    <ProjectReference Include="../DTOLayer/DTOLayer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\Repositories\" />
   </ItemGroup>
 </Project>

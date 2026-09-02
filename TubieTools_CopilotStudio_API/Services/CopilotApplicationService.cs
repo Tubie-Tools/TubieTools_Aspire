@@ -1,5 +1,5 @@
-using TubieTools_Aspire.EnterpriseAutomation.CopilotStudio.Models;
-using TubieTools_CopilotStudio_API.Data.Repositories;
+using DataAccessLayer.Data.Entities;
+using DataAccessLayer.Data.Repositories; 
 using TubieTools_CopilotStudio_API.Services.DTOs;
 
 namespace TubieTools_CopilotStudio_API.Services;

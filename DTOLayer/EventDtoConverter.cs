@@ -1,5 +1,6 @@
 ﻿using DataAccessLayer;
 using ModelLayer;
+using ModelLayer.ViewModels;
 
 namespace DTOLayer
 {
@@ -10,7 +11,7 @@ namespace DTOLayer
             IList<IEvent> items = new List<IEvent>();
             foreach (var item in myEvents)
             {
-                var ev = new EventViewModel()
+                IEvent ev = new EventViewModel()
                 {
                     CreatedBy = item.CreatedBy,
                     DateCreated = item.DateCreated,
