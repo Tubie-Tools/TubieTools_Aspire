@@ -1,0 +1,31 @@
+﻿name: Health Check
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  dependency-update-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0'
+
+    - name: Check for outdated packages
+      run: |
+        dotnet restore TubieTools_Aspire.sln
+        dotnet list package --outdated > outdated-packages.txt
+        cat outdated-packages.txt
+      continue-on-error: true
+
+    - name: Upload outdated packages report
+      uses: actions/upload-artifact@v4
+      with:
+        name: outdated-packages
+        path: outdated-packages.txt

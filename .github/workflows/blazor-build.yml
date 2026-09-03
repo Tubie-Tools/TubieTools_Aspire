@@ -1,0 +1,39 @@
+﻿name: Blazor Build & Test
+
+on:
+  push:
+    branches: [ master, develop ]
+    paths:
+      - 'TubieTools_Aspire.Web/**'
+  pull_request:
+    branches: [ master, develop ]
+    paths:
+      - 'TubieTools_Aspire.Web/**'
+
+jobs:
+  blazor-build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0'
+        cache: true
+
+    - name: Restore Blazor project
+      run: dotnet restore TubieTools_Aspire.Web/TubieTools_Aspire.Web.csproj
+
+    - name: Build Blazor project
+      run: dotnet build TubieTools_Aspire.Web/TubieTools_Aspire.Web.csproj --no-restore --configuration Release
+
+    - name: Publish Blazor WASM
+      run: dotnet publish TubieTools_Aspire.Web/TubieTools_Aspire.Web.csproj --no-build --configuration Release --output ./blazor-dist
+
+    - name: Upload Blazor artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: blazor-build-artifacts
+        path: ./blazor-dist/**/*
