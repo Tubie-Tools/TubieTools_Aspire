@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.dataverse.microsoft.com/table.schema.json",
+  "logicalName": "copilot_deploymentconfig",
+  "displayName": "Copilot Deployment Config",
+  "pluralName": "Copilot Deployment Configs",
+  "description": "Deployment audit trail backing the Deployment Automation Agent pilot",
+  "primaryColumn": "copilot_deploymentname",
+  "columns": [
+    { "name": "copilot_deploymentname", "type": "Text", "maxLength": 200, "displayName": "Deployment Name" },
+    { "name": "copilot_environment", "type": "Choice", "options": ["Dev", "Staging", "Prod"], "displayName": "Environment" },
+    { "name": "copilot_status", "type": "Choice", "options": ["Pending", "Succeeded", "Failed", "RolledBack"], "displayName": "Status" },
+    { "name": "copilot_timestamp", "type": "DateTime", "displayName": "Timestamp" },
+    { "name": "copilot_rollbacktriggered", "type": "Boolean", "displayName": "Rollback Triggered" },
+    { "name": "copilot_rollbackreason", "type": "Memo", "maxLength": 2000, "displayName": "Rollback Reason" },
+    { "name": "copilot_latencyms", "type": "WholeNumber", "displayName": "Sync Latency (ms)" },
+    { "name": "copilot_queuedepth", "type": "WholeNumber", "displayName": "Retry Queue Depth" },
+    { "name": "copilot_lasterror", "type": "Memo", "maxLength": 2000, "displayName": "Last Sync Error" },
+    { "name": "copilot_responsecode", "type": "Text", "maxLength": 20, "displayName": "Health Check Response Code" }
+  ],
+  "auditing": true
+}

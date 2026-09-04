@@ -367,4 +367,5 @@ FodyWeavers.xsd
 /TubieTools_Machine_Learning/data/EtsySoldOrderItems2025 (1).csv
 /TubieTools_Machine_Learning/data/EtsySoldOrderItems2026.csv
 /TubieTools_Machine_Learning/data/output.csv
-/PowerPlatformIntegration
+/PowerPlatformIntegration/solution/_generated/
+TensorFlow/model.zip

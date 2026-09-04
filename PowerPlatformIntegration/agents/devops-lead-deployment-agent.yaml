@@ -1,0 +1,60 @@
+# Copilot Studio agent definition — Business Owner (@DevOps Lead)
+# Scope: Deployment Automation Agent pilot (see ../DECISION_POINT_1_DEPLOYMENT_AGENT.md)
+name: DevOpsLead-DeploymentAgent
+displayName: Deployment Oversight Agent
+owner: DevOps Lead
+role: Business Owner
+description: >
+  Gives the DevOps Lead a conversational view of deployment scope, status,
+  and pending approvals without needing to check the CI/CD pipeline directly.
+language: en-US
+
+triggerPhrases:
+  - "what deployed today"
+  - "show me the last deployment"
+  - "was the deployment successful"
+  - "what's the rollback status"
+  - "prioritize the deployment queue"
+
+topics:
+  - name: DeploymentStatusLookup
+    triggerPhrases:
+      - "what deployed today"
+      - "show me the last deployment"
+    action:
+      type: PowerAutomateFlow
+      flow: GetRecentDeployments
+      dataSource: Dataverse.CopilotDeploymentConfig
+      responseTemplate: >
+        Last deployment: {{DeploymentName}} to {{Environment}} at {{Timestamp}}
+        — status: {{Status}}.
+
+  - name: RollbackStatusLookup
+    triggerPhrases:
+      - "was the deployment successful"
+      - "what's the rollback status"
+    action:
+      type: PowerAutomateFlow
+      flow: GetRollbackHistory
+      dataSource: Dataverse.CopilotDeploymentConfig
+      responseTemplate: >
+        {{DeploymentName}}: {{RollbackTriggered}} rollback
+        (reason: {{RollbackReason}}).
+
+  - name: DeploymentPriorityTriage
+    triggerPhrases:
+      - "prioritize the deployment queue"
+    action:
+      type: PowerAutomateFlow
+      flow: TriageDeploymentQueue
+      requiresApproval: true
+      approver: DevOps Lead
+
+connectors:
+  - Dataverse
+  - Microsoft Teams
+  - Power Automate
+
+successCriteria:
+  - Answers deployment status questions without manual pipeline lookup
+  - Surfaces rollback events within 5s of occurrence

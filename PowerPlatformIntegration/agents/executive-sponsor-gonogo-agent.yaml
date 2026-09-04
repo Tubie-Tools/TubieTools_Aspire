@@ -1,0 +1,57 @@
+# Copilot Studio agent definition — Sponsor (@Executive Champion)
+# Scope: Deployment Automation Agent pilot (see ../DECISION_POINT_1_DEPLOYMENT_AGENT.md)
+name: ExecutiveSponsor-GoNoGoAgent
+displayName: Pilot Progress & Go/No-Go Agent
+owner: Executive Champion
+role: Sponsor
+description: >
+  Gives the executive sponsor a lightweight status summary of the pilot
+  against its 4-week timeline and success criteria, for Go/No-Go review.
+language: en-US
+
+triggerPhrases:
+  - "how is the deployment pilot going"
+  - "are we ready for go/no-go"
+  - "show me the success criteria status"
+  - "what's blocking the pilot"
+
+topics:
+  - name: PilotStatusSummary
+    triggerPhrases:
+      - "how is the deployment pilot going"
+    action:
+      type: PowerAutomateFlow
+      flow: GetPilotMilestoneStatus
+      dataSource: Dataverse.CopilotDeploymentConfig
+      responseTemplate: >
+        Week {{CurrentWeek}} of 4. Milestone: {{MilestoneName}} —
+        {{MilestoneStatus}}.
+
+  - name: GoNoGoChecklist
+    triggerPhrases:
+      - "are we ready for go/no-go"
+      - "show me the success criteria status"
+    action:
+      type: PowerAutomateFlow
+      flow: EvaluateSuccessCriteria
+      responseTemplate: >
+        {{CriteriaMet}}/{{CriteriaTotal}} success criteria met.
+        Recommendation: {{Recommendation}}.
+
+  - name: BlockerEscalation
+    triggerPhrases:
+      - "what's blocking the pilot"
+    action:
+      type: PowerAutomateFlow
+      flow: GetOpenBlockers
+      responseTemplate: >
+        {{BlockerCount}} open blockers. Top: {{TopBlockerDescription}}.
+
+connectors:
+  - Dataverse
+  - Microsoft Teams
+  - Power Automate
+
+successCriteria:
+  - Sponsor can self-serve pilot status without a status meeting
+  - Go/No-Go recommendation available on demand at Week 4

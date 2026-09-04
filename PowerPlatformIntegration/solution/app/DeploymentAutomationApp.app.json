@@ -1,0 +1,16 @@
+{
+  "appLogicalName": "copilot_deploymentautomationapp",
+  "displayName": "Deployment Automation Pilot",
+  "description": "Model-driven app for the Deployment Automation Agent pilot",
+  "tables": ["copilot_deploymentconfig"],
+  "embeddedAgents": [
+    { "role": "Business Owner", "manifest": "../agents/devops-lead-deployment-agent.yaml" },
+    { "role": "Technical Owner", "manifest": "../agents/integration-developer-sync-agent.yaml" },
+    { "role": "Platform Owner", "manifest": "../agents/flow-specialist-automation-agent.yaml" },
+    { "role": "Sponsor", "manifest": "../agents/executive-sponsor-gonogo-agent.yaml" }
+  ],
+  "siteMap": [
+    { "area": "Deployments", "subArea": "Deployment History", "table": "copilot_deploymentconfig" },
+    { "area": "Deployments", "subArea": "Rollback Log", "table": "copilot_deploymentconfig", "view": "RolledBack deployments" }
+  ]
+}

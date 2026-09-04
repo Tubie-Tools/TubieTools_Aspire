@@ -1,0 +1,56 @@
+# Copilot Studio agent definition — Technical Owner (@.NET Integration Developer)
+# Scope: Deployment Automation Agent pilot (see ../DECISION_POINT_1_DEPLOYMENT_AGENT.md)
+name: IntegrationDeveloper-SyncAgent
+displayName: Dataverse Sync & Connector Health Agent
+owner: .NET Integration Developer
+role: Technical Owner
+description: >
+  Monitors the DualWriteService that syncs deployment events from SQL Server
+  to Dataverse, and surfaces sync failures/retry-queue depth on demand.
+language: en-US
+
+triggerPhrases:
+  - "is the dataverse sync healthy"
+  - "show me the retry queue"
+  - "what failed to sync"
+  - "replay failed sync events"
+
+topics:
+  - name: SyncHealthCheck
+    triggerPhrases:
+      - "is the dataverse sync healthy"
+    action:
+      type: PowerAutomateFlow
+      flow: CheckDualWriteHealth
+      dataSource: Dataverse.CopilotDeploymentConfig
+      responseTemplate: >
+        Sync latency: {{LatencyMs}}ms. Retry queue depth: {{QueueDepth}}.
+
+  - name: RetryQueueInspection
+    triggerPhrases:
+      - "show me the retry queue"
+      - "what failed to sync"
+    action:
+      type: PowerAutomateFlow
+      flow: GetRetryQueueItems
+      responseTemplate: >
+        {{FailedCount}} events pending retry. Most recent failure:
+        {{LastError}} at {{Timestamp}}.
+
+  - name: ReplayFailedSync
+    triggerPhrases:
+      - "replay failed sync events"
+    action:
+      type: PowerAutomateFlow
+      flow: ReplayRetryQueue
+      requiresApproval: true
+      approver: .NET Integration Developer
+
+connectors:
+  - Dataverse
+  - Power Automate
+  - HTTP (DualWriteService API)
+
+successCriteria:
+  - Reports sync latency and failures without querying logs manually
+  - Retry queue never blocks the CI/CD pipeline (fire-and-forget confirmed)

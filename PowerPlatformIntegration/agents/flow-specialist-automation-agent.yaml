@@ -1,0 +1,62 @@
+# Copilot Studio agent definition — Platform Owner (@Power Apps/Flow Specialist)
+# Scope: Deployment Automation Agent pilot (see ../DECISION_POINT_1_DEPLOYMENT_AGENT.md)
+name: FlowSpecialist-AutomationAgent
+displayName: Flow & Rollback Automation Agent
+owner: Power Apps/Flow Specialist
+role: Platform Owner
+description: >
+  Manages the Power Automate flows that notify stakeholders, run post-deploy
+  health checks, and trigger auto-rollback on failure thresholds.
+language: en-US
+
+triggerPhrases:
+  - "run a health check now"
+  - "trigger rollback for the last deployment"
+  - "adjust the rollback threshold"
+  - "test the notification flow"
+
+topics:
+  - name: ManualHealthCheck
+    triggerPhrases:
+      - "run a health check now"
+    action:
+      type: PowerAutomateFlow
+      flow: PostDeployHealthCheck
+      responseTemplate: >
+        Health check result: {{Status}} ({{ResponseCode}}).
+
+  - name: ManualRollback
+    triggerPhrases:
+      - "trigger rollback for the last deployment"
+    action:
+      type: PowerAutomateFlow
+      flow: TriggerRollback
+      requiresApproval: true
+      approver: Power Apps/Flow Specialist
+
+  - name: RollbackThresholdConfig
+    triggerPhrases:
+      - "adjust the rollback threshold"
+    action:
+      type: PowerAutomateFlow
+      flow: UpdateRollbackThreshold
+      requiresApproval: true
+      approver: Power Apps/Flow Specialist
+
+  - name: NotificationFlowTest
+    triggerPhrases:
+      - "test the notification flow"
+    action:
+      type: PowerAutomateFlow
+      flow: SendDeploymentNotification
+      dryRun: true
+
+connectors:
+  - Dataverse
+  - Microsoft Teams
+  - Outlook
+  - Power Automate
+
+successCriteria:
+  - Auto-rollback fires correctly in staged failure tests
+  - Notification flow reachable and testable on demand without redeploying
