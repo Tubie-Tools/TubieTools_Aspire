@@ -1,0 +1,22 @@
+{
+  "$schema": "https://schema.dataverse.microsoft.com/table.schema.json",
+  "logicalName": "copilot_copilotapplication",
+  "displayName": "Copilot Application",
+  "pluralName": "Copilot Applications",
+  "description": "Registry of Copilot applications with governance and lifecycle metadata (dual-write primary)",
+  "primaryColumn": "copilot_name",
+  "columns": [
+    { "name": "copilot_name", "type": "Text", "maxLength": 200, "displayName": "Name", "searchable": true },
+    { "name": "copilot_landingzone", "type": "Text", "maxLength": 100, "displayName": "Landing Zone", "searchable": true },
+    { "name": "copilot_description", "type": "Memo", "maxLength": 2000, "displayName": "Description" },
+    { "name": "copilot_businessobjective", "type": "Text", "maxLength": 500, "displayName": "Business Objective" },
+    { "name": "copilot_modelconfiguration", "type": "Lookup", "targets": ["copilot_modelconfiguration"], "displayName": "Model Configuration" },
+    { "name": "copilot_governancepolicy", "type": "Lookup", "targets": ["copilot_governancepolicy"], "displayName": "Governance Policy" },
+    { "name": "copilot_owner", "type": "Lookup", "targets": ["systemuser"], "displayName": "Owner" },
+    { "name": "copilot_status", "type": "Choice", "options": ["Dev", "Test", "Prod", "Deprecated"], "displayName": "Status" },
+    { "name": "copilot_capabilities", "type": "Text", "maxLength": 2000, "displayName": "Capabilities (JSON)" },
+    { "name": "copilot_currentversion", "type": "Text", "maxLength": 50, "displayName": "Current Version" },
+    { "name": "copilot_isactive", "type": "Boolean", "displayName": "Is Active", "defaultValue": true }
+  ],
+  "auditing": true
+}

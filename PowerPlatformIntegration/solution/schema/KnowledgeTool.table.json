@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schema.dataverse.microsoft.com/table.schema.json",
+  "logicalName": "copilot_knowledgetool",
+  "displayName": "Knowledge Tool",
+  "pluralName": "Knowledge Tools",
+  "description": "Retrieval/knowledge tools attached to a copilot (dual-write 1:N child)",
+  "primaryColumn": "copilot_toolname",
+  "columns": [
+    { "name": "copilot_toolname", "type": "Text", "maxLength": 200, "displayName": "Tool Name", "searchable": true },
+    { "name": "copilot_copilotapplication", "type": "Lookup", "targets": ["copilot_copilotapplication"], "required": true, "displayName": "Copilot Application", "searchable": true },
+    { "name": "copilot_description", "type": "Memo", "maxLength": 2000, "displayName": "Description" },
+    { "name": "copilot_pattern", "type": "Choice", "options": ["VectorSearch", "RAG", "StructuredQuery", "Hybrid"], "displayName": "Pattern" },
+    { "name": "copilot_datasource", "type": "Memo", "maxLength": 4000, "displayName": "Data Source (JSON)" },
+    { "name": "copilot_retrievalconfig", "type": "Memo", "maxLength": 4000, "displayName": "Retrieval Config (JSON)" },
+    { "name": "copilot_embeddingconfig", "type": "Memo", "maxLength": 4000, "displayName": "Embedding Config (JSON)" },
+    { "name": "copilot_contextwindowsize", "type": "WholeNumber", "defaultValue": 2000, "displayName": "Context Window Size" },
+    { "name": "copilot_relevancethreshold", "type": "Decimal", "precision": 2, "minValue": 0, "maxValue": 1, "defaultValue": 0.7, "displayName": "Relevance Threshold" },
+    { "name": "copilot_maxresults", "type": "WholeNumber", "defaultValue": 5, "displayName": "Max Results" },
+    { "name": "copilot_cacheconfig", "type": "Memo", "maxLength": 4000, "displayName": "Cache Config (JSON)" },
+    { "name": "copilot_accesscontrol", "type": "Memo", "maxLength": 4000, "displayName": "Access Control (JSON)" },
+    { "name": "copilot_freshnessrequirement", "type": "Choice", "options": ["RealTime", "Daily", "Weekly", "Monthly"], "displayName": "Freshness Requirement" },
+    { "name": "copilot_isenabled", "type": "Boolean", "defaultValue": true, "displayName": "Is Enabled" },
+    { "name": "copilot_performancemetrics", "type": "Memo", "maxLength": 4000, "displayName": "Performance Metrics (JSON)" }
+  ],
+  "auditing": true
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://schema.dataverse.microsoft.com/table.schema.json",
+  "logicalName": "copilot_performancemetrics",
+  "displayName": "Copilot Performance Metrics",
+  "pluralName": "Copilot Performance Metrics",
+  "description": "Performance metrics and monitoring per copilot per measurement period (event-driven streaming; feeds Power BI)",
+  "primaryColumn": "copilot_metricsname",
+  "columns": [
+    { "name": "copilot_metricsname", "type": "Text", "maxLength": 200, "displayName": "Metrics Name", "searchable": true },
+    { "name": "copilot_copilotapplication", "type": "Lookup", "targets": ["copilot_copilotapplication"], "required": true, "displayName": "Copilot Application", "searchable": true },
+    { "name": "copilot_measurementperioddays", "type": "WholeNumber", "defaultValue": 30, "displayName": "Measurement Period (Days)" },
+    { "name": "copilot_totalinteractions", "type": "WholeNumber", "format": "BigInt", "displayName": "Total Interactions" },
+    { "name": "copilot_successfulcompletions", "type": "WholeNumber", "format": "BigInt", "displayName": "Successful Completions" },
+    { "name": "copilot_failedinteractions", "type": "WholeNumber", "format": "BigInt", "displayName": "Failed Interactions" },
+    { "name": "copilot_successrate", "type": "Decimal", "precision": 2, "minValue": 0, "maxValue": 100, "displayName": "Success Rate (%)" },
+    { "name": "copilot_avgresponsetimems", "type": "Decimal", "precision": 0, "displayName": "Avg Response Time (ms)" },
+    { "name": "copilot_p95responsetimems", "type": "Decimal", "precision": 0, "displayName": "P95 Response Time (ms)" },
+    { "name": "copilot_activeusers", "type": "WholeNumber", "displayName": "Active Users" },
+    { "name": "copilot_avgsessiondurationminutes", "type": "Decimal", "precision": 2, "displayName": "Avg Session Duration (min)" },
+    { "name": "copilot_usersatisfactionscore", "type": "Decimal", "precision": 2, "minValue": 0, "maxValue": 5, "displayName": "User Satisfaction Score" },
+    { "name": "copilot_knowledgehitrate", "type": "Decimal", "precision": 2, "minValue": 0, "maxValue": 100, "displayName": "Knowledge Hit Rate (%)" },
+    { "name": "copilot_actionsuccessrate", "type": "Decimal", "precision": 2, "minValue": 0, "maxValue": 100, "displayName": "Action Success Rate (%)" },
+    { "name": "copilot_evaluationpassrate", "type": "Decimal", "precision": 2, "minValue": 0, "maxValue": 100, "displayName": "Evaluation Pass Rate (%)" },
+    { "name": "copilot_uptimepercentage", "type": "Decimal", "precision": 3, "minValue": 0, "maxValue": 100, "displayName": "Uptime (%)" },
+    { "name": "copilot_tokensused", "type": "WholeNumber", "format": "BigInt", "displayName": "Tokens Used" },
+    { "name": "copilot_costperinteraction", "type": "Currency", "displayName": "Cost Per Interaction" },
+    { "name": "copilot_tokenefficiency", "type": "Decimal", "precision": 4, "displayName": "Token Efficiency" },
+    { "name": "copilot_lastupdated", "type": "DateTime", "displayName": "Last Updated" }
+  ],
+  "auditing": true
+}

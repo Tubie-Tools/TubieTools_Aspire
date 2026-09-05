@@ -1,0 +1,27 @@
+{
+  "$schema": "https://schema.dataverse.microsoft.com/table.schema.json",
+  "logicalName": "copilot_governancepolicy",
+  "displayName": "Copilot Governance Policy",
+  "pluralName": "Copilot Governance Policies",
+  "description": "Governance policy aligned with landing zones and enterprise standards (dual-write reference)",
+  "primaryColumn": "copilot_policyname",
+  "columns": [
+    { "name": "copilot_policyname", "type": "Text", "maxLength": 200, "displayName": "Policy Name", "searchable": true },
+    { "name": "copilot_landingzone", "type": "Text", "maxLength": 100, "displayName": "Landing Zone", "searchable": true },
+    { "name": "copilot_description", "type": "Memo", "maxLength": 2000, "displayName": "Description" },
+    { "name": "copilot_dataresidency", "type": "Memo", "maxLength": 4000, "displayName": "Data Residency (JSON)" },
+    { "name": "copilot_securityrequirements", "type": "Memo", "maxLength": 4000, "displayName": "Security Requirements (JSON)" },
+    { "name": "copilot_compliancerequirements", "type": "Memo", "maxLength": 4000, "displayName": "Compliance Requirements (JSON)" },
+    { "name": "copilot_datahandling", "type": "Memo", "maxLength": 4000, "displayName": "Data Handling (JSON)" },
+    { "name": "copilot_modelgovernance", "type": "Memo", "maxLength": 4000, "displayName": "Model Governance (JSON)" },
+    { "name": "copilot_auditrequirements", "type": "Memo", "maxLength": 4000, "displayName": "Audit Requirements (JSON)" },
+    { "name": "copilot_costmanagement", "type": "Memo", "maxLength": 4000, "displayName": "Cost Management (JSON)" },
+    { "name": "copilot_incidentresponse", "type": "Memo", "maxLength": 4000, "displayName": "Incident Response (JSON)" },
+    { "name": "copilot_enforcementmode", "type": "Choice", "options": ["Strict", "Moderate", "Advisory"], "defaultValue": "Strict", "displayName": "Enforcement Mode" },
+    { "name": "copilot_requiresattestation", "type": "Boolean", "displayName": "Requires Attestation" },
+    { "name": "copilot_lastreviewdate", "type": "DateTime", "format": "DateOnly", "displayName": "Last Review Date" },
+    { "name": "copilot_nextreviewdate", "type": "DateTime", "format": "DateOnly", "displayName": "Next Review Date" },
+    { "name": "copilot_isactive", "type": "Boolean", "defaultValue": true, "displayName": "Is Active" }
+  ],
+  "auditing": true
+}

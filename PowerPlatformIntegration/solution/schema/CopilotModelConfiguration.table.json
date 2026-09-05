@@ -1,0 +1,25 @@
+{
+  "$schema": "https://schema.dataverse.microsoft.com/table.schema.json",
+  "logicalName": "copilot_modelconfiguration",
+  "displayName": "Copilot Model Configuration",
+  "pluralName": "Copilot Model Configurations",
+  "description": "Underlying LLM and generation settings for a copilot (dual-write reference)",
+  "primaryColumn": "copilot_configurationname",
+  "columns": [
+    { "name": "copilot_configurationname", "type": "Text", "maxLength": 200, "displayName": "Configuration Name", "searchable": true },
+    { "name": "copilot_modelprovider", "type": "Choice", "options": ["OpenAI", "Azure OpenAI", "Anthropic", "Custom"], "displayName": "Model Provider", "searchable": true },
+    { "name": "copilot_modelname", "type": "Text", "maxLength": 100, "displayName": "Model Name", "searchable": true },
+    { "name": "copilot_modelversion", "type": "Text", "maxLength": 50, "displayName": "Model Version" },
+    { "name": "copilot_temperature", "type": "Decimal", "precision": 2, "minValue": 0, "maxValue": 2, "defaultValue": 0.7, "displayName": "Temperature" },
+    { "name": "copilot_topp", "type": "Decimal", "precision": 2, "minValue": 0, "maxValue": 1, "defaultValue": 0.9, "displayName": "Top P" },
+    { "name": "copilot_maxtokens", "type": "WholeNumber", "defaultValue": 2000, "displayName": "Max Tokens" },
+    { "name": "copilot_frequencypenalty", "type": "Decimal", "precision": 2, "minValue": -2, "maxValue": 2, "defaultValue": 0, "displayName": "Frequency Penalty" },
+    { "name": "copilot_presencepenalty", "type": "Decimal", "precision": 2, "minValue": -2, "maxValue": 2, "defaultValue": 0, "displayName": "Presence Penalty" },
+    { "name": "copilot_systemprompt", "type": "Memo", "maxLength": 10000, "displayName": "System Prompt" },
+    { "name": "copilot_customparameters", "type": "Memo", "maxLength": 4000, "displayName": "Custom Parameters (JSON)" },
+    { "name": "copilot_safetysettings", "type": "Memo", "maxLength": 4000, "displayName": "Safety Settings (JSON)" },
+    { "name": "copilot_contextwindowsize", "type": "WholeNumber", "displayName": "Context Window Size" },
+    { "name": "copilot_supportsfunctioncalling", "type": "Boolean", "displayName": "Supports Function Calling" }
+  ],
+  "auditing": true
+}

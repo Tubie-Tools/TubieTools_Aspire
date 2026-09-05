@@ -16,6 +16,7 @@ ability to act on your tenant, and shouldn't be relied on as a credential.
 | Path | Purpose |
 |------|---------|
 | `schema/CopilotDeploymentConfig.table.json` | Dataverse table schema backing all 4 agents |
+| `schema/*.table.json` | Full 7-table data model (CopilotApplication, ModelConfiguration, KnowledgeTool, GovernancePolicy, PerformanceMetrics, DeploymentConfig, Version) — see ../IMPLEMENTATION_HANDBOOK.md Section 1 |
 | `app/DeploymentAutomationApp.app.json` | Model-driven app definition (table + 4 embedded Copilot Studio agents) |
 | `deploy.ps1` | `pac` CLI script: auth, solution init, table + app import |
 

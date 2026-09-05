@@ -27,13 +27,17 @@ if (Test-Path $solutionDir) {
   pac solution init --publisher-name $PublisherName --publisher-prefix $PublisherPrefix --outputDirectory $solutionDir
 }
 
-Write-Host "Copying table schema and app definition into solution scaffold..."
-Copy-Item ./schema/CopilotDeploymentConfig.table.json ./_generated/$SolutionName/ -Force
+Write-Host "Copying table schemas and app definition into solution scaffold..."
+Get-ChildItem ./schema/*.table.json | ForEach-Object {
+  Copy-Item $_.FullName ./_generated/$SolutionName/ -Force
+  Write-Host "  + $($_.Name)"
+}
 Copy-Item ./app/DeploymentAutomationApp.app.json ./_generated/$SolutionName/ -Force
 
 Write-Host "NEXT STEPS (manual, Maker Portal):"
 Write-Host "  1. Open the Maker Portal for your environment"
-Write-Host "  2. Create table 'Copilot Deployment Config' using ./schema/CopilotDeploymentConfig.table.json as reference"
+Write-Host "  2. Create the 7 tables using ./schema/*.table.json as reference"
+Write-Host "     (full data model: ../IMPLEMENTATION_HANDBOOK.md Section 1)"
 Write-Host "  3. Build the Power Automate flows listed in README.md"
 Write-Host "  4. Import each Copilot Studio agent from ../agents/*.yaml"
 Write-Host "  5. Build the model-driven app per ./app/DeploymentAutomationApp.app.json"

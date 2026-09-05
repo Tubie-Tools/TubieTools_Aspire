@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schema.dataverse.microsoft.com/table.schema.json",
+  "logicalName": "copilot_version",
+  "displayName": "Copilot Version",
+  "pluralName": "Copilot Versions",
+  "description": "Version tracking and release history per copilot (time-based snapshot)",
+  "primaryColumn": "copilot_versionnumber",
+  "columns": [
+    { "name": "copilot_versionnumber", "type": "Text", "maxLength": 50, "displayName": "Version Number", "searchable": true },
+    { "name": "copilot_copilotapplication", "type": "Lookup", "targets": ["copilot_copilotapplication"], "required": true, "displayName": "Copilot Application", "searchable": true },
+    { "name": "copilot_releasetype", "type": "Choice", "options": ["Major", "Minor", "Patch", "Beta", "RC"], "displayName": "Release Type" },
+    { "name": "copilot_releasedate", "type": "DateTime", "format": "DateOnly", "displayName": "Release Date" },
+    { "name": "copilot_releasenotes", "type": "Memo", "maxLength": 4000, "displayName": "Release Notes" },
+    { "name": "copilot_changes", "type": "Memo", "maxLength": 8000, "displayName": "Changes (JSON)" },
+    { "name": "copilot_breakingchanges", "type": "Memo", "maxLength": 4000, "displayName": "Breaking Changes (JSON)" },
+    { "name": "copilot_deprecations", "type": "Memo", "maxLength": 4000, "displayName": "Deprecations (JSON)" },
+    { "name": "copilot_migrationguideurl", "type": "Text", "maxLength": 500, "format": "Url", "displayName": "Migration Guide URL" },
+    { "name": "copilot_versionmetrics", "type": "Memo", "maxLength": 4000, "displayName": "Version Metrics (JSON)" },
+    { "name": "copilot_deploymentstatus", "type": "Choice", "options": ["Development", "Staging", "Production", "Archived"], "displayName": "Deployment Status" },
+    { "name": "copilot_rollbackpath", "type": "Lookup", "targets": ["copilot_version"], "displayName": "Rollback Path (Previous Version)" },
+    { "name": "copilot_supportenddate", "type": "DateTime", "format": "DateOnly", "displayName": "Support End Date" }
+  ],
+  "auditing": true
+}
