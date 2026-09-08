@@ -43,8 +43,6 @@ builder.Services.AddHttpClient<ServiceNowService>((provider, client) =>
 });
 
 builder.Services.AddScoped<IServiceNowService, ServiceNowService>();
-
-builder.Services.AddScoped<IServiceNowService, ServiceNowService>();
 builder.Services.AddScoped<ITerraformService, TerraformService>();
 builder.Services.AddScoped<IKubernetesService, KubernetesService>();
 builder.Services.AddScoped<ISecurityService, SecurityService>();
