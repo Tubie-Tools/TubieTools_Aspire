@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Polly;
 using TubieTools_Aspire.EnterpriseAutomation.AIAgent;
 using TubieTools_Aspire.EnterpriseAutomation.Azure;
 using TubieTools_Aspire.EnterpriseAutomation.AzureDevOps;
@@ -14,6 +12,7 @@ using TubieTools_Aspire.EnterpriseAutomation.ServiceNow;
 using TubieTools_Aspire.EnterpriseAutomation.ServiceNow.Tools;
 using TubieTools_Aspire.EnterpriseAutomation.Terraform;
 using TubieTools_Aspire.Security.Extensions;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +33,17 @@ builder.Services.AddHttpContextAccessor();
 // Register Enterprise Automation Services
 builder.Services.AddScoped<IAzureAutomationService, AzureAutomationService>();
 builder.Services.AddScoped<IAzureDevOpsService, AzureDevOpsService>();
+builder.Services.AddHttpClient<ServiceNowService>((provider, client) =>
+{
+    var config = provider.GetRequiredService<IConfiguration>();
+    var instance = config["ServiceNow:Instance"];
+    client.BaseAddress = new Uri($"https://{instance}.service-now.com/api/now");
+    client.DefaultRequestHeaders.Add("Authorization", $"Bearer {config["ServiceNow:Token"]}");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
+builder.Services.AddScoped<IServiceNowService, ServiceNowService>();
+
 builder.Services.AddScoped<IServiceNowService, ServiceNowService>();
 builder.Services.AddScoped<ITerraformService, TerraformService>();
 builder.Services.AddScoped<IKubernetesService, KubernetesService>();
@@ -81,9 +91,6 @@ builder.Services.AddScoped<ITenantContextAccessor, TenantContextAccessor>();
 builder.Services.AddScoped<ITenantService, TenantService>();
 builder.Services.AddScoped<ISubscriptionManager, SubscriptionManager>();
 builder.Services.AddScoped<IMultiTenantAIAgent, MultiTenantAIAgent>();
-
-// Add HTTP clients for external services
-builder.Services.AddHttpClient<ServiceNowService>();
 
 // Health checks
 builder.Services.AddHealthChecks()

@@ -18,13 +18,14 @@ namespace TubieTools_Aspire.EnterpriseAutomation.Seeds
                 var configPath = Path.Combine(AppContext.BaseDirectory, 
                     "MultiTenant", "Jurisdiction", "Config", "jurisdictions.json");
 
-                if (!File.Exists(configPath))
+                if (!System.IO.Path.Exists(configPath))
                 {
                     Console.WriteLine($"⚠ Config file not found: {configPath}");
                     return;
                 }
 
-                var json = await File.ReadAllTextAsync(configPath);
+                // Use async file read for better performance
+                var json = await System.IO.File.ReadAllTextAsync(configPath);
                 using var doc = JsonDocument.Parse(json);
 
                 if (!doc.RootElement.TryGetProperty("jurisdictions", out var jurArray))

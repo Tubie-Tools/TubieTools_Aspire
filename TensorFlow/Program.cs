@@ -45,13 +45,14 @@ ITransformer trainedModel = pipelineEstimator.Fit(data);
 // Save model
 mlContext.Model.Save(trainedModel, data.Schema, "model.zip");
 
-using (FileStream stream = File.Create("onnx_model.onnx"))
-{
-    mlContext.Model.ConvertToOnnx(trainedModel, data, stream);
-    stream.Flush();
-    stream.Dispose(); // Explicit dispose
-}
-string modelPath = Path.GetFullPath("onnx_model.onnx");
+// Use a temporary in-memory stream to avoid disk I/O
+using var memoryStream = new MemoryStream();
+mlContext.Model.ConvertToOnnx(trainedModel, data, memoryStream);
+memoryStream.Position = 0;
+
+// Only write to disk if absolutely necessary for your use case
+var modelPath = Path.Combine(Path.GetTempPath(), "onnx_model.onnx");
+await System.IO.File.WriteAllBytesAsync(modelPath, memoryStream.ToArray());
 System.Threading.Thread.Sleep(100); // Brief delay to ensure file is synced
 
 OnnxScoringEstimator estimator = mlContext.Transforms.ApplyOnnxModel(modelPath);

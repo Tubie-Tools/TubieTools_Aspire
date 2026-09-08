@@ -11,7 +11,7 @@ public class LogisticsOSRMClient
 
     public LogisticsOSRMClient(HttpClient httpClient, ILogger<LogisticsOSRMClient> logger)
     {
-        _httpClient = httpClient;
+        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         _logger = logger;
     }
 
@@ -20,6 +20,9 @@ public class LogisticsOSRMClient
         try
         {
             _logger.LogInformation("Calculating route for {WaypointCount} waypoints", request.Waypoints.Count);
+            
+            if (_httpClient.BaseAddress == null)
+                throw new InvalidOperationException("HttpClient BaseAddress must be configured in DI");
 
             var response = await _httpClient.PostAsJsonAsync("/api/routing/calculate", request);
 

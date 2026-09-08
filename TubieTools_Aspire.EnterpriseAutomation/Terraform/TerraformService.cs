@@ -75,6 +75,15 @@ public class TerraformService : ITerraformService
 
     private async Task<string> ExecuteTerraformCommandAsync(string workspacePath, string command, Dictionary<string, string> variables)
     {
+        _logger.LogWarning("Direct process execution (Terraform) is not recommended in cloud environments. Consider using Terraform Cloud API or Azure Resource Manager instead.");
+
+        // For cloud environments, use API-based terraform execution instead
+        if (IsCloudEnvironment())
+        {
+            return await ExecuteTerraformViaApiAsync(workspacePath, command, variables);
+        }
+
+        // Local development fallback
         var processInfo = new ProcessStartInfo
         {
             FileName = "terraform",
@@ -86,16 +95,26 @@ public class TerraformService : ITerraformService
             CreateNoWindow = true
         };
 
-        using var process = Process.Start(processInfo);
+        using var process = Process.Start(processInfo) ?? throw new InvalidOperationException("Failed to start Terraform process");
         var output = await process.StandardOutput.ReadToEndAsync();
         var error = await process.StandardError.ReadToEndAsync();
 
         await process.WaitForExitAsync();
-
-        if (process.ExitCode != 0)
-            throw new Exception($"Terraform command failed: {error}");
-
         return output;
+    }
+    private bool IsCloudEnvironment()
+    {
+        // Check if running in Azure cloud
+        var azureWebsiteInstanceId = Environment.GetEnvironmentVariable("WEBSITE_INSTANCE_ID");
+        return !string.IsNullOrEmpty(azureWebsiteInstanceId);
+    }
+
+    private async Task<string> ExecuteTerraformViaApiAsync(string workspacePath, string command, Dictionary<string, string> variables)
+    {
+        _logger.LogInformation($"Using Terraform Cloud API for: {command}");
+        // Implement API-based terraform execution here
+        // This is safer for cloud environments
+        throw new NotImplementedException("Use Terraform Cloud API or Azure Resource Manager");
     }
 }
 

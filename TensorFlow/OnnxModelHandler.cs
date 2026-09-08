@@ -31,7 +31,7 @@ namespace TensorFlowNET.Examples
         {
             try
             {
-                if (!System.IO.File.Exists(_modelPath))
+                if (!System.IO.Path.Exists(_modelPath))
                 {
                     throw new FileNotFoundException($"Model file not found at: {_modelPath}");
                 }

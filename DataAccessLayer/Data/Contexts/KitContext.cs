@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace DataAccessLayer.Data.Contexts
 {
@@ -33,19 +32,6 @@ namespace DataAccessLayer.Data.Contexts
             modelBuilder.Entity<Event>().ToTable("Event");
             modelBuilder.Entity<EventType>().ToTable("EventType");
             modelBuilder.Entity<ProfileAspNetUsers>().ToTable("ProfileAspnetUsers");
-        }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                IConfiguration config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory()) // Ensure correct path
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .Build();
-
-                string connectionString = config.GetConnectionString("KitContext");
-                optionsBuilder.UseSqlServer(connectionString);
-            }
         }
     }
 }

@@ -17,21 +17,20 @@ public class ServiceNowService : IServiceNowService
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public ServiceNowService(
-        HttpClient httpClient,
-        IConfiguration configuration,
-        ILogger<ServiceNowService> logger,
-        IAuthorizationService authorizationService,
-        IHttpContextAccessor httpContextAccessor)
+    HttpClient httpClient,
+    IConfiguration configuration,
+    ILogger<ServiceNowService> logger,
+    IAuthorizationService authorizationService,
+    IHttpContextAccessor httpContextAccessor)
     {
-        _httpClient = httpClient;
+        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         _configuration = configuration;
         _logger = logger;
         _authorizationService = authorizationService;
         _httpContextAccessor = httpContextAccessor;
 
-        var instance = _configuration["ServiceNow:Instance"];
-        _httpClient.BaseAddress = new Uri($"https://{instance}.service-now.com/api/now");
-        _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_configuration["ServiceNow:Token"]}");
+        // HttpClient configuration should be done in Program.cs via AddHttpClient<ServiceNowService>()
+        // This ensures cloud-readiness and proper DI patterns
     }
 
     public async Task<List<Incident>> GetIncidentsAsync(string query = "")

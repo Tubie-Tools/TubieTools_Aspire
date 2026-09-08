@@ -61,6 +61,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TubieTools_Map", "TubieTool
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TubieTools_CopilotStudio_API", "TubieTools_CopilotStudio_API\TubieTools_CopilotStudio_API.csproj", "{31D588B0-405D-E8FD-9057-2EAB3F133FB1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{938C0866-C8FE-4C4E-9312-5EAAF55CC95B}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\Downloads\tubietoolsreport.json = ..\..\..\Downloads\tubietoolsreport.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
