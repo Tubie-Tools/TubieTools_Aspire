@@ -5,11 +5,24 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 //using Serilog; 
+using Azure.Identity;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using DataAccessLayer.Data.Contexts;
 using TubieTools_Map.Exceptions;
 using ServiceLayer;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Load non-secret settings from Azure App Configuration when deployed (falls back to appsettings.json locally).
+var azureAppConfigEndpoint = Environment.GetEnvironmentVariable("AZURE_APP_CONFIGURATION_ENDPOINT");
+if (!string.IsNullOrEmpty(azureAppConfigEndpoint))
+{
+    builder.Configuration.AddAzureAppConfiguration(options =>
+    {
+        options.Connect(new Uri(azureAppConfigEndpoint), new DefaultAzureCredential());
+    });
+    builder.Services.AddAzureAppConfiguration();
+}
 
 // Configure Serilog
 //Log.Logger = new LoggerConfiguration()

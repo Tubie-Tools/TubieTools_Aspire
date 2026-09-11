@@ -1,0 +1,200 @@
+{
+  "$schema": "../../../../skills/create-modernization-plan/tasks-schema.json",
+  "description": "Tasks template for modernization plan. Generate this file alongside plan.md to track individual migration tasks.",
+  "tasks": [
+    {
+      "type": "transform",
+      "id": "001-transform-configuration-management-app-configuration",
+      "description": "Externalize non-secret application configuration to Azure App Configuration. Addresses issues: Local application configuration detected, Hardcoded URLs detected.",
+      "reason": "Local appsettings.json files are not suitable for cloud-native, multi-instance deployments and prevent dynamic configuration refresh.",
+      "requirements": "Externalize non-secret configuration from appsettings.json/appsettings.{Environment}.json to Azure App Configuration using the SDK-integrated approach, preserving existing IConfiguration/IOptions<T> shape and supporting dynamic refresh.",
+      "kbId": "local-appsettings-to-azure-app-configuration",
+      "skills": [
+        { "name": "migration-local-appsettings-azure-app-configuration", "location": "builtin" }
+      ],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "transform",
+      "id": "002-transform-local-credential-keyvault",
+      "description": "Migrate plaintext credentials and connection strings to Azure Key Vault. Addresses issues: Hardcoded sensitive data detected, Connection string is detected.",
+      "reason": "Plaintext credentials and connection strings in configuration files are a security risk and are not compatible with least-privilege, secretless authentication in Azure.",
+      "requirements": "Migrate plaintext credentials and connection strings to Azure Key Vault, and access them using Managed Identity instead of storing secrets in configuration files.",
+      "kbId": "plaintext-credential-to-azure-keyvault",
+      "dependencies": ["001-transform-configuration-management-app-configuration"],
+      "skills": [
+        { "name": "migration-azure-keyvault-secret", "location": "builtin" }
+      ],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "transform",
+      "id": "003-transform-http-communication",
+      "description": "Modernize access to external resources via HTTP for cloud deployment. Addresses issues: Access to external resources via HTTP is detected.",
+      "reason": "Direct HTTP access patterns may not be resilient or portable across Azure hosting targets.",
+      "requirements": "Modernize HTTP communication patterns used to access external resources so they are resilient and portable to Azure App Service, AKS, or Azure Container Apps.",
+      "kbId": "http-communication-prompt",
+      "dependencies": ["002-transform-local-credential-keyvault"],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "transform",
+      "id": "004-transform-file-system-management",
+      "description": "Modernize local or network IO operations for cloud deployment. Addresses issues: Local or network IO operations detected.",
+      "reason": "Local or network file IO operations are not portable to stateless, containerized Azure compute.",
+      "requirements": "Modernize local or network IO operations so the application does not depend on local or network file system paths that are unavailable in Azure App Service, AKS, or Azure Container Apps.",
+      "kbId": "file-system-management-prompt",
+      "dependencies": ["003-transform-http-communication"],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "transform",
+      "id": "005-transform-performance-optimization",
+      "description": "Optimize synchronous API usage for cloud performance. Addresses issues: Synchronous API usage detected.",
+      "reason": "Synchronous API usage can limit scalability and responsiveness in cloud-hosted environments.",
+      "requirements": "Replace synchronous API usage with asynchronous equivalents to improve scalability and responsiveness for cloud deployment.",
+      "kbId": "performance-optimization-prompt",
+      "dependencies": ["004-transform-file-system-management"],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "transform",
+      "id": "006-transform-connection-string-security",
+      "description": "Modernize connection string and database connection management. Addresses issues: Environment variables dependency detected.",
+      "reason": "Reliance on environment variables for connection strings is fragile and not aligned with secretless, Managed Identity-based authentication in Azure.",
+      "requirements": "Modernize connection string and database connection handling to reduce dependency on environment variables, preferring Managed Identity-based authentication where applicable.",
+      "kbId": "connection-string-prompt",
+      "dependencies": ["005-transform-performance-optimization"],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "transform",
+      "id": "007-transform-local-system-dependencies",
+      "description": "Migrate local process start dependencies for cloud compatibility. Addresses issues: Local process start detected.",
+      "reason": "Starting local OS processes is not supported or reliable in many Azure compute hosting models.",
+      "requirements": "Migrate local process start dependencies to approaches compatible with Azure App Service, AKS, or Azure Container Apps hosting.",
+      "kbId": "local-system-dependencies-prompt",
+      "dependencies": ["006-transform-connection-string-security"],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "transform",
+      "id": "008-transform-certificate-management",
+      "description": "Migrate certificate management to Azure Key Vault. Addresses issues: Certificate management dependency detected.",
+      "reason": "Locally managed certificates are not portable and complicate certificate rotation in Azure.",
+      "requirements": "Migrate certificate management to Azure Key Vault, using Managed Identity for access.",
+      "kbId": "certificate-to-azure-key-vault",
+      "dependencies": ["007-transform-local-system-dependencies"],
+      "skills": [
+        { "name": "migration-azure-keyvault-certificate", "location": "builtin" }
+      ],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "transform",
+      "id": "009-transform-local-file-blob-storage",
+      "description": "Migrate local file system usage to Azure Blob Storage. Addresses issues: Static content detected, Hardcoded local or network paths detected.",
+      "reason": "Static content and hardcoded local/network file paths are not available in stateless, containerized Azure compute.",
+      "requirements": "Migrate static content and files referenced via hardcoded local or network paths to Azure Blob Storage, using Managed Identity for access.",
+      "kbId": "local-file-to-azure-blob-storage",
+      "dependencies": ["008-transform-certificate-management"],
+      "skills": [
+        { "name": "migration-azure-storage-blob", "location": "builtin" }
+      ],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "transform",
+      "id": "010-transform-local-file-logging-opentelemetry",
+      "description": "Migrate local file logging to OpenTelemetry on Application Insights. Addresses issues: Logging to local or network paths detected.",
+      "reason": "Logging to local or network file paths is not durable or observable in cloud-hosted, containerized deployments.",
+      "requirements": "Replace logging to local or network file paths with OpenTelemetry instrumentation reporting to Azure Application Insights.",
+      "kbId": "local-file-log-to-opentelemetry",
+      "dependencies": ["009-transform-local-file-blob-storage"],
+      "skills": [
+        { "name": "migration-opentelemetry-azure", "location": "builtin" }
+      ],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "transform",
+      "id": "011-transform-serilog-opentelemetry",
+      "description": "Migrate Serilog logging framework usage to OpenTelemetry on Application Insights. Addresses issues: Serilog logging framework detected.",
+      "reason": "Consolidating logging on OpenTelemetry/Application Insights provides consistent, cloud-native observability across the solution.",
+      "requirements": "Replace Serilog logging framework usage with OpenTelemetry instrumentation reporting to Azure Application Insights.",
+      "kbId": "serilog-to-opentelemetry",
+      "dependencies": ["010-transform-local-file-logging-opentelemetry"],
+      "skills": [
+        { "name": "migration-opentelemetry-azure", "location": "builtin" }
+      ],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "security",
+      "id": "012-security-cve-remediation",
+      "description": "Scan all project dependencies for known CVEs and remediate any identified vulnerabilities to ensure the application is secure before deployment.",
+      "reason": "Ensure the modernized application is free of known security vulnerabilities before deployment.",
+      "requirements": "Upgrade vulnerable dependencies to the minimum patched version. If a CVE fix requires a major version upgrade, document the affected dependency, the current version, the upgraded major version, and the breaking change risk. Verify that the project builds and all tests pass after remediation.",
+      "dependencies": ["011-transform-serilog-opentelemetry"],
+      "skills": [
+        { "name": "validate-cves-and-fix", "location": "builtin" }
+      ],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    }
+  ],
+  "metadata": {
+    "planName": "Cloud Readiness Modernization",
+    "projectName": "TubieTools_Aspire",
+    "language": "dotnet",
+    "createdAt": "2026-09-08T00:00:00Z",
+    "version": "1.0"
+  }
+}

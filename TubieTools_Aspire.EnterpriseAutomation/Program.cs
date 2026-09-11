@@ -1,4 +1,6 @@
 using Polly;
+using Azure.Identity;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using TubieTools_Aspire.EnterpriseAutomation.AIAgent;
 using TubieTools_Aspire.EnterpriseAutomation.Azure;
 using TubieTools_Aspire.EnterpriseAutomation.AzureDevOps;
@@ -12,9 +14,21 @@ using TubieTools_Aspire.EnterpriseAutomation.ServiceNow;
 using TubieTools_Aspire.EnterpriseAutomation.ServiceNow.Tools;
 using TubieTools_Aspire.EnterpriseAutomation.Terraform;
 using TubieTools_Aspire.Security.Extensions;
-
+using Azure.Identity;
+using Azure.Data.AppConfiguration;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Load non-secret settings from Azure App Configuration when deployed (falls back to appsettings.json locally).
+var azureAppConfigEndpoint = Environment.GetEnvironmentVariable("AZURE_APP_CONFIGURATION_ENDPOINT");
+if (!string.IsNullOrEmpty(azureAppConfigEndpoint))
+{
+    builder.Configuration.AddAzureAppConfiguration(options =>
+    {
+        options.Connect(new Uri(azureAppConfigEndpoint), new DefaultAzureCredential());
+    });
+    builder.Services.AddAzureAppConfiguration();
+}
 
 // Add service defaults
 builder.AddServiceDefaults();
@@ -98,6 +112,7 @@ builder.Services.AddHealthChecks()
     .AddCheck<TubieTools_Aspire.Security.Health.EntraIdHealthCheck>("entra-id");
 
 var app = builder.Build();
+
 
 // Add tenant resolver middleware
 app.UseTenantResolver();

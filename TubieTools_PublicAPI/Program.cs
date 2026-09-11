@@ -1,4 +1,6 @@
 
+using Azure.Identity;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.OpenApi;
 using TubieTools_PublicAPI.Middleware;
 using TubieTools_PublicAPI.Models;
@@ -13,6 +15,17 @@ namespace TubieTools_PublicAPI
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // Load non-secret settings from Azure App Configuration when deployed (falls back to appsettings.json locally).
+            var azureAppConfigEndpoint = Environment.GetEnvironmentVariable("AZURE_APP_CONFIGURATION_ENDPOINT");
+            if (!string.IsNullOrEmpty(azureAppConfigEndpoint))
+            {
+                builder.Configuration.AddAzureAppConfiguration(options =>
+                {
+                    options.Connect(new Uri(azureAppConfigEndpoint), new DefaultAzureCredential());
+                });
+                builder.Services.AddAzureAppConfiguration();
+            }
 
             // Add services to the container.
 
@@ -49,6 +62,7 @@ namespace TubieTools_PublicAPI
             SetDependencyInjectedTenant(builder);
 
             var app = builder.Build();
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

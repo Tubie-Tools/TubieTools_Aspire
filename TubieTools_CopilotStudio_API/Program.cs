@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Azure.Identity;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using DataAccessLayer.Data.Contexts; 
 using TubieTools_CopilotStudio_API.Services;
 using DataAccessLayer.Data.Repositories;
@@ -11,6 +13,17 @@ using DataAccessLayer.Repositories;
 
 // Initialize builder
 var builder = WebApplication.CreateBuilder(args);
+
+// Load non-secret settings from Azure App Configuration when deployed (falls back to appsettings.json locally).
+var azureAppConfigEndpoint = Environment.GetEnvironmentVariable("AZURE_APP_CONFIGURATION_ENDPOINT");
+if (!string.IsNullOrEmpty(azureAppConfigEndpoint))
+{
+    builder.Configuration.AddAzureAppConfiguration(options =>
+    {
+        options.Connect(new Uri(azureAppConfigEndpoint), new DefaultAzureCredential());
+    });
+    builder.Services.AddAzureAppConfiguration();
+}
 
 // Configure Serilog
 builder.Host.UseSerilog((context, config) =>
