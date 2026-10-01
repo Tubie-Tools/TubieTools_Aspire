@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ServiceLayer.PowerPlatformDependencies.SnowflakeAuthService" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAACAAAgAAAAAAAAAAAIAAAgAAAAEEAAAAAAAA=</HashCode>
+      <FileName>PowerPlatformDependencies\SnowflakeAuthService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceLayer.PowerPlatformDependencies.SnowflakeRepository" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="6.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIACAAAAAAABAAAAQAIAAAAAAAAAEAAAAACAA=</HashCode>
+      <FileName>PowerPlatformDependencies\SnowflakeRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceLayer.PowerPlatformDependencies.PowerPlatformConnectorService" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAQIAAAAAAAAAAQAAIAAAAAAAAAAAAIAAAAA=</HashCode>
+      <FileName>PowerPlatformDependencies\PowerPlatformConnectorService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ServiceLayer.PowerPlatformDependencies.PowerPlatformDataverseService" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="6.25" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAAABAAAAAoIAAAIIAAACEAAAAAAAA=</HashCode>
+      <FileName>PowerPlatformDependencies\PowerPlatformDataverseService.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Interface Name="ServiceLayer.PowerPlatformDependencies.ISnowflakeRepository" Collapsed="true">
+    <Position X="6.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIACAAAAAAAAAAAAQAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>PowerPlatformDependencies\ISnowflakeRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ServiceLayer.PowerPlatformDependencies.IPowerPlatformConnectorService" Collapsed="true">
+    <Position X="4.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAQAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>PowerPlatformDependencies\IPowerPlatformConnectorService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ServiceLayer.PowerPlatformDependencies.IPowerPlatformDataverseService" Collapsed="true">
+    <Position X="6.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAAAAAAAAAIAAAAIIAAACAAAAAAAAA=</HashCode>
+      <FileName>PowerPlatformDependencies\IPowerPlatformDataverseService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ServiceLayer.PowerPlatformDependencies.ISnowflakeAuthService" Collapsed="true">
+    <Position X="4.5" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>PowerPlatformDependencies\ISnowflakeAuthService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
