@@ -128,7 +128,7 @@ public class BatchProcessingService : IBatchProcessingService
                 var variance = Math.Abs(shipment.ActualDistanceMiles.Value - shipment.PlannedDistanceMiles) /
                               shipment.PlannedDistanceMiles;
 
-                if (variance > 0.2) // 20% variance threshold
+                if (variance > 0.2m) // 20% variance threshold
                 {
                     validation.IsValid = false;
                     validation.Validations.Add($"Distance variance excessive: {variance:P}");
@@ -390,7 +390,7 @@ public class BatchProcessingService : IBatchProcessingService
 
     private decimal CalculateExpectedFuelCost(Shipment shipment)
     {
-        const double standardMPG = 6.5;
+        const decimal standardMPG = 6.5m;
         const decimal standardFuelPrice = 3.50m;
 
         var gallonsUsed = (shipment.ActualDistanceMiles ?? shipment.PlannedDistanceMiles) / standardMPG;
@@ -457,5 +457,5 @@ public class PerformanceMetrics
     public decimal TotalFuelCost { get; set; }
     public decimal NetRevenue { get; set; }
     public double ProfitMargin { get; set; }
-    public double AverageMilesSaved { get; set; }
+    public decimal AverageMilesSaved { get; set; }
 }

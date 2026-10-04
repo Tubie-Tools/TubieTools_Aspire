@@ -29,9 +29,9 @@ public class Shipment
 
     // Route optimization
     public List<string> PlannedRouteStates { get; set; } = new();
-    public double PlannedDistanceMiles { get; set; }
+    public decimal PlannedDistanceMiles { get; set; }
     public int PlannedDurationMinutes { get; set; }
-    public double? ActualDistanceMiles { get; set; }
+    public decimal? ActualDistanceMiles { get; set; }
     public int? ActualDurationMinutes { get; set; }
 
     // Billing (Code-to-Cash)

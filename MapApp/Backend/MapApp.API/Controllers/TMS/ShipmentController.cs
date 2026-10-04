@@ -487,7 +487,7 @@ public class CreateShipmentRequest
     public decimal DeclaredValue { get; set; }
     public DateTime PickupScheduledTime { get; set; }
     public DateTime DeliveryScheduledTime { get; set; }
-    public double PlannedDistanceMiles { get; set; }
+    public decimal PlannedDistanceMiles { get; set; }
     public int PlannedDurationMinutes { get; set; }
     public decimal BaseRate { get; set; }
 }
@@ -539,7 +539,7 @@ public class JitAssignmentResponse
     public string? Reason { get; set; }
     public string? AssignedTruckId { get; set; }
     public string? AssignedDriverId { get; set; }
-    public double RequiredMPH { get; set; }
+    public decimal RequiredMPH { get; set; }
     public decimal UrgencyPremium { get; set; }
 }
 

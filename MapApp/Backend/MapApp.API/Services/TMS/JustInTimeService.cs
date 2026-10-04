@@ -68,7 +68,7 @@ public class JustInTimeService : IJustInTimeService
         };
 
         // Calculate required speed
-        var requiredMPH = shipment.PlannedDistanceMiles / (minutesUntilDeadline / 60.0);
+        var requiredMPH = shipment.PlannedDistanceMiles / (minutesUntilDeadline / 60.0m);
         result.RequiredAverageMPH = requiredMPH;
 
         // Check feasibility
@@ -305,18 +305,18 @@ public class JustInTimeService : IJustInTimeService
         return score;
     }
 
-    private double CalculateConsolidatedDistance(List<Shipment> shipments)
+    private decimal CalculateConsolidatedDistance(List<Shipment> shipments)
     {
         // Simplified calculation - would use actual TSP solver
         var totalDistance = shipments.Sum(s => s.PlannedDistanceMiles);
-        return totalDistance * 0.85; // Assume 15% optimization from consolidation
+        return totalDistance * 0.85m; // Assume 15% optimization from consolidation
     }
 
-    private decimal CalculateFuelCost(double distanceMiles)
+    private decimal CalculateFuelCost(decimal distanceMiles)
     {
-        const double mpg = 6.5;
+        const decimal mpg = 6.5m;
         const decimal fuelPrice = 3.50m;
-        return (decimal)(distanceMiles / mpg) * fuelPrice;
+        return (distanceMiles / mpg) * fuelPrice;
     }
 
     private double CalculateDestinationDistance(string destState)
@@ -339,7 +339,7 @@ public class JITAssignmentResult
     public string? Reason { get; set; }
     public string? AssignedTruckId { get; set; }
     public string? AssignedDriverId { get; set; }
-    public double RequiredAverageMPH { get; set; }
+    public decimal RequiredAverageMPH { get; set; }
     public decimal UrgencyPremium { get; set; }
 }
 
@@ -359,8 +359,8 @@ public class ConsolidationResult
     public int ConsolidatedShipments { get; set; }
     public bool IsFeasible { get; set; }
     public string Reason { get; set; } = string.Empty;
-    public double OriginalDistance { get; set; }
-    public double ConsolidatedDistance { get; set; }
-    public double DistanceSaved { get; set; }
+    public decimal OriginalDistance { get; set; }
+    public decimal ConsolidatedDistance { get; set; }
+    public decimal DistanceSaved { get; set; }
     public decimal FuelSavings { get; set; }
 }
