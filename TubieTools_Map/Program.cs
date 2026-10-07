@@ -1,13 +1,14 @@
+//using Serilog; 
+using DataAccessLayer.Data.Contexts;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
-//using Serilog; 
-using DataAccessLayer.Data.Contexts;
-using TubieTools_Map.Exceptions;
 using ServiceLayer;
+using TubieTools_Map.Components;
+using TubieTools_Map.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,10 +58,7 @@ else
     builder.Services.AddDbContext<MapAppDbContext>(options =>
         options.UseSqlServer(connectionString));
 }
-
-// Add AutoMapper
-//builder.Services.AddAutoMapper(typeof(Program));
-
+ 
 // Add HTTP clients
 builder.Services
     .AddHttpClient<LogisticsOSRMClient>()
@@ -88,20 +86,9 @@ app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseAntiforgery();
 
-app.MapRazorPages();
-app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
-
-// Initialize database
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<MapAppDbContext>();
-    await context.Database.EnsureCreatedAsync();
-    await MapAppDbContext.SeedAsync(context);
-}
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
 
 app.Run();

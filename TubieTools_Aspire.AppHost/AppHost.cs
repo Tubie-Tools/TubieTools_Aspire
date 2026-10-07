@@ -48,7 +48,7 @@ var enterpriseAutomation = builder.AddProject<Projects.TubieTools_Aspire_Enterpr
     .WithReference(publicApi)
     .WaitFor(publicApi);
 
-builder.AddProject<Projects.TubieTools_Map>("tubietools-map")
-    .WithReference(logisticsApi);
+//builder.AddProject<Projects.TubieTools_Map>("tubietools-map")
+//    .WithReference(logisticsApi);
 
 builder.Build().Run();
