@@ -51,4 +51,6 @@ var enterpriseAutomation = builder.AddProject<Projects.TubieTools_Aspire_Enterpr
 //builder.AddProject<Projects.TubieTools_Map>("tubietools-map")
 //    .WithReference(logisticsApi);
 
+builder.AddProject<Projects.BlazingPizza>("blazing-pizza");
+
 builder.Build().Run();
