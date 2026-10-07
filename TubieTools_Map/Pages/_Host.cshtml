@@ -11,21 +11,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TubieTools Map - Logistics Management</title>
     <base href="~/" />
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/lib/app.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="TubieTools_Map.styles.css" asp-append-version="true" />
+   
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
 <body>
     <component type="typeof(App)" render-mode="ServerPrerendered" />
 
-    <div id="blazor-error-ui">
+    @*<div id="blazor-error-ui">
         An unhandled exception has occurred. <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
-
+    *@
     <script src="_framework/blazor.server.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>

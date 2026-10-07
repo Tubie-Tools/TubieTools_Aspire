@@ -5,6 +5,7 @@
 @using ServiceLayer
 @inject RouteService RouteService
 @inject MapAppDbContext Context
+@inject IJSRuntime JS
 @rendermode InteractiveServer
 @attribute [Authorize(Roles = "Admin")]
 
@@ -114,5 +115,5 @@
         }
     }
 
-    public dynamic JS { get; private set; }
+    // public dynamic JS { get; private set; }
 }

@@ -1,11 +1,12 @@
-﻿@* @page "/"
+﻿@page "/"
 @using System.ComponentModel.DataAnnotations
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Components.Authorization
 @using ModelLayer.Models
-@using TubieTools_Map.Services
+@using ServiceLayer
 @inject RouteService RouteService
 @inject LogisticsOSRMClient LogisticsClient
+@inject IJSRuntime JS
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
@@ -106,7 +107,8 @@
 
 @code {
     private RouteFormModel newRoute = new();
-    private MapRoute? selectedRoute;
+    //TODO fix to use a DTO object here, do not return entities directly to the UI
+    private DataAccessLayer.Data.Entities.MapRoute? selectedRoute;
     private bool isLoading;
     private string currentUserId = "";
 
@@ -126,8 +128,7 @@
             await JS.InvokeVoidAsync("mapManager.initMap", "map");
         }
     }
-
-    public dynamic JS { get; set; }
+     
     private void AddWaypoint()
     {
         newRoute.Waypoints.Add(new Waypoint());
@@ -190,4 +191,4 @@
 
         public string VehicleType { get; set; } = "car";
     }
-} *@
+}

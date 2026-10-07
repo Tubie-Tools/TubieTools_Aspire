@@ -5,6 +5,7 @@
 @using ServiceLayer
 @inject RouteService RouteService
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IJSRuntime JS
 @rendermode InteractiveServer
 
 <PageTitle>My Routes - TubieTools Map</PageTitle>
@@ -132,6 +133,4 @@
         "Archived" => "secondary",
         _ => "primary"
     };
-
-    public dynamic JS { get; private set; }
 }
