@@ -56,12 +56,23 @@ jobs:
       #   issuer:   https://token.actions.githubusercontent.com
       #   subject:  repo:Tubie-Tools/TubieTools_Aspire:ref:refs/heads/master
       #   audience: api://AzureADTokenExchange
-      - name: Azure Login
+      - name: Azure Login (OIDC)
+        id: azure_login_oidc
+        continue-on-error: true
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Azure Login (client secret fallback)
+        if: steps.azure_login_oidc.outcome != 'success'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
 
       - name: Log in to Azure Container Registry
         run: |
@@ -135,12 +146,23 @@ jobs:
       #   issuer:   https://token.actions.githubusercontent.com
       #   subject:  repo:Tubie-Tools/TubieTools_Aspire:ref:refs/heads/master
       #   audience: api://AzureADTokenExchange
-      - name: Azure Login
+      - name: Azure Login (OIDC)
+        id: azure_login_oidc
+        continue-on-error: true
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Azure Login (client secret fallback)
+        if: steps.azure_login_oidc.outcome != 'success'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
 
       - name: Deploy Web Container App
         run: |
