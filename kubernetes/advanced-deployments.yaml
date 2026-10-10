@@ -1,0 +1,518 @@
+---
+# Advanced Kubernetes Deployment Manifests with Auto-scaling
+# This includes HPA, resource limits, and production-ready configurations
+
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tubietools
+  labels:
+    name: tubietools
+
+---
+# ConfigMap for shared application configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tubietools-config
+  namespace: tubietools
+data:
+  ASPNETCORE_ENVIRONMENT: "Production"
+  ASPNETCORE_URLS: "http://+:80"
+  LOG_LEVEL: "Information"
+
+---
+# Secret for sensitive data
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tubietools-secrets
+  namespace: tubietools
+type: Opaque
+stringData:
+  # Configure these values before deployment
+  SqlConnectionString: "Server=tcp:<SQL_SERVER_FQDN>,1433;Initial Catalog=<DB_NAME>;Persist Security Info=False;User ID=<SQL_ADMIN_USER>;Password=<SQL_ADMIN_PASSWORD>;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+  ApplicationInsightsKey: "<APP_INSIGHTS_CONNECTION_STRING>"
+  StorageAccountKey: "<STORAGE_ACCOUNT_KEY>"
+
+---
+# Image pull secret for ACR
+apiVersion: v1
+kind: Secret
+metadata:
+  name: acr-credentials
+  namespace: tubietools
+type: kubernetes.io/dockercfg
+data:
+  # This should be base64 encoded: {\"<ACR_LOGIN_SERVER>\":{\"username\":\"<USERNAME>\",\"password\":\"<PASSWORD>\",\"email\":\"<EMAIL>\",\"auth\":\"<BASE64_AUTH>\"}}
+  .dockercfg: eyJhY3IubXljb250YWluZXJyZWdpc3RyeS5henVyZS5jb20iOnsidXNlcm5hbWUiOiI8VVNFUk5BTUU+IiwicGFzc3dvcmQiOiI8UEFTU1dPUkQ+IiwiZW1haWwiOiJub29wIn19Cg==
+
+---
+# PersistentVolumeClaim for application data
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tubietools-data-pvc
+  namespace: tubietools
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: premium-storage
+  resources:
+    requests:
+      storage: 100Gi
+
+---
+# PublicAPI StatefulSet (for consistency)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: publicapi
+  namespace: tubietools
+  labels:
+    app: publicapi
+    version: v1
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: publicapi
+  template:
+    metadata:
+      labels:
+        app: publicapi
+        version: v1
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+    spec:
+      affinity:
+        # Spread pods across nodes for high availability
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - publicapi
+            topologyKey: kubernetes.io/hostname
+        # Prefer nodes with lower resource usage
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            preference:
+              matchExpressions:
+              - key: WorkloadType
+                operator: In
+                values:
+                - Services
+
+      serviceAccountName: tubietools-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+
+      containers:
+      - name: publicapi
+        image: <ACR_LOGIN_SERVER>/publicapi:<IMAGE_TAG>
+        imagePullPolicy: IfNotPresent
+
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        - containerPort: 8080
+          name: metrics
+          protocol: TCP
+
+        # Environment variables
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: tubietools-config
+              key: ASPNETCORE_ENVIRONMENT
+        - name: ASPNETCORE_URLS
+          valueFrom:
+            configMapKeyRef:
+              name: tubietools-config
+              key: ASPNETCORE_URLS
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: tubietools-config
+              key: LOG_LEVEL
+        - name: ConnectionStrings__DefaultConnection
+          valueFrom:
+            secretKeyRef:
+              name: tubietools-secrets
+              key: SqlConnectionString
+        - name: ApplicationInsights__ConnectionString
+          valueFrom:
+            secretKeyRef:
+              name: tubietools-secrets
+              key: ApplicationInsightsKey
+        - name: WEBSITE_INSTANCE_ID
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+
+        # Resource management
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+
+        # Liveness probe
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+
+        # Readiness probe
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 2
+
+        # Startup probe
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 80
+          failureThreshold: 30
+          periodSeconds: 10
+
+        # Security context
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          runAsNonRoot: true
+          runAsUser: 1001
+          capabilities:
+            drop:
+            - ALL
+
+        # Volume mounts
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: cache
+          mountPath: /app/cache
+
+      # Volumes
+      volumes:
+      - name: tmp
+        emptyDir: {}
+      - name: cache
+        emptyDir: {}
+
+      # Image pull secrets
+      imagePullSecrets:
+      - name: acr-credentials
+
+      # Termination grace period for graceful shutdown
+      terminationGracePeriodSeconds: 30
+
+---
+# PublicAPI Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: publicapi-service
+  namespace: tubietools
+  labels:
+    app: publicapi
+spec:
+  type: ClusterIP
+  clusterIP: None  # Headless service for StatefulSet
+  selector:
+    app: publicapi
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+
+---
+# Horizontal Pod Autoscaler for PublicAPI
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: publicapi-hpa
+  namespace: tubietools
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: publicapi
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 60
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 25
+        periodSeconds: 60
+
+---
+# Web Frontend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webfrontend
+  namespace: tubietools
+  labels:
+    app: webfrontend
+    version: v1
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: webfrontend
+  template:
+    metadata:
+      labels:
+        app: webfrontend
+        version: v1
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - webfrontend
+              topologyKey: kubernetes.io/hostname
+
+      serviceAccountName: tubietools-sa
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+
+      containers:
+      - name: webfrontend
+        image: <ACR_LOGIN_SERVER>/webfrontend:<IMAGE_TAG>
+        imagePullPolicy: IfNotPresent
+
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: tubietools-config
+              key: ASPNETCORE_ENVIRONMENT
+        - name: ASPNETCORE_URLS
+          valueFrom:
+            configMapKeyRef:
+              name: tubietools-config
+              key: ASPNETCORE_URLS
+        - name: PublicApiUrl
+          value: "http://publicapi-service/api"
+        - name: ApplicationInsights__ConnectionString
+          valueFrom:
+            secretKeyRef:
+              name: tubietools-secrets
+              key: ApplicationInsightsKey
+
+        resources:
+          requests:
+            cpu: 200m
+            memory: 512Mi
+          limits:
+            cpu: 800m
+            memory: 1Gi
+
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 2
+
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          runAsNonRoot: true
+          runAsUser: 1001
+
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+
+      volumes:
+      - name: tmp
+        emptyDir: {}
+
+      imagePullSecrets:
+      - name: acr-credentials
+
+      terminationGracePeriodSeconds: 30
+
+---
+# Web Frontend Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: webfrontend-service
+  namespace: tubietools
+  labels:
+    app: webfrontend
+spec:
+  type: LoadBalancer
+  selector:
+    app: webfrontend
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+
+---
+# HPA for Web Frontend
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: webfrontend-hpa
+  namespace: tubietools
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: webfrontend
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 75
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 85
+
+---
+# ServiceAccount for applications
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tubietools-sa
+  namespace: tubietools
+
+---
+# Ingress for external access
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tubietools-ingress
+  namespace: tubietools
+  annotations:
+    kubernetes.io/ingress.class: "azure/application-gateway"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+spec:
+  tls:
+  - hosts:
+    - "app.tubietools.com"
+    - "api.tubietools.com"
+    secretName: tubietools-tls
+  rules:
+  - host: "api.tubietools.com"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: publicapi-service
+            port:
+              number: 80
+  - host: "app.tubietools.com"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webfrontend-service
+            port:
+              number: 80

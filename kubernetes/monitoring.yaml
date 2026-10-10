@@ -1,0 +1,557 @@
+---
+# Kubernetes Monitoring & Observability Configuration for TubieTools
+# Includes Application Insights integration, Prometheus, Loki, and Grafana
+
+# PrometheusRule for custom alerts
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: tubietools-alerts
+  namespace: monitoring
+spec:
+  groups:
+  - name: tubietools.rules
+    interval: 30s
+    rules:
+    # Pod high CPU usage alert
+    - alert: PodHighCPUUsage
+      expr: |
+        (sum by (pod, namespace) (container_cpu_usage_seconds_total) 
+         / sum by (pod, namespace) (container_spec_cpu_quota / container_spec_cpu_period)) > 0.8
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Pod {{ $labels.pod }} has high CPU usage"
+        description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is using {{ $value | humanizePercentage }} CPU"
+
+    # Pod high memory usage alert
+    - alert: PodHighMemoryUsage
+      expr: |
+        (sum by (pod, namespace) (container_memory_usage_bytes) 
+         / sum by (pod, namespace) (container_spec_memory_limit_bytes)) > 0.8
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Pod {{ $labels.pod }} has high memory usage"
+        description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is using {{ $value | humanizePercentage }} memory"
+
+    # Pod restart alert
+    - alert: PodRestartingTooOften
+      expr: rate(kube_pod_container_status_restarts_total[15m]) > 0.1
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Pod {{ $labels.pod }} is restarting frequently"
+        description: "Pod {{ $labels.pod }} has restarted {{ $value }} times in the last 15 minutes"
+
+    # Node not ready alert
+    - alert: NodeNotReady
+      expr: kube_node_status_condition{condition="Ready",status="true"} == 0
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Node {{ $labels.node }} is not ready"
+        description: "Node {{ $labels.node }} has been unready for more than 5 minutes"
+
+    # High API response time
+    - alert: HighAPIResponseTime
+      expr: |
+        histogram_quantile(0.95, 
+          sum(rate(http_request_duration_seconds_bucket{job="publicapi"}[5m])) by (le)
+        ) > 1
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        summary: "PublicAPI high response time"
+        description: "95th percentile response time is {{ $value | humanizeDuration }}"
+
+    # High error rate
+    - alert: HighErrorRate
+      expr: |
+        sum(rate(http_requests_total{status=~"5.."}[5m])) by (job)
+        /
+        sum(rate(http_requests_total[5m])) by (job) > 0.05
+      for: 10m
+      labels:
+        severity: critical
+      annotations:
+        summary: "High error rate in {{ $labels.job }}"
+        description: "Error rate is {{ $value | humanizePercentage }}"
+
+    # Database connection pool exhausted
+    - alert: DatabaseConnectionPoolLow
+      expr: |
+        sql_client_connection_pool_available / sql_client_connection_pool_total < 0.1
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Database connection pool is running low"
+        description: "Only {{ $value | humanizePercentage }} of connections available"
+
+---
+# ServiceMonitor for Prometheus to scrape application metrics
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: tubietools-monitor
+  namespace: tubietools
+spec:
+  selector:
+    matchLabels:
+      app: publicapi
+  endpoints:
+  - port: metrics
+    interval: 30s
+    path: /metrics
+
+---
+# Grafana Dashboard ConfigMap for TubieTools
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tubietools-dashboard
+  namespace: monitoring
+data:
+  tubietools-dashboard.json: |
+    {
+      "annotations": {
+        "list": [
+          {
+            "builtIn": 1,
+            "datasource": "-- Grafana --",
+            "enable": true,
+            "hide": true,
+            "iconColor": "rgba(0, 211, 255, 1)",
+            "name": "Annotations & Alerts",
+            "type": "dashboard"
+          }
+        ]
+      },
+      "editable": true,
+      "gnetId": null,
+      "graphTooltip": 0,
+      "id": null,
+      "links": [],
+      "panels": [
+        {
+          "datasource": "Prometheus",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "tooltip": false,
+                  "viz": false,
+                  "legend": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 0
+          },
+          "id": 2,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "targets": [
+            {
+              "expr": "sum(rate(http_requests_total{job=\"publicapi\"}[5m])) by (method)",
+              "refId": "A"
+            }
+          ],
+          "title": "Request Rate",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "Prometheus",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 1000
+                  },
+                  {
+                    "color": "red",
+                    "value": 2000
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 0
+          },
+          "id": 3,
+          "options": {
+            "colorMode": "background",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "values": false,
+              "fields": "",
+              "calcs": [
+                "lastNotNull"
+              ]
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.0.0",
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.95, sum(http_request_duration_seconds_bucket{job=\"publicapi\"}) by (le))",
+              "refId": "A"
+            }
+          ],
+          "title": "Response Time (95th percentile)",
+          "type": "stat"
+        },
+        {
+          "datasource": "Prometheus",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "hideFrom": {
+                  "tooltip": false,
+                  "viz": false,
+                  "legend": false
+                }
+              },
+              "mappings": [],
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 8
+          },
+          "id": 4,
+          "options": {
+            "legend": {
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "pieType": "pie"
+          },
+          "targets": [
+            {
+              "expr": "sum(rate(http_requests_total{job=\"publicapi\"}[5m])) by (status)",
+              "refId": "A"
+            }
+          ],
+          "title": "Request Status Distribution",
+          "type": "piechart"
+        },
+        {
+          "datasource": "Prometheus",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "CPU Usage (%)",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "tooltip": false,
+                  "viz": false,
+                  "legend": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": true,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 8
+          },
+          "id": 5,
+          "options": {
+            "legend": {
+              "calcs": [
+                "mean",
+                "max"
+              ],
+              "displayMode": "table",
+              "placement": "right"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "pluginVersion": "8.0.0",
+          "targets": [
+            {
+              "expr": "sum(rate(container_cpu_usage_seconds_total{pod=~\"publicapi-.*\"}[5m])) by (pod) * 100",
+              "refId": "A"
+            }
+          ],
+          "title": "Pod CPU Usage",
+          "type": "timeseries"
+        }
+      ],
+      "refresh": "10s",
+      "schemaVersion": 30,
+      "style": "dark",
+      "templating": {
+        "list": []
+      },
+      "time": {
+        "from": "now-6h",
+        "to": "now"
+      },
+      "timepicker": {},
+      "timezone": "",
+      "title": "TubieTools Application Monitoring",
+      "uid": "tubietools",
+      "version": 0
+    }
+
+---
+# Loki Stack for log aggregation
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: loki-config
+  namespace: monitoring
+data:
+  loki-config.yaml: |
+    auth_enabled: false
+    ingester:
+      chunk_idle_period: 3m
+      chunk_retain_period: 1m
+      max_chunk_age: 1h
+      max_streams_per_user: 10000
+    limits_config:
+      enforce_metric_name: false
+      reject_old_samples: true
+      reject_old_samples_max_age: 168h
+    schema_config:
+      configs:
+      - from: 2020-10-24
+        store: boltdb-shipper
+        object_store: filesystem
+        schema: v11
+        index:
+          prefix: index_
+          period: 24h
+    server:
+      http_listen_port: 3100
+    storage_config:
+      boltdb_shipper:
+        active_index_directory: /loki/boltdb-shipper-active
+        cache_location: /loki/boltdb-shipper-cache
+        shared_store: filesystem
+      filesystem:
+        directory: /loki/chunks
+    chunk_store_config:
+      max_look_back_period: 0s
+    table_manager:
+      retention_deletes_enabled: false
+      retention_period: 0s
+
+---
+# Alert Manager email configuration (optional)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alertmanager-config
+  namespace: monitoring
+data:
+  alertmanager.yml: |
+    global:
+      resolve_timeout: 5m
+      slack_api_url: "YOUR_SLACK_WEBHOOK_URL"
+    route:
+      group_by: ['alertname', 'cluster', 'service']
+      group_wait: 10s
+      group_interval: 10s
+      repeat_interval: 12h
+      receiver: 'default'
+      routes:
+      - match:
+          severity: critical
+        receiver: 'pagerduty'
+      - match:
+          severity: warning
+        receiver: 'slack'
+    receivers:
+    - name: 'default'
+      slack_configs:
+      - channel: '#alerts'
+        title: 'Alert: {{ .GroupLabels.alertname }}'
+        text: '{{ range .Alerts }}{{ .Annotations.description }}{{ end }}'
+    - name: 'slack'
+      slack_configs:
+      - channel: '#alerts-warning'
+        severity: 'warning'
+    - name: 'pagerduty'
+      pagerduty_configs:
+      - service_key: "YOUR_PAGERDUTY_SERVICE_KEY"
+
+---
+# OpenTelemetry Collector for Application Insights integration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-collector-config
+  namespace: monitoring
+data:
+  otel-collector-config.yaml: |
+    receivers:
+      prometheus:
+        config:
+          scrape_configs:
+          - job_name: 'kubernetes-pods'
+            kubernetes_sd_configs:
+            - role: pod
+            relabel_configs:
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+              action: keep
+              regex: true
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+              action: replace
+              target_label: __metrics_path__
+              regex: (.+)
+            - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+              action: replace
+              regex: ([^:]+)(?::\d+)?;(\d+)
+              replacement: $1:$2
+              target_label: __address__
+    processors:
+      batch:
+        send_batch_size: 1024
+        timeout: 5s
+      k8sattributes:
+        auth_type: "serviceAccount"
+        passthrough: false
+        extract:
+          metadata:
+          - container.id
+          - k8s.volume.type
+          - k8s.namespaces.owner.name
+          - k8s.deployment.name
+          - k8s.statefulset.name
+          - k8s.daemonset.name
+          - k8s.pod.name
+          - k8s.pod.uid
+    exporters:
+      azuremonitor:
+        instrumentation_key: "${APPINSIGHTS_INSTRUMENTATION_KEY}"
+        max_batch_size: 100
+    service:
+      pipelines:
+        metrics:
+          receivers: [prometheus]
+          processors: [batch, k8sattributes]
+          exporters: [azuremonitor]

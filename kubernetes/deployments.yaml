@@ -1,0 +1,222 @@
+---
+# Namespace for the application
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tubietools
+
+---
+# ConfigMap for application settings
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tubietools-config
+  namespace: tubietools
+data:
+  ASPNETCORE_ENVIRONMENT: "Production"
+  ASPNETCORE_URLS: "http://+:80"
+
+---
+# Secret for database connection and credentials
+apiVersion: v1
+kind: Secret
+metadata:
+  name: tubietools-secrets
+  namespace: tubietools
+type: Opaque
+stringData:
+  SqlConnectionString: "Server=tcp:<SQL_SERVER_FQDN>,1433;Initial Catalog=<DB_NAME>;Persist Security Info=False;User ID=<SQL_ADMIN_USER>;Password=<SQL_ADMIN_PASSWORD>;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+  ApplicationInsightsKey: "<APP_INSIGHTS_KEY>"
+
+---
+# Image pull secret for ACR
+apiVersion: v1
+kind: Secret
+metadata:
+  name: acr-credentials
+  namespace: tubietools
+type: kubernetes.io/dockercfg
+data:
+  .dockercfg: <BASE64_ENCODED_ACR_CREDENTIALS>
+
+---
+# PublicAPI Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: publicapi
+  namespace: tubietools
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: publicapi
+  template:
+    metadata:
+      labels:
+        app: publicapi
+    spec:
+      containers:
+      - name: publicapi
+        image: <ACR_LOGIN_SERVER>/publicapi:<IMAGE_TAG>
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: tubietools-config
+              key: ASPNETCORE_ENVIRONMENT
+        - name: ASPNETCORE_URLS
+          valueFrom:
+            configMapKeyRef:
+              name: tubietools-config
+              key: ASPNETCORE_URLS
+        - name: ConnectionStrings__DefaultConnection
+          valueFrom:
+            secretKeyRef:
+              name: tubietools-secrets
+              key: SqlConnectionString
+        - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: tubietools-secrets
+              key: ApplicationInsightsKey
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      imagePullSecrets:
+      - name: acr-credentials
+
+---
+# PublicAPI Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: publicapi-service
+  namespace: tubietools
+spec:
+  type: ClusterIP
+  selector:
+    app: publicapi
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+
+---
+# Web Frontend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webfrontend
+  namespace: tubietools
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: webfrontend
+  template:
+    metadata:
+      labels:
+        app: webfrontend
+    spec:
+      containers:
+      - name: webfrontend
+        image: <ACR_LOGIN_SERVER>/webfrontend:<IMAGE_TAG>
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: tubietools-config
+              key: ASPNETCORE_ENVIRONMENT
+        - name: ASPNETCORE_URLS
+          valueFrom:
+            configMapKeyRef:
+              name: tubietools-config
+              key: ASPNETCORE_URLS
+        - name: PublicApiUrl
+          value: "http://publicapi-service/api"
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 250m
+            memory: 256Mi
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      imagePullSecrets:
+      - name: acr-credentials
+
+---
+# Web Frontend Service (LoadBalancer)
+apiVersion: v1
+kind: Service
+metadata:
+  name: webfrontend-service
+  namespace: tubietools
+spec:
+  type: LoadBalancer
+  selector:
+    app: webfrontend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+
+---
+# Ingress Controller (optional - for advanced routing)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tubietools-ingress
+  namespace: tubietools
+  annotations:
+    kubernetes.io/ingress.class: "azure/application-gateway"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: publicapi-service
+            port:
+              number: 80
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webfrontend-service
+            port:
+              number: 80
