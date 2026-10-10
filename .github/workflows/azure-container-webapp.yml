@@ -52,30 +52,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Azure Login (OIDC)
-        id: azure_login_oidc
-        continue-on-error: true
+      # Requires an Azure federated identity credential on the app registration:
+      #   issuer:   https://token.actions.githubusercontent.com
+      #   subject:  repo:Tubie-Tools/TubieTools_Aspire:ref:refs/heads/master
+      #   audience: api://AzureADTokenExchange
+      - name: Azure Login
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Azure Login (client secret fallback)
-        if: steps.azure_login_oidc.outcome != 'success'
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-
-      - name: Fail when Azure login is not configured
-        if: steps.azure_login_oidc.outcome != 'success'
-        run: |
-          echo "::error::Azure OIDC login failed and AZURE_CLIENT_SECRET is not configured."
-          echo "Configure federated credentials for this repo/branch, or add AZURE_CLIENT_SECRET."
-          exit 1
 
       - name: Log in to Azure Container Registry
         run: |
@@ -130,31 +116,6 @@ jobs:
       id-token: write
 
     steps:
-      - name: Azure Login (OIDC)
-        id: azure_login_oidc
-        continue-on-error: true
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Azure Login (client secret fallback)
-        if: steps.azure_login_oidc.outcome != 'success'
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
-
-      - name: Fail when Azure login is not configured
-        if: steps.azure_login_oidc.outcome != 'success'
-        run: |
-          echo "::error::Azure OIDC login failed and AZURE_CLIENT_SECRET is not configured."
-          echo "Configure federated credentials for this repo/branch, or add AZURE_CLIENT_SECRET."
-          exit 1
-
       - name: Validate required secrets
         run: |
           missing=""
@@ -169,6 +130,17 @@ jobs:
             echo "Please add these secrets in the repository Settings > Secrets and variables > Actions."
             exit 1
           fi
+
+      # Requires an Azure federated identity credential on the app registration:
+      #   issuer:   https://token.actions.githubusercontent.com
+      #   subject:  repo:Tubie-Tools/TubieTools_Aspire:ref:refs/heads/master
+      #   audience: api://AzureADTokenExchange
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy Web Container App
         run: |
