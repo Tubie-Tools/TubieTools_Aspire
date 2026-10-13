@@ -1,0 +1,277 @@
+@page "/enterprise-automation"
+@using TubieTools_Aspire.Web.Services
+@inject EnterpriseAutomationClient AutomationClient
+@rendermode InteractiveServer
+
+<PageTitle>Enterprise Automation</PageTitle>
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1>
+                <span class="bi bi-robot"></span>
+                Enterprise Automation & Workflows
+            </h1>
+            <p class="text-muted">Manage and execute automated business workflows</p>
+            <hr />
+        </div>
+    </div>
+
+    @if (IsLoadingWorkflows)
+    {
+        <div class="alert alert-info">
+            <span class="spinner-border spinner-border-sm me-2"></span>
+            Loading workflows...
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error:</strong> @ErrorMessage
+            <button type="button" class="btn-close" @onclick="() => ErrorMessage = string.Empty"></button>
+        </div>
+    }
+    else if (Workflows.Count == 0)
+    {
+        <div class="alert alert-info">
+            No workflows available. Check your connection to the Enterprise Automation service.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var workflow in Workflows)
+            {
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">@workflow.Name</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">@workflow.Description</p>
+
+                            <div class="mb-3">
+                                <strong>Steps:</strong>
+                                <ul class="list-sm mt-2">
+                                    @foreach (var step in workflow.Steps.Take(3))
+                                    {
+                                        <li><small>@step.Name <code class="text-muted">(@step.Action)</code></small></li>
+                                    }
+                                    @if (workflow.Steps.Count > 3)
+                                    {
+                                        <li><small class="text-muted">...and @(workflow.Steps.Count - 3) more</small></li>
+                                    }
+                                </ul>
+                            </div>
+
+                            @if (workflow.Parameters.Count > 0)
+                            {
+                                <div class="mb-3">
+                                    <strong>Parameters:</strong>
+                                    <div class="mt-2" style="max-height: 150px; overflow-y: auto;">
+                                        @foreach (var param in workflow.Parameters)
+                                        {
+                                            <div class="mb-2">
+                                                <small>
+                                                    <strong>@param.Value.Name</strong><br />
+                                                    <code class="text-muted">@param.Value.Type @(param.Value.Required ? "(required)" : "(optional)")</code>
+                                                </small>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-sm btn-primary w-100" @onclick="() => SelectWorkflow(workflow)">
+                                <span class="bi bi-play-circle"></span>
+                                Execute Workflow
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (SelectedWorkflow != null)
+        {
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">Execute: @SelectedWorkflow.Name</h5>
+                        </div>
+                        <div class="card-body">
+                            @if (SelectedWorkflow.Parameters.Count == 0)
+                            {
+                                <p class="text-muted">This workflow has no parameters.</p>
+                            }
+                            else
+                            {
+                                @foreach (var param in SelectedWorkflow.Parameters)
+                                {
+                                    <div class="mb-3">
+                                        <label class="form-label">
+                                            @param.Value.Name
+                                            @if (param.Value.Required)
+                                            {
+                                                <span class="text-danger">*</span>
+                                            }
+                                        </label>
+                                        @switch (param.Value.Type.ToLower())
+                                        {
+                                            case "string":
+                                                <input type="text" class="form-control" @onchange="@((ChangeEventArgs e) => UpdateParam(param.Key, e.Value))" placeholder="@param.Value.Name" />
+                                                break;
+                                            case "number":
+                                            case "int":
+                                                <input type="number" class="form-control" @onchange="@((ChangeEventArgs e) => UpdateParam(param.Key, e.Value))" placeholder="@param.Value.Name" />
+                                                break;
+                                            case "boolean":
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" @onchange="@((ChangeEventArgs e) => UpdateParam(param.Key, e.Value))" />
+                                                    <label class="form-check-label">
+                                                        Enabled
+                                                    </label>
+                                                </div>
+                                                break;
+                                        }
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-success w-100" @onclick="ExecuteWorkflow" disabled="@IsExecuting">
+                                @if (IsExecuting)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                    <span>Executing...</span>
+                                }
+                                else
+                                {
+                                    <span class="bi bi-play-circle"></span>
+                                    <span>Execute</span>
+                                }
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    @if (ExecutionResult != null)
+                    {
+                        <div class="card">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0">Execution Result</h5>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>Status:</strong> <span class="badge bg-@GetStatusColor(ExecutionResult.Status)">@ExecutionResult.Status</span></p>
+                                <p><strong>Execution ID:</strong> <code>@ExecutionResult.ExecutionId</code></p>
+                                <p><strong>Started:</strong> @ExecutionResult.StartedAt:G</p>
+                                @if (ExecutionResult.CompletedAt.HasValue)
+                                {
+                                    <p><strong>Completed:</strong> @ExecutionResult.CompletedAt.Value:G</p>
+                                }
+                                @if (ExecutionResult.Output.Count > 0)
+                                {
+                                    <div class="mt-3">
+                                        <strong>Output:</strong>
+                                        <pre class="bg-light p-2" style="max-height: 200px; overflow-y: auto;"><code>@System.Text.Json.JsonSerializer.Serialize(ExecutionResult.Output, new System.Text.Json.JsonSerializerOptions { WriteIndented = true })</code></pre>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    private List<AutomationWorkflow> Workflows = new();
+    private AutomationWorkflow? SelectedWorkflow;
+    private WorkflowExecutionResult? ExecutionResult;
+    private Dictionary<string, object?> WorkflowParams = new();
+
+    private string ErrorMessage = string.Empty;
+    private bool IsLoadingWorkflows = true;
+    private bool IsExecuting = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadWorkflows();
+    }
+
+    private async Task LoadWorkflows()
+    {
+        try
+        {
+            IsLoadingWorkflows = true;
+            ErrorMessage = string.Empty;
+            Workflows = await AutomationClient.GetWorkflowsAsync();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to load workflows: {ex.Message}";
+        }
+        finally
+        {
+            IsLoadingWorkflows = false;
+        }
+    }
+
+    private void SelectWorkflow(AutomationWorkflow workflow)
+    {
+        SelectedWorkflow = workflow;
+        WorkflowParams = new();
+        ExecutionResult = null;
+
+        // Initialize parameters with empty values
+        foreach (var param in workflow.Parameters)
+        {
+            WorkflowParams[param.Key] = param.Value.Type.ToLower() switch
+            {
+                "number" or "int" => 0,
+                "boolean" => false,
+                _ => string.Empty
+            };
+        }
+    }
+
+    private void UpdateParam(string key, object? value)
+    {
+        WorkflowParams[key] = value;
+    }
+
+    private async Task ExecuteWorkflow()
+    {
+        if (SelectedWorkflow == null) return;
+
+        try
+        {
+            IsExecuting = true;
+            ExecutionResult = await AutomationClient.ExecuteWorkflowAsync(
+                SelectedWorkflow.Id,
+                WorkflowParams);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to execute workflow: {ex.Message}";
+        }
+        finally
+        {
+            IsExecuting = false;
+        }
+    }
+
+    private string GetStatusColor(string status)
+    {
+        return status.ToLower() switch
+        {
+            "running" => "info",
+            "success" => "success",
+            "failed" => "danger",
+            _ => "secondary"
+        };
+    }
+}

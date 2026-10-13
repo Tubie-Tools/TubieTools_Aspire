@@ -23,17 +23,26 @@ var password = builder.AddParameter("SqlAdminPassword","My$ecureP@ssw0rd",false,
 
 var publicApi = builder.AddProject<Projects.TubieTools_PublicAPI>("publicapi");
 //.WithReference(db);
-builder.AddProject<Projects.TubieTools_SentimentModel_WebApi>("sentimentapi");
-builder.AddProject<Projects.TubieTools_SentimentModel_ProductApi>("sentimentproductapi");
-builder.AddProject<Projects.TubieTools_Forecasting_API>("forecastingapi");
-//var logisticsApi =builder.AddProject<Projects.TubieTools_LogisticsOSRM>("logisticsOSRM");
+var sentimentApi = builder.AddProject<Projects.TubieTools_SentimentModel_WebApi>("sentimentapi");
+var sentimentProductApi = builder.AddProject<Projects.TubieTools_SentimentModel_ProductApi>("sentimentproductapi");
+var forecastingApi = builder.AddProject<Projects.TubieTools_Forecasting_API>("forecastingapi");
+//var logisticsApi = builder.AddProject<Projects.TubieTools_LogisticsOSRM>("logisticsOSRM");
 
 // start tensorflow
-builder.AddProject<Projects.TensorFlow>("tensorflow");
+var tensorflow = builder.AddProject<Projects.TensorFlow>("tensorflow");
 
 builder.AddProject<Projects.TubieTools_Aspire_Web>("webfrontend")
     .WithExternalHttpEndpoints() 
     .WithReference(publicApi)
+    .WithReference(sentimentApi)
+    .WithReference(sentimentProductApi)
+    .WithReference(forecastingApi)
+    //.WithReference(logisticsApi)
+    .WithReference(tensorflow)
+    .WithReference(builder.AddProject<Projects.TubieTools_Aspire_EnterpriseAutomation>("enterpriseautomation")
+        .WithExternalHttpEndpoints()
+        .WithReference(publicApi)
+        .WaitFor(publicApi))
     .WaitFor(publicApi);
 
 /*builder.AddProject<Projects.SanityCheque>("sanityCheque")
@@ -41,12 +50,6 @@ builder.AddProject<Projects.TubieTools_Aspire_Web>("webfrontend")
     .WithReference(publicApi)
     .WaitFor(publicApi);
 */
-
-// Add Enterprise Automation MCP Server
-var enterpriseAutomation = builder.AddProject<Projects.TubieTools_Aspire_EnterpriseAutomation>("enterpriseautomation")
-    .WithExternalHttpEndpoints()
-    .WithReference(publicApi)
-    .WaitFor(publicApi);
 
 //builder.AddProject<Projects.TubieTools_Map>("tubietools-map")
 //    .WithReference(logisticsApi);

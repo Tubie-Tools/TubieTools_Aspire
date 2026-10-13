@@ -1,0 +1,244 @@
+@page "/forecasting"
+@using TubieTools_Aspire.Web.Services
+@using System.Globalization
+@inject ForecastingApiClient ForecastClient
+@rendermode InteractiveServer
+
+<PageTitle>Forecasting Dashboard</PageTitle>
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1>
+                <span class="bi bi-graph-up"></span>
+                Price & Demand Forecasting
+            </h1>
+            <p class="text-muted">Generate time-series forecasts for your products</p>
+            <hr />
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Single Product Forecast</h5>
+                    <div class="input-group">
+                        <input type="text" class="form-control" @bind="ProductId" placeholder="Enter Product ID" />
+                        <input type="number" class="form-control" style="max-width: 120px;" @bind="ForecastPeriods" min="1" max="365" placeholder="Periods" />
+                        <button class="btn btn-primary" @onclick="GetSingleForecast" disabled="@IsLoading">
+                            <span class="bi bi-search"></span>
+                            Forecast
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Batch Forecast</h5>
+                    <div class="mb-2">
+                        <input type="text" class="form-control" @bind="BatchProductsInput" placeholder="Enter Product IDs (comma-separated)" />
+                    </div>
+                    <button class="btn btn-success w-100" @onclick="GetBatchForecasts" disabled="@IsLoading">
+                        <span class="bi bi-lightning-fill"></span>
+                        Process Batch
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (IsLoading)
+    {
+        <div class="alert alert-info">
+            <span class="spinner-border spinner-border-sm me-2"></span>
+            Generating forecasts...
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error:</strong> @ErrorMessage
+            <button type="button" class="btn-close" @onclick="() => ErrorMessage = string.Empty"></button>
+        </div>
+    }
+
+    @if (CurrentForecast != null)
+    {
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Forecast for @CurrentForecast.ProductId</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="alert alert-info">
+                                    <p class="mb-0"><strong>Generated:</strong></p>
+                                    <small>@CurrentForecast.GeneratedAt:G</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="alert alert-success">
+                                    <p class="mb-0"><strong>Model Accuracy:</strong></p>
+                                    <small>@CurrentForecast.Accuracy.ToString("P2")</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="alert alert-warning">
+                                    <p class="mb-0"><strong>Data Points:</strong></p>
+                                    <small>@CurrentForecast.Forecast.Count entries</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="max-height: 400px; overflow-y: auto;">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Forecasted Value</th>
+                                        <th>Confidence Range</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var point in CurrentForecast.Forecast)
+                                    {
+                                        <tr>
+                                            <td><strong>@point.Date.ToString("yyyy-MM-dd")</strong></td>
+                                            <td>
+                                                <code>@point.Value.ToString("F2")</code>
+                                            </td>
+                                            <td>
+                                                @if (point.ConfidenceLower.HasValue && point.ConfidenceUpper.HasValue)
+                                                {
+                                                    <small class="text-muted">
+                                                        [@point.ConfidenceLower.Value.ToString("F2"), @point.ConfidenceUpper.Value.ToString("F2")]
+                                                    </small>
+                                                }
+                                                else
+                                                {
+                                                    <small class="text-muted">N/A</small>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (BatchForecasts.Count > 0)
+    {
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <h4>Batch Results (<span class="badge bg-secondary">@BatchForecasts.Count</span>)</h4>
+            </div>
+        </div>
+        @foreach (var forecast in BatchForecasts)
+        {
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header bg-secondary text-white">
+                            <h6 class="mb-0">@forecast.ProductId - Accuracy: @forecast.Accuracy.ToString("P2")</h6>
+                        </div>
+                        <div class="card-body">
+                            <small>@forecast.Forecast.Count forecast points generated on @forecast.GeneratedAt:G</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    private ForecastResult? CurrentForecast;
+    private List<ForecastResult> BatchForecasts = new();
+
+    private string ProductId = string.Empty;
+    private int ForecastPeriods = 30;
+    private string BatchProductsInput = string.Empty;
+
+    private string ErrorMessage = string.Empty;
+    private bool IsLoading = false;
+
+    private async Task GetSingleForecast()
+    {
+        if (string.IsNullOrWhiteSpace(ProductId))
+        {
+            ErrorMessage = "Please enter a Product ID";
+            return;
+        }
+
+        try
+        {
+            IsLoading = true;
+            ErrorMessage = string.Empty;
+            CurrentForecast = await ForecastClient.GetForecastAsync(ProductId, ForecastPeriods);
+
+            if (CurrentForecast == null)
+            {
+                ErrorMessage = "Failed to retrieve forecast. Please check the Product ID.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error generating forecast: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    private async Task GetBatchForecasts()
+    {
+        if (string.IsNullOrWhiteSpace(BatchProductsInput))
+        {
+            ErrorMessage = "Please enter Product IDs (comma-separated)";
+            return;
+        }
+
+        try
+        {
+            IsLoading = true;
+            ErrorMessage = string.Empty;
+
+            var productIds = BatchProductsInput
+                .Split(',')
+                .Select(id => id.Trim())
+                .Where(id => !string.IsNullOrEmpty(id))
+                .ToList();
+
+            if (productIds.Count == 0)
+            {
+                ErrorMessage = "Please enter at least one Product ID";
+                return;
+            }
+
+            BatchForecasts = await ForecastClient.GetMultipleForecastsAsync(productIds);
+
+            if (BatchForecasts.Count == 0)
+            {
+                ErrorMessage = "No forecasts generated. Please check your Product IDs.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error generating batch forecasts: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+}

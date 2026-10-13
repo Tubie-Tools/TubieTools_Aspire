@@ -1,0 +1,291 @@
+@page "/logistics"
+@using TubieTools_Aspire.Web.Services
+@inject LogisticsApiClient LogisticsClient
+@rendermode InteractiveServer
+
+<PageTitle>Logistics & Routing</PageTitle>
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1>
+                <span class="bi bi-geo-alt"></span>
+                Logistics & Route Optimization
+            </h1>
+            <p class="text-muted">Calculate optimal routes and distance matrices</p>
+            <hr />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    Route Between Two Points
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">From Latitude</label>
+                        <input type="number" class="form-control" @bind="FromLat" step="0.00001" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">From Longitude</label>
+                        <input type="number" class="form-control" @bind="FromLon" step="0.00001" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">To Latitude</label>
+                        <input type="number" class="form-control" @bind="ToLat" step="0.00001" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">To Longitude</label>
+                        <input type="number" class="form-control" @bind="ToLon" step="0.00001" />
+                    </div>
+                    <button class="btn btn-primary w-100" @onclick="GetRoute" disabled="@IsLoading">
+                        <span class="bi bi-arrow-down-up"></span>
+                        Calculate Route
+                    </button>
+
+                    @if (CurrentRoute != null)
+                    {
+                        <div class="mt-3">
+                            <div class="alert alert-info">
+                                <p class="mb-2">
+                                    <strong>Distance:</strong> <code>@(CurrentRoute.Distance / 1000) km</code>
+                                </p>
+                                <p class="mb-2">
+                                    <strong>Duration:</strong> <code>@(CurrentRoute.Duration / 60) min @(CurrentRoute.Duration % 60) sec</code>
+                                </p>
+                                <p class="mb-0">
+                                    <strong>Waypoints:</strong> <code>@CurrentRoute.Polyline.Count</code>
+                                </p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    Distance Matrix
+                </div>
+                <div class="card-body">
+                    <label class="form-label">Add Locations</label>
+                    <div class="mb-2">
+                        <input type="text" class="form-control mb-2" @bind="LocationName" placeholder="Location name" />
+                        <input type="number" class="form-control mb-2" @bind="LocationLat" step="0.00001" placeholder="Latitude" />
+                        <input type="number" class="form-control mb-2" @bind="LocationLon" step="0.00001" placeholder="Longitude" />
+                        <button class="btn btn-sm btn-outline-success w-100" @onclick="AddLocation">
+                            <span class="bi bi-plus"></span> Add Location
+                        </button>
+                    </div>
+
+                    @if (Locations.Count > 0)
+                    {
+                        <hr />
+                        <h6>Locations (@Locations.Count)</h6>
+                        <div style="max-height: 150px; overflow-y: auto; margin-bottom: 10px;">
+                            <ul class="list-group list-group-sm">
+                                @foreach (var (index, loc) in Locations.Select((l, i) => (i, l)))
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <small>
+                                            <strong>@loc.Id</strong><br />
+                                            @loc.Latitude.ToString("F5"), @loc.Longitude.ToString("F5")
+                                        </small>
+                                        <button class="btn btn-sm btn-danger" @onclick="() => RemoveLocation(index)">
+                                            <span class="bi bi-trash"></span>
+                                        </button>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        <button class="btn btn-success w-100" @onclick="GetDistanceMatrix" disabled="@(IsLoading || Locations.Count < 2)">
+                            <span class="bi bi-lightning-fill"></span>
+                            Calculate Distance Matrix
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Error:</strong> @ErrorMessage
+                    <button type="button" class="btn-close" @onclick="() => ErrorMessage = string.Empty"></button>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (IsLoading)
+    {
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <div class="alert alert-info">
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+                    Calculating...
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (DistanceMatrix != null)
+    {
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">Distance Matrix Results</h5>
+                    </div>
+                    <div class="card-body table-responsive">
+                        @if (Locations.Count > 0 && DistanceMatrix.Distances.GetLength(0) > 0)
+                        {
+                            <table class="table table-sm table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>From \ To</th>
+                                        @foreach (var loc in Locations)
+                                        {
+                                            <th>@loc.Id</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (int i = 0; i < Locations.Count; i++)
+                                    {
+                                        <tr>
+                                            <th>@Locations[i].Id</th>
+                                            @for (int j = 0; j < Locations.Count; j++)
+                                            {
+                                                <td>
+                                                    @if (i == j)
+                                                    {
+                                                        <span class="text-muted">—</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <strong>@((DistanceMatrix.Distances[i, j] / 1000)) km</strong><br />
+                                                        <small class="text-muted">@(DistanceMatrix.Durations[i, j] / 60) min</small>
+                                                    }
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private RouteResult? CurrentRoute;
+    private DistanceMatrixResult? DistanceMatrix;
+    private List<Location> Locations = new();
+
+    private double FromLat = 40.7128;
+    private double FromLon = -74.0060;
+    private double ToLat = 34.0522;
+    private double ToLon = -118.2437;
+
+    private string LocationName = string.Empty;
+    private double LocationLat = 0;
+    private double LocationLon = 0;
+
+    private string ErrorMessage = string.Empty;
+    private bool IsLoading = false;
+
+    private async Task GetRoute()
+    {
+        try
+        {
+            IsLoading = true;
+            ErrorMessage = string.Empty;
+            CurrentRoute = await LogisticsClient.GetRouteAsync(FromLat, FromLon, ToLat, ToLon);
+
+            if (CurrentRoute == null)
+            {
+                ErrorMessage = "Failed to calculate route. Please check your coordinates.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error calculating route: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    private void AddLocation()
+    {
+        if (string.IsNullOrWhiteSpace(LocationName))
+        {
+            ErrorMessage = "Please enter a location name.";
+            return;
+        }
+
+        var location = new Location
+        {
+            Id = LocationName,
+            Latitude = LocationLat,
+            Longitude = LocationLon
+        };
+
+        Locations.Add(location);
+        LocationName = string.Empty;
+        LocationLat = 0;
+        LocationLon = 0;
+        ErrorMessage = string.Empty;
+    }
+
+    private void RemoveLocation(int index)
+    {
+        if (index >= 0 && index < Locations.Count)
+        {
+            Locations.RemoveAt(index);
+            DistanceMatrix = null;
+        }
+    }
+
+    private async Task GetDistanceMatrix()
+    {
+        try
+        {
+            IsLoading = true;
+            ErrorMessage = string.Empty;
+
+            if (Locations.Count < 2)
+            {
+                ErrorMessage = "Please add at least 2 locations.";
+                IsLoading = false;
+                return;
+            }
+
+            DistanceMatrix = await LogisticsClient.GetDistanceMatrixAsync(Locations);
+
+            if (DistanceMatrix == null)
+            {
+                ErrorMessage = "Failed to calculate distance matrix. Please try again.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error calculating distance matrix: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+}

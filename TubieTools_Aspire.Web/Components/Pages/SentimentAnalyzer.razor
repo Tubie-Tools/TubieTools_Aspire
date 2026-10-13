@@ -1,0 +1,239 @@
+@page "/sentiment-analyzer"
+@using TubieTools_Aspire.Web.Services
+@inject SentimentApiClient SentimentClient
+@rendermode InteractiveServer
+
+<PageTitle>Sentiment Analyzer</PageTitle>
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1>
+                <span class="bi bi-chat-dots"></span>
+                Sentiment Analysis
+            </h1>
+            <p class="text-muted">Analyze the sentiment of text using machine learning</p>
+            <hr />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    Single Text Analysis
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="textInput" class="form-label">Enter Text</label>
+                        <textarea class="form-control" id="textInput" @bind="SingleText" rows="4" placeholder="Enter text to analyze..."></textarea>
+                    </div>
+                    <button class="btn btn-primary w-100" @onclick="AnalyzeSingle" disabled="@IsAnalyzing">
+                        @if (IsAnalyzing)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                            <span>Analyzing...</span>
+                        }
+                        else
+                        {
+                            <span class="bi bi-search"></span>
+                            <span>Analyze Sentiment</span>
+                        }
+                    </button>
+
+                    @if (SingleResult != null)
+                    {
+                        <div class="mt-3">
+                            <div class="alert alert-info">
+                                <h6>Analysis Result</h6>
+                                <p class="mb-1">
+                                    <strong>Sentiment:</strong>
+                                    @switch (SingleResult.Sentiment)
+                                    {
+                                        case "Positive":
+                                            <span class="badge bg-success">@SingleResult.Sentiment</span>
+                                            break;
+                                        case "Negative":
+                                            <span class="badge bg-danger">@SingleResult.Sentiment</span>
+                                            break;
+                                        default:
+                                            <span class="badge bg-warning text-dark">@SingleResult.Sentiment</span>
+                                            break;
+                                    }
+                                </p>
+                                <p class="mb-0">
+                                    <strong>Confidence Score:</strong> <code>@SingleResult.Score.ToString("P2")</code>
+                                </p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    Batch Analysis
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="batchInput" class="form-label">Enter Multiple Texts (one per line)</label>
+                        <textarea class="form-control" id="batchInput" @bind="BatchTextInput" rows="4" placeholder="Line 1&#10;Line 2&#10;Line 3..."></textarea>
+                    </div>
+                    <button class="btn btn-success w-100" @onclick="AnalyzeBatch" disabled="@IsAnalyzing">
+                        @if (IsAnalyzing)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                            <span>Processing...</span>
+                        }
+                        else
+                        {
+                            <span class="bi bi-lightning-fill"></span>
+                            <span>Analyze Batch</span>
+                        }
+                    </button>
+
+                    @if (BatchResult?.Results.Count > 0)
+                    {
+                        <div class="mt-3">
+                            <h6>Batch Results (<strong>@BatchResult.Results.Count</strong> texts analyzed)</h6>
+                            <div style="max-height: 300px; overflow-y: auto;">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Text</th>
+                                            <th>Sentiment</th>
+                                            <th>Score</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var result in BatchResult.Results)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <small>@(result.Text.Length > 30 ? result.Text.Substring(0, 30) + "..." : result.Text)</small>
+                                                </td>
+                                                <td>
+                                                    @switch (result.Sentiment)
+                                                    {
+                                                        case "Positive":
+                                                            <span class="badge bg-success">@result.Sentiment</span>
+                                                            break;
+                                                        case "Negative":
+                                                            <span class="badge bg-danger">@result.Sentiment</span>
+                                                            break;
+                                                        default:
+                                                            <span class="badge bg-warning text-dark">@result.Sentiment</span>
+                                                            break;
+                                                    }
+                                                </td>
+                                                <td>
+                                                    <small>@result.Score.ToString("P0")</small>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Error:</strong> @ErrorMessage
+                    <button type="button" class="btn-close" @onclick="() => ErrorMessage = string.Empty"></button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private SentimentResult? SingleResult;
+    private SentimentBatchResult? BatchResult;
+
+    private string SingleText = string.Empty;
+    private string BatchTextInput = string.Empty;
+
+    private string ErrorMessage = string.Empty;
+    private bool IsAnalyzing = false;
+
+    private async Task AnalyzeSingle()
+    {
+        if (string.IsNullOrWhiteSpace(SingleText))
+        {
+            ErrorMessage = "Please enter text to analyze";
+            return;
+        }
+
+        try
+        {
+            IsAnalyzing = true;
+            ErrorMessage = string.Empty;
+            SingleResult = await SentimentClient.AnalyzeSentimentAsync(SingleText);
+
+            if (SingleResult == null)
+            {
+                ErrorMessage = "Failed to analyze sentiment. Please try again.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error analyzing sentiment: {ex.Message}";
+        }
+        finally
+        {
+            IsAnalyzing = false;
+        }
+    }
+
+    private async Task AnalyzeBatch()
+    {
+        if (string.IsNullOrWhiteSpace(BatchTextInput))
+        {
+            ErrorMessage = "Please enter text to analyze (one per line)";
+            return;
+        }
+
+        try
+        {
+            IsAnalyzing = true;
+            ErrorMessage = string.Empty;
+
+            var texts = BatchTextInput
+                .Split('\n')
+                .Select(t => t.Trim())
+                .Where(t => !string.IsNullOrEmpty(t))
+                .ToList();
+
+            if (texts.Count == 0)
+            {
+                ErrorMessage = "Please enter at least one line of text";
+                return;
+            }
+
+            BatchResult = await SentimentClient.AnalyzeBatchAsync(texts);
+
+            if (BatchResult?.Results.Count == 0)
+            {
+                ErrorMessage = "No results returned from batch analysis.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error in batch sentiment analysis: {ex.Message}";
+        }
+        finally
+        {
+            IsAnalyzing = false;
+        }
+    }
+}

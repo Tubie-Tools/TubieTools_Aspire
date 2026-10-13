@@ -19,11 +19,42 @@ builder.Services.AddOutputCache();
 builder.Services.AddScoped<CartService>();
 builder.Services.AddTransient<IPaymentService, PaymentService>();
 
+// Register all microservice HTTP clients
 builder.Services.AddHttpClient<WeatherApiClient>(client =>
     {
         // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
         // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
         client.BaseAddress = new("https+http://publicapi");
+    });
+
+// Public API Client
+builder.Services.AddHttpClient<PublicApiClient>(client =>
+    {
+        client.BaseAddress = new("https+http://publicapi");
+    });
+
+// Sentiment Analysis API Client
+builder.Services.AddHttpClient<SentimentApiClient>(client =>
+    {
+        client.BaseAddress = new("https+http://sentimentapi");
+    });
+
+// Forecasting API Client
+builder.Services.AddHttpClient<ForecastingApiClient>(client =>
+    {
+        client.BaseAddress = new("https+http://forecastingapi");
+    });
+
+// Logistics / OSRM API Client
+builder.Services.AddHttpClient<LogisticsApiClient>(client =>
+    {
+        client.BaseAddress = new("https+http://logisticsOSRM");
+    });
+
+// Enterprise Automation API Client
+builder.Services.AddHttpClient<EnterpriseAutomationClient>(client =>
+    {
+        client.BaseAddress = new("https+http://enterpriseautomation");
     });
 
 var app = builder.Build();
