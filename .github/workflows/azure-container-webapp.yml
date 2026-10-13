@@ -54,7 +54,7 @@ jobs:
 
       # Requires an Azure federated identity credential on the app registration:
       #   issuer:   https://token.actions.githubusercontent.com
-      #   subject:  repo:Tubie-Tools/TubieTools_Aspire:ref:refs/heads/master
+      #   subject:  repo:Tubie-Tools@322336264/TubieTools_Aspire@1193285319:ref:refs/heads/master
       #   audience: api://AzureADTokenExchange
       - name: Azure Login (OIDC)
         id: azure_login_oidc
@@ -154,7 +154,7 @@ jobs:
 
       # Requires an Azure federated identity credential on the app registration:
       #   issuer:   https://token.actions.githubusercontent.com
-      #   subject:  repo:Tubie-Tools/TubieTools_Aspire:ref:refs/heads/master
+      #   subject:  repo:Tubie-Tools@322336264/TubieTools_Aspire@1193285319:ref:refs/heads/master
       #   audience: api://AzureADTokenExchange
       - name: Azure Login (OIDC)
         id: azure_login_oidc
