@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace TubieTools_PublicAPI.Models
 {
     /// <summary>
@@ -18,6 +20,7 @@ namespace TubieTools_PublicAPI.Models
         /// <summary>
         /// Care provider tier classification
         /// </summary>
+        [JsonConverter(typeof(CareProviderTierJsonConverter))]
         public CareProviderTier Tier { get; set; }
 
         /// <summary>

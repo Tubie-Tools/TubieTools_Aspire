@@ -1,10 +1,7 @@
 
 using Microsoft.OpenApi;
-using TubieTools_PublicAPI.Middleware;
-using TubieTools_PublicAPI.Models;
 using TubieTools_PublicAPI.Services;
 using TubieTools_Aspire.Security.Extensions;
-using Microsoft.Extensions.Hosting;
 
 namespace TubieTools_PublicAPI
 {
@@ -48,6 +45,7 @@ namespace TubieTools_PublicAPI
 
             SetDependencyInjectedTenant(builder);
 
+            builder.Services.AddTransient<ICareProviderService, CareProviderService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -57,7 +55,7 @@ namespace TubieTools_PublicAPI
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

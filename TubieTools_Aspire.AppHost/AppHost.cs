@@ -2,6 +2,8 @@ using Aspire.Hosting;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
+var keyVault = builder.AddAzureKeyVault("tubie-key-vault");
+
 //env variable password
 // Create a ParameterResource for a password
 var secretpassword = builder.AddParameter("dbpassword", secret: true);

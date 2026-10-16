@@ -1,6 +1,7 @@
-using System.Net.Http.Json;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
+using System.Net.Http.Json;
 
 namespace TubieTools_Aspire.Web.Services;
 
@@ -18,17 +19,27 @@ public class PublicApiClient
         _logger = logger;
     }
 
-    public async Task<List<CareCareProvider>> GetCareProvidersAsync()
-    {
+    /// <summary>
+    /// TODO  add parameters  of  tier and status
+    /// </summary>
+    /// <returns></returns>
+    public async Task<dynamic> GetCareProvidersAsync()
+    { 
         try
         {
-            var result = await _httpClient.GetFromJsonAsync<List<CareCareProvider>>("/api/careproviders");
-            return result ?? new();
+            var response = await _httpClient.GetAsync("/api/CareProviders?tier=1&status=f");
+            // Ensure the request was successful
+            response.EnsureSuccessStatusCode();
+
+            // Read the response body as a string
+            string content = await response.Content.ReadAsStringAsync();
+
+            return content;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting care providers");
-            return new();
+            throw;// return new();
         }
     }
 

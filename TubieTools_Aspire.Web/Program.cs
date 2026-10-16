@@ -1,7 +1,9 @@
-    using TubieTools_Aspire.Web;
+using TubieTools_Aspire.Web;
 using TubieTools_Aspire.Web.Components;
 using TubieTools_Aspire.Web.Services;
 using TubieTools_Aspire.Security.Extensions;
+using Azure.Identity;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,43 +21,86 @@ builder.Services.AddOutputCache();
 builder.Services.AddScoped<CartService>();
 builder.Services.AddTransient<IPaymentService, PaymentService>();
 
-// Register all microservice HTTP clients
+// Register IHttpContextAccessor for resolving the current HTTP context
+builder.Services.AddHttpContextAccessor();
+
+// Register the token forwarding handler for dependency injection
+// This handler automatically forwards the user's Entra ID token to all downstream API calls
+// Registered as Transient to avoid lifetime mismatch with the scoped IHttpContextAccessor
+builder.Services.AddTransient<TokenForwardingDelegatingHandler>();
+
 builder.Services.AddHttpClient<WeatherApiClient>(client =>
     {
         // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
         // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
         client.BaseAddress = new("https+http://publicapi");
-    });
+    })
+    .AddHttpMessageHandler<TokenForwardingDelegatingHandler>();
 
 // Public API Client
 builder.Services.AddHttpClient<PublicApiClient>(client =>
     {
         client.BaseAddress = new("https+http://publicapi");
-    });
+    })
+    .AddHttpMessageHandler<TokenForwardingDelegatingHandler>();
 
 // Sentiment Analysis API Client
 builder.Services.AddHttpClient<SentimentApiClient>(client =>
     {
         client.BaseAddress = new("https+http://sentimentapi");
-    });
+    })
+    .AddHttpMessageHandler<TokenForwardingDelegatingHandler>();
 
 // Forecasting API Client
 builder.Services.AddHttpClient<ForecastingApiClient>(client =>
     {
         client.BaseAddress = new("https+http://forecastingapi");
-    });
+    })
+    .AddHttpMessageHandler<TokenForwardingDelegatingHandler>();
 
 // Logistics / OSRM API Client
 builder.Services.AddHttpClient<LogisticsApiClient>(client =>
     {
         client.BaseAddress = new("https+http://logisticsOSRM");
-    });
+    })
+    .AddHttpMessageHandler<TokenForwardingDelegatingHandler>();
 
 // Enterprise Automation API Client
 builder.Services.AddHttpClient<EnterpriseAutomationClient>(client =>
     {
         client.BaseAddress = new("https+http://enterpriseautomation");
-    });
+    })
+    .AddHttpMessageHandler<TokenForwardingDelegatingHandler>();
+
+// Load configuration from Azure Key Vault
+var keyVaultUrl = builder.Configuration["KeyVault:VaultUri"];
+if (!string.IsNullOrEmpty(keyVaultUrl))
+{
+    var credential = new DefaultAzureCredential();
+    builder.Configuration.AddAzureKeyVault(
+        new Uri(keyVaultUrl),
+        credential);
+}
+
+// Then add authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = "Cookies";
+    options.DefaultChallengeScheme = "oidc";
+})
+.AddCookie("Cookies")
+.AddOpenIdConnect("oidc", options =>
+{
+    options.Authority = $"https://login.microsoftonline.com/{builder.Configuration["AzureAd--TenantId"]}/v2.0";
+    options.ClientId = builder.Configuration["AzureAd--ClientId"];
+    options.ClientSecret = builder.Configuration["AzureAd--ClientSecret"];
+    options.ResponseType = "code";
+    options.SaveTokens = true;
+    options.Scope.Clear();
+    options.Scope.Add("openid");
+    options.Scope.Add("profile");
+    options.Scope.Add("email");
+});
 
 var app = builder.Build();
 
