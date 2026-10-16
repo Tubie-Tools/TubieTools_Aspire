@@ -34,7 +34,8 @@ var forecastingApi = builder.AddProject<Projects.TubieTools_Forecasting_API>("fo
 var tensorflow = builder.AddProject<Projects.TensorFlow>("tensorflow");
 
 builder.AddProject<Projects.TubieTools_Aspire_Web>("webfrontend")
-    .WithExternalHttpEndpoints() 
+    .WithExternalHttpEndpoints()
+    .WithReference(keyVault)
     .WithReference(publicApi)
     .WithReference(sentimentApi)
     .WithReference(sentimentProductApi)
