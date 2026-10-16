@@ -1,8 +1,9 @@
 using Aspire.Hosting;
+using Azure.Identity;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-var keyVault = builder.AddAzureKeyVault("tubie-key-vault");
+var keyVault = builder.AddAzureKeyVault("KeyVault");
 
 //env variable password
 // Create a ParameterResource for a password
@@ -35,7 +36,7 @@ var tensorflow = builder.AddProject<Projects.TensorFlow>("tensorflow");
 
 builder.AddProject<Projects.TubieTools_Aspire_Web>("webfrontend")
     .WithExternalHttpEndpoints()
-    .WithReference(keyVault)
+    //.WithReference(keyVault)
     .WithReference(publicApi)
     .WithReference(sentimentApi)
     .WithReference(sentimentProductApi)
