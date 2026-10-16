@@ -1,0 +1,284 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning",
+      "Microsoft.EntityFrameworkCore": "Information"
+    }
+  },
+  "AllowedHosts": "*",
+  "ChatGPT": {
+    "ApiKey": "sk-your-openai-api-key-here",
+    "Model": "gpt-4-turbo",
+    "Temperature": 0.7,
+    "MaxTokens": 2000
+  },
+  "ServiceNow": {
+    "Instance": "your-instance-name",
+    "Token": "your-oauth-bearer-token",
+    "TimeoutSeconds": 30
+  },
+  "Azure": {
+    "SubscriptionId": "00000000-0000-0000-0000-000000000000",
+    "ResourceGroup": "your-resource-group",
+    "Region": "eastus"
+  },
+  "AzureDevOps": {
+    "OrganizationUrl": "https://dev.azure.com/your-organization",
+    "PatToken": "your-pat-token"
+  },
+  "AzureAutomation": {
+    "SubscriptionId": "00000000-0000-0000-0000-000000000000",
+    "ResourceGroup": "your-resource-group",
+    "AccountName": "your-automation-account"
+  },
+  "Kubernetes": {
+    "ClusterName": "your-aks-cluster",
+    "ResourceGroup": "your-resource-group",
+    "Namespace": "default"
+  },
+  "Terraform": {
+    "StorageAccount": "your-storage-account",
+    "StorageContainer": "terraform-state",
+    "StateFilePath": "prod/terraform.tfstate"
+  },
+  "Embedding": {
+    "EmbeddingProvider": "OpenAI",
+    "EmbeddingModel": "text-embedding-3-small",
+    "EmbeddingDimension": 1536,
+    "VectorStoreBackend": "Pinecone",
+    "VectorStoreConnection": "your-vector-store-connection-string",
+    "SimilarityMetric": "cosine",
+    "ReembeddingFrequency": "Weekly"
+  },
+  "Tenants": [
+    {
+      "TenantId": "tenant-free-001",
+      "DisplayName": "Free Tier Customer",
+      "SubscriptionTier": "Free",
+      "MonthlyApiQuota": 100,
+      "AllowedTools": ["search_incident"],
+      "SupportedModels": ["gpt-3.5-turbo"],
+      "IsActive": true
+    },
+    {
+      "TenantId": "tenant-starter-001",
+      "DisplayName": "Starter Tier Customer",
+      "SubscriptionTier": "Starter",
+      "MonthlyApiQuota": 5000,
+      "AllowedTools": ["search_incident", "create_incident", "close_incident"],
+      "SupportedModels": ["gpt-3.5-turbo", "gpt-4"],
+      "IsActive": true
+    },
+    {
+      "TenantId": "tenant-pro-001",
+      "DisplayName": "Pro Tier Customer",
+      "SubscriptionTier": "Pro",
+      "MonthlyApiQuota": 50000,
+      "AllowedTools": ["search_incident", "create_incident", "close_incident"],
+      "SupportedModels": ["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo"],
+      "EnableWebhooks": true,
+      "EnableCustomAnalytics": true,
+      "IsActive": true
+    },
+    {
+      "TenantId": "tenant-enterprise-001",
+      "DisplayName": "Enterprise Customer",
+      "SubscriptionTier": "Enterprise",
+      "MonthlyApiQuota": -1,
+      "AllowedTools": ["search_incident", "create_incident", "close_incident"],
+      "SupportedModels": ["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo"],
+      "EnableWebhooks": true,
+      "EnableCustomAnalytics": true,
+      "EnableMultiAgent": true,
+      "EnableDisasterRecovery": true,
+      "SsoEnabled": true,
+      "IsActive": true
+    }
+  ],
+  "jurisdictions": [
+    {
+      "jurisdictionId": "juris-ca",
+      "jurisdictionName": "California",
+      "stateCode": "CA",
+      "description": "State of California jurisdiction",
+      "isActive": true,
+      "databaseSchema": "dbo_ca",
+      "connectionStringName": "FoundryConnection_CA",
+      "regulations": {
+        "stateCode": "CA",
+        "dataRetentionPolicies": {
+          "minRetentionDays": 90,
+          "maxRetentionDays": 2555,
+          "requiresEncryption": true
+        },
+        "complianceRequirements": {
+          "ccpa": true,
+          "gdprEquivalent": true,
+          "requiresAuditLog": true,
+          "breachNotificationDays": 30
+        },
+        "securityStandards": {
+          "minimumTlsVersion": 1.3,
+          "requiresMfa": false,
+          "passwordMinLength": 12,
+          "requiresSpecialCharacters": true
+        },
+        "restrictedFeatures": {
+          "dataExport": false,
+          "bulkDataTransfer": false,
+          "publicSharing": true
+        }
+      },
+      "features": {
+        "stateCode": "CA",
+        "enabledFeatures": [
+          "standard_ai_agent",
+          "advanced_analytics",
+          "compliance_reporting",
+          "audit_logging",
+          "data_residency"
+        ],
+        "featureConfiguration": {
+          "dataResidency": {
+            "required": true,
+            "allowedRegions": ["us-west-1", "us-west-2"]
+          },
+          "auditRetention": {
+            "minimumDays": 365
+          }
+        },
+        "maxTeamMembers": 100,
+        "maxApiKeys": 20,
+        "requiresMfa": false,
+        "requiresDataEncryption": true
+      }
+    },
+    {
+      "jurisdictionId": "juris-tx",
+      "jurisdictionName": "Texas",
+      "stateCode": "TX",
+      "description": "State of Texas jurisdiction",
+      "isActive": true,
+      "databaseSchema": "dbo_tx",
+      "connectionStringName": "FoundryConnection_TX",
+      "regulations": {
+        "stateCode": "TX",
+        "dataRetentionPolicies": {
+          "minRetentionDays": 60,
+          "maxRetentionDays": 1825,
+          "requiresEncryption": true
+        },
+        "complianceRequirements": {
+          "ccpa": false,
+          "gdprEquivalent": false,
+          "requiresAuditLog": true,
+          "breachNotificationDays": 60
+        },
+        "securityStandards": {
+          "minimumTlsVersion": 1.2,
+          "requiresMfa": false,
+          "passwordMinLength": 10,
+          "requiresSpecialCharacters": false
+        },
+        "restrictedFeatures": {
+          "dataExport": false,
+          "bulkDataTransfer": true,
+          "publicSharing": true
+        }
+      },
+      "features": {
+        "stateCode": "TX",
+        "enabledFeatures": [
+          "standard_ai_agent",
+          "analytics",
+          "audit_logging"
+        ],
+        "featureConfiguration": {
+          "dataResidency": {
+            "required": false,
+            "allowedRegions": []
+          }
+        },
+        "maxTeamMembers": 50,
+        "maxApiKeys": 10,
+        "requiresMfa": false,
+        "requiresDataEncryption": true
+      }
+    },
+    {
+      "jurisdictionId": "juris-ny",
+      "jurisdictionName": "New York",
+      "stateCode": "NY",
+      "description": "State of New York jurisdiction",
+      "isActive": true,
+      "databaseSchema": "dbo_ny",
+      "connectionStringName": "FoundryConnection_NY",
+      "regulations": {
+        "stateCode": "NY",
+        "dataRetentionPolicies": {
+          "minRetentionDays": 180,
+          "maxRetentionDays": 3650,
+          "requiresEncryption": true
+        },
+        "complianceRequirements": {
+          "ccpa": false,
+          "gdprEquivalent": true,
+          "requiresAuditLog": true,
+          "breachNotificationDays": 30,
+          "bitlawCompliance": true
+        },
+        "securityStandards": {
+          "minimumTlsVersion": 1.3,
+          "requiresMfa": true,
+          "passwordMinLength": 14,
+          "requiresSpecialCharacters": true
+        },
+        "restrictedFeatures": {
+          "dataExport": false,
+          "bulkDataTransfer": false,
+          "publicSharing": false
+        }
+      },
+      "features": {
+        "stateCode": "NY",
+        "enabledFeatures": [
+          "standard_ai_agent",
+          "advanced_analytics",
+          "compliance_reporting",
+          "audit_logging",
+          "data_residency",
+          "encryption_at_rest"
+        ],
+        "featureConfiguration": {
+          "dataResidency": {
+            "required": true,
+            "allowedRegions": ["us-east-1"]
+          },
+          "encryptionAtRest": {
+            "algorithm": "AES-256",
+            "keyRotationDays": 90
+          }
+        },
+        "maxTeamMembers": 150,
+        "maxApiKeys": 25,
+        "requiresMfa": true,
+        "requiresDataEncryption": true
+      }
+    }
+  ],
+  "Serilog": {
+    "Using": ["Serilog.Sinks.Console"],
+    "MinimumLevel": "Information",
+    "WriteTo": [
+      {
+        "Name": "Console"
+      }
+    ],
+    "Enrich": ["FromLogContext", "WithMachineName", "WithThreadId"]
+  },
+  "KeyVault": {
+    "Enabled": false,
+    "Url": "https://your-keyvault-name.vault.azure.net/"
+  }
+}
